@@ -95,8 +95,7 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
                 'class' => 'required-entry',
                 'required' => true,
                 'values' => $setsAddress
-            ));
-
+            ]);
         }
 
         if (!is_null($customerGroup->getId())) {
