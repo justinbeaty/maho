@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Test_A>
+            <version>1.0.0</version>
+        </Test_A>
+    </modules>
+    <global>
+        <resources>
+            <test_a_resource>
+                <setup>
+                    <module>Test_A</module>
+                </setup>
+            </test_a_resource>
+        </resources>
+    </global>
+</config>

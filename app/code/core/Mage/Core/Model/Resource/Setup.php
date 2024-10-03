@@ -210,6 +210,11 @@ class Mage_Core_Model_Resource_Setup
             if (!$resource->setup) {
                 continue;
             }
+
+            if (str_starts_with($resName, 'test_')) {
+                Mage::log($resName);
+            }
+
             $className = __CLASS__;
             if (isset($resource->setup->class)) {
                 $className = $resource->setup->getClassName();
