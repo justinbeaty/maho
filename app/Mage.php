@@ -21,6 +21,8 @@ define('BP', MAHO_ROOT_DIR);
 $composerClassLoader = require BP . '/vendor/autoload.php';
 set_include_path(implode(PS, \Maho\MahoAutoload::generatePaths(BP)) . PS . get_include_path());
 
+$foo = 'bar'
+
 if (!empty($_SERVER['MAGE_IS_DEVELOPER_MODE']) || !empty($_ENV['MAGE_IS_DEVELOPER_MODE'])) {
     Mage::setIsDeveloperMode(true);
     ini_set('display_errors', '1');
