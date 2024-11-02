@@ -19,8 +19,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Get last successful commit
         id: last-successful-commit
@@ -28,7 +26,6 @@ jobs:
         with:
           branch: main
           workflow: ${{ github.workflow }}
-          verify: true
 
       - name: Get changed files
         id: changed-files
