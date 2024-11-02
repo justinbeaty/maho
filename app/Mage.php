@@ -14,8 +14,6 @@ define('DS', DIRECTORY_SEPARATOR);
 define('PS', PATH_SEPARATOR);
 define('BP', MAHO_ROOT_DIR);
 
-foobar
-
 /*
  * Require Composer autoloader and set include paths
  * @var \Composer\Autoload\ClassLoader $composerClassLoader
