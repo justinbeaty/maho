@@ -55,7 +55,7 @@ jobs:
               MESSAGE=$(php -l "$FILE" 2>&1 1>/dev/null)
               if [ $? -ne 0 ]; then
                   ERROR=255
-                  LINE=$(echo $MESSAGE | sed -En 's/.*on line ([0-9]+).*/\1/p')
+                  LINE=$(echo $MESSAGE | sed -En 's/.*zon line ([0-9]+).*/\1/p')
                   echo "::error file=$FILE,line=$LINE::$MESSAGE"
               fi
           done
