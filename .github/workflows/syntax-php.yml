@@ -19,13 +19,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Get last successful commit
         id: last-successful-commit
         uses: SamhammerAG/last-successful-build-action@v7
         with:
-          branch: main
+          branch: ${{ github.base_ref || github.ref_name }}
           workflow: ${{ github.workflow }}
+          verify: true
 
       - name: Get changed files
         id: changed-files
