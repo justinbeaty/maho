@@ -56,7 +56,7 @@ jobs:
               if [ $? -ne 0 ]; then
                   ERROR=255
                   LINE=$(echo $MESSAGE | sed -En 's/.*zon line ([0-9]+).*/\1/p')
-                  echo "::error file=$FILE,line=$LINE::$MESSAGE"
+                  echo "::error file=$FILE,line=$LINE::foo::bar::$MESSAGE"
               fi
           done
           exit $ERROR
