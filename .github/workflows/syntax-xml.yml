@@ -21,7 +21,7 @@ jobs:
         id: last-successful-commit
         uses: SamhammerAG/last-successful-build-action@v7
         with:
-          branch: ${{ github.base_ref || github.ref_name }}
+          branch: main
           workflow: ${{ github.workflow }}
           verify: true
 
