@@ -19,15 +19,17 @@ jobs:
 
       - name: Get last successful commit
         id: last-successful-commit
-        uses: nrwl/nx-set-shas@v4
+        uses: SamhammerAG/last-successful-build-action@v7
         with:
-          workflow-id: 'syntax-xml.yml'
+          branch: main
+          workflow: syntax-xml
+          verify: true
 
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v45
         with:
-          base_sha: ${{ steps.last-successful-commit.outputs.base }}
+          base_sha: ${{ steps.last-successful-commit.outputs.sha }}
           files: |
             **/*.xml
 
