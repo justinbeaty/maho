@@ -16,7 +16,7 @@
 class Mage_Eav_Block_Adminhtml_Attribute_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
 {
     protected Mage_Eav_Model_Entity_Type $entityType;
-    protected Mage_Eav_Model_Attribute $entityAttribute;
+    protected Mage_Eav_Model_Entity_Attribute $entityAttribute;
 
     public function __construct()
     {

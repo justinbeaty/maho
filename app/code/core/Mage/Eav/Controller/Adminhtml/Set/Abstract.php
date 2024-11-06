@@ -14,6 +14,8 @@
  */
 abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml_Controller_Action
 {
+    public const FLAG_USE_CUSTOM_LAYOUT = 'use-custom-layout';
+
     protected string $entityTypeCode;
     protected Mage_Eav_Model_Entity_Type $entityType;
 
@@ -39,26 +41,32 @@ abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml
 
     public function indexAction()
     {
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set'))
-             ->renderLayout();
+        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
+            $this->_initAction()
+                 ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set'))
+                 ->renderLayout();
+        }
     }
 
     public function setGridAction()
     {
-        $this->getResponse()->setBody(
-            $this->getLayout()
-                 ->createBlock('eav/adminhtml_attribute_set_grid')
-                 ->toHtml()
-        );
+        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
+            $this->getResponse()->setBody(
+                $this->getLayout()
+                     ->createBlock('eav/adminhtml_attribute_set_grid')
+                     ->toHtml()
+            );
+        }
     }
 
     public function addAction()
     {
-        $this->_initAction()
-             ->_title($this->__('New Set'))
-             ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set_toolbar_add'))
-             ->renderLayout();
+        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
+            $this->_initAction()
+                 ->_title($this->__('New Set'))
+                 ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set_add'))
+                 ->renderLayout();
+        }
     }
 
     public function editAction()
@@ -74,11 +82,14 @@ abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml
 
         Mage::register('current_attribute_set', $attributeSet);
 
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set_main'));
+        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
+            $this->_initAction()
+                 ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set_main'))
+                 ->_title($attributeSet->getId() ? $attributeSet->getAttributeSetName() : $this->__('New Set'));
 
-        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
-        $this->renderLayout();
+            $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
+            $this->renderLayout();
+        }
     }
 
     public function createFromSkeletonSetAction()

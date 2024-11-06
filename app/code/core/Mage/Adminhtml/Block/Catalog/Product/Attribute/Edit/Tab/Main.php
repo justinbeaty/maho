@@ -12,6 +12,9 @@
 
 /**
  * Product attribute add/edit form main tab
+ *
+ * @category   Mage
+ * @package    Mage_Adminhtml
  */
 class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract
 {
@@ -206,5 +209,24 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
         return [
             'apply' => Mage::getConfig()->getBlockClassName('adminhtml/catalog_product_helper_form_apply'),
         ];
+    }
+
+    /**
+     * Processing block html after rendering
+     * Adding js block to the end of this block
+     *
+     * @param   string $html
+     * @return  string
+     */
+    #[\Override]
+    protected function _afterToHtml($html)
+    {
+        // TODO, check if template exists
+
+        $jsScripts = $this->getLayout()->createBlock('adminhtml/template')
+            ->setTemplate('catalog/product/attribute/js.phtml')
+            ->toHtml();
+
+        return $html . $jsScripts;
     }
 }
