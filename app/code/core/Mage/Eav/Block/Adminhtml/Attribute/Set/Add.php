@@ -13,12 +13,12 @@
  * @category   Mage
  * @package    Mage_Eav
  */
-class Mage_Eav_Block_Adminhtml_Attribute_Set_Toolbar_Add extends Mage_Adminhtml_Block_Template
+class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Template
 {
     #[\Override]
     protected function _construct()
     {
-        $this->setTemplate('eav/attribute/set/toolbar/add.phtml');
+        $this->setTemplate('eav/attribute/set/add.phtml');
     }
 
     #[\Override]

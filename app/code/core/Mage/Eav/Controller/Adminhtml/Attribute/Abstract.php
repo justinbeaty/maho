@@ -14,6 +14,8 @@
  */
 abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adminhtml_Controller_Action
 {
+    public const FLAG_USE_CUSTOM_LAYOUT = 'use-custom-layout';
+
     protected string $entityTypeCode;
     protected Mage_Eav_Model_Entity_Type $entityType;
 
@@ -39,9 +41,11 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
 
     public function indexAction()
     {
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute'))
-             ->renderLayout();
+        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
+            $this->_initAction()
+                 ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute'))
+                 ->renderLayout();
+        }
     }
 
     public function newAction()
@@ -100,41 +104,43 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
 
         Mage::register('entity_attribute', $attribute);
 
-        $this->_initAction();
+        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
+            $this->_initAction();
 
-        if ($id) {
-            $this->_title($attribute->getName());
-            $this->_addBreadcrumb(
-                $this->__('Edit Attribute'),
-                $this->__('Edit Attribute')
-            );
-        } else {
-            $this->_title($this->__('New Attribute'));
-            $this->_addBreadcrumb(
-                $this->__('New Attribute'),
-                $this->__('New Attribute')
-            );
-        }
-
-        // Add website switcher if editing existing attribute and we have a scope table
-        if (!Mage::app()->isSingleStoreMode()) {
-            if ($id && $attribute->getResource()->hasScopeTable()) {
-                $this->_addLeft(
-                    $this->getLayout()->createBlock('adminhtml/website_switcher')
-                         ->setDefaultWebsiteName($this->__('Default Values'))
+            if ($id) {
+                $this->_title($attribute->getName());
+                $this->_addBreadcrumb(
+                    $this->__('Edit Attribute'),
+                    $this->__('Edit Attribute')
+                );
+            } else {
+                $this->_title($this->__('New Attribute'));
+                $this->_addBreadcrumb(
+                    $this->__('New Attribute'),
+                    $this->__('New Attribute')
                 );
             }
+
+            // Add website switcher if editing existing attribute and we have a scope table
+            if (!Mage::app()->isSingleStoreMode()) {
+                if ($id && $attribute->getResource()->hasScopeTable()) {
+                    $this->_addLeft(
+                        $this->getLayout()->createBlock('adminhtml/website_switcher')
+                            ->setDefaultWebsiteName($this->__('Default Values'))
+                    );
+                }
+            }
+
+            $this->_addLeft($this->getLayout()->createBlock('eav/adminhtml_attribute_edit_tabs'))
+                ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_edit'));
+
+            $this->_addJs(
+                $this->getLayout()->createBlock('adminhtml/template')
+                    ->setTemplate('eav/attribute/js.phtml')
+            );
+
+            $this->renderLayout();
         }
-
-        $this->_addLeft($this->getLayout()->createBlock('eav/adminhtml_attribute_edit_tabs'))
-             ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_edit'));
-
-        $this->_addJs(
-            $this->getLayout()->createBlock('adminhtml/template')
-                 ->setTemplate('eav/attribute/js.phtml')
-        );
-
-        $this->renderLayout();
     }
 
     public function validateAction()
@@ -170,14 +176,12 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
     protected function _filterPostData($data)
     {
         if ($data) {
-            // Labels
             $data['frontend_label'] = (array) $data['frontend_label'];
             foreach ($data['frontend_label'] as & $value) {
                 if ($value) {
                     $value = Mage::helper('eav')->stripTags($value);
                 }
             }
-            // Options
             if (!empty($data['option']) && !empty($data['option']['value']) && is_array($data['option']['value'])) {
                 foreach ($data['option']['value'] as $key => $values) {
                     foreach ($values as $storeId => $storeLabel) {

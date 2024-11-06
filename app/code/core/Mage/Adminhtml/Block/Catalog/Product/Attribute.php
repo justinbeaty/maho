@@ -11,9 +11,6 @@
 
 /**
  * Adminhtml catalog product attributes block
- *
- * @category   Mage
- * @package    Mage_Adminhtml
  */
 class Mage_Adminhtml_Block_Catalog_Product_Attribute extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
