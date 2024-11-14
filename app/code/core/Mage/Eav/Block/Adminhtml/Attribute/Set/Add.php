@@ -45,7 +45,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Te
 
         $this->setChild(
             'setForm',
-            $this->getLayout()->createBlock('eav/adminhtml_attribute_set_main_formset')
+            $this->getLayout()->createBlock('eav/adminhtml_attribute_set_edit_formset')
         );
         return parent::_prepareLayout();
     }
@@ -79,7 +79,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Te
      */
     protected function getFormHtml()
     {
-        return $this->getChildHtml('setForm');
+        return $this->getChildHtml('set_form');
     }
 
     /**
@@ -87,6 +87,6 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Te
      */
     protected function getFormId()
     {
-        return $this->getChild('setForm')->getForm()->getId();
+        return $this->getChild('set_form')->getForm()->getId();
     }
 }

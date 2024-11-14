@@ -27,11 +27,6 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Eav_Controller_A
         $this->entityTypeCode = Mage_Catalog_Model_Product::ENTITY;
     }
 
-    /**
-     * Controller predispatch method
-     *
-     * @return Mage_Adminhtml_Controller_Action
-     */
     #[\Override]
     public function preDispatch()
     {
@@ -61,56 +56,5 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Eav_Controller_A
              );
 
         return $this;
-    }
-
-    public function indexAction()
-    {
-        $this->setFlag('', self::FLAG_USE_CUSTOM_LAYOUT, true);
-        parent::indexAction();
-
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set'))
-             ->renderLayout();
-    }
-
-    public function setGridAction()
-    {
-        $this->setFlag('', self::FLAG_USE_CUSTOM_LAYOUT, true);
-        parent::setGridAction();
-
-        $this->getResponse()->setBody(
-            $this->getLayout()
-                 ->createBlock('adminhtml/catalog_product_attribute_set_grid')
-                 ->toHtml()
-        );
-    }
-
-    public function addAction()
-    {
-        $this->setFlag('', self::FLAG_USE_CUSTOM_LAYOUT, true);
-        parent::setGridAction();
-
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set_add'))
-             ->renderLayout();
-
-        $this->renderLayout();
-    }
-
-    public function editAction()
-    {
-        $this->setFlag('', self::FLAG_USE_CUSTOM_LAYOUT, true);
-        parent::editAction();
-
-        /** @var Mage_Eav_Model_Entity_Attribute_Set $attributeSet */
-        $attributeSet = Mage::getModel('eav/entity_attribute_set')
-            ->load($this->getRequest()->getParam('id'));
-
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('adminhtml/catalog_product_attribute_set_main'))
-             ->_title($attributeSet->getId() ? $attributeSet->getAttributeSetName() : $this->__('New Set'));
-
-        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
-        $this->renderLayout();
     }
 }

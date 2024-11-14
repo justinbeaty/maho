@@ -14,7 +14,7 @@
  * @category   Mage
  * @package    Mage_Eav
  */
-class Mage_Eav_Block_Adminhtml_Attribute_Set_Main_Formset extends Mage_Adminhtml_Block_Widget_Form
+class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit_Formset extends Mage_Adminhtml_Block_Widget_Form
 {
     #[\Override]
     protected function _prepareForm()

@@ -14,16 +14,9 @@
  */
 abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adminhtml_Controller_Action
 {
-    public const FLAG_USE_CUSTOM_LAYOUT = 'use-custom-layout';
-
     protected string $entityTypeCode;
     protected Mage_Eav_Model_Entity_Type $entityType;
 
-    /**
-     * Controller predispatch method
-     *
-     * @return Mage_Adminhtml_Controller_Action
-     */
     #[\Override]
     public function preDispatch()
     {
@@ -34,6 +27,17 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
         return parent::preDispatch();
     }
 
+    #[\Override]
+    public function addActionLayoutHandles()
+    {
+        parent::addActionLayoutHandles();
+        $this->getLayout()->getUpdate()
+            ->removeHandle(strtolower($this->getFullActionName()))
+            ->addHandle(strtolower('adminhtml_eav_attribute_' . $this->getRequest()->getActionName()))
+            ->addHandle(strtolower($this->getFullActionName()));
+        return $this;
+    }
+
     protected function _initAction()
     {
         return $this->loadLayout();
@@ -41,11 +45,8 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
 
     public function indexAction()
     {
-        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
-            $this->_initAction()
-                 ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute'))
-                 ->renderLayout();
-        }
+        $this->_initAction()
+            ->renderLayout();
     }
 
     public function newAction()
@@ -104,38 +105,33 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
 
         Mage::register('entity_attribute', $attribute);
 
-        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
-            $this->_initAction();
+        $this->_initAction();
 
-            if ($id) {
-                $this->_title($attribute->getName());
-                $this->_addBreadcrumb(
-                    $this->__('Edit Attribute'),
-                    $this->__('Edit Attribute')
-                );
-            } else {
-                $this->_title($this->__('New Attribute'));
-                $this->_addBreadcrumb(
-                    $this->__('New Attribute'),
-                    $this->__('New Attribute')
-                );
-            }
-
-            // Add website switcher if editing existing attribute and we have a scope table
-            if (!Mage::app()->isSingleStoreMode()) {
-                if ($id && $attribute->getResource()->hasScopeTable()) {
-                    $this->_addLeft(
-                        $this->getLayout()->createBlock('adminhtml/website_switcher')
-                            ->setDefaultWebsiteName($this->__('Default Values'))
-                    );
-                }
-            }
-
-            $this->_addLeft($this->getLayout()->createBlock('eav/adminhtml_attribute_edit_tabs'))
-                ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_edit'));
-
-            $this->renderLayout();
+        if ($id) {
+            $this->_title($attribute->getName());
+            $this->_addBreadcrumb(
+                $this->__('Edit Attribute'),
+                $this->__('Edit Attribute')
+            );
+        } else {
+            $this->_title($this->__('New Attribute'));
+            $this->_addBreadcrumb(
+                $this->__('New Attribute'),
+                $this->__('New Attribute')
+            );
         }
+
+        // Add website switcher if editing existing attribute and we have a scope table
+        if (!Mage::app()->isSingleStoreMode()) {
+            if ($id && $attribute->getResource()->hasScopeTable()) {
+                $this->_addLeft(
+                    $this->getLayout()->createBlock('adminhtml/website_switcher')
+                        ->setDefaultWebsiteName($this->__('Default Values'))
+                );
+            }
+        }
+
+        $this->renderLayout();
     }
 
     public function validateAction()

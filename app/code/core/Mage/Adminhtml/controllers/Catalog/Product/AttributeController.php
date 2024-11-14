@@ -53,42 +53,6 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Eav_Contro
         return $this;
     }
 
-    public function indexAction()
-    {
-        $this->setFlag('', self::FLAG_USE_CUSTOM_LAYOUT, true);
-        parent::indexAction();
-
-        $this->_initAction()
-             ->_addContent($this->getLayout()->createBlock('adminhtml/catalog_product_attribute'))
-             ->renderLayout();
-    }
-
-    public function editAction()
-    {
-        $this->setFlag('', self::FLAG_USE_CUSTOM_LAYOUT, true);
-        parent::editAction();
-
-        /** @var Mage_Eav_Model_Entity_Attribute $attribute */
-        $attribute = Mage::getModel($this->entityType->getAttributeModel());
-
-        $this->_initAction();
-
-        if ($this->getRequest()->getParam('attribute_id')) {
-            $this->_title($attribute->getName());
-            $this->_addBreadcrumb(
-                Mage::helper('catalog')->__('Edit Attribute'),
-                Mage::helper('catalog')->__('Edit Attribute')
-            );
-        } else {
-            $this->_title($this->__('New Attribute'));
-            $this->_addBreadcrumb(
-                Mage::helper('catalog')->__('New Attribute'),
-                Mage::helper('catalog')->__('New Attribute')
-            );
-        }
-
-        $this->renderLayout();
-    }
     /**
      * Get list of allowed text formatted as array
      *

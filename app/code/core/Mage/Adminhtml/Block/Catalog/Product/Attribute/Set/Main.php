@@ -11,41 +11,17 @@
  */
 
 /**
- * Adminhtml Catalog Attribute Set Main Block
+ * Adminhtml Catalog Product Attribute Set Edit Form
  *
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Eav_Block_Adminhtml_Attribute_Set_Main
+class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Eav_Block_Adminhtml_Attribute_Set_Edit
 {
-    /**
-     * Initialize template
-     */
     #[\Override]
     protected function _construct()
     {
-        // TODO, merge and delete
-        $this->setTemplate('catalog/product/attribute/set/main.phtml');
-    }
-
-    /**
-     * Prepare Global Layout
-     *
-     * @return $this
-     */
-    #[\Override]
-    protected function _prepareLayout()
-    {
-        parent::_prepareLayout();
-
-        $this->setChild(
-            'group_tree',
-            $this->getLayout()->createBlock('adminhtml/catalog_product_attribute_set_main_tree_group')
-        );
-
-        $this->setChild(
-            'edit_set_form',
-            $this->getLayout()->createBlock('adminhtml/catalog_product_attribute_set_main_formset')
-        );
+        // TODO, merge template and delete
+        $this->setTemplateIfExists('catalog/product/attribute/set/main.phtml');
     }
 }

@@ -14,16 +14,9 @@
  */
 abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml_Controller_Action
 {
-    public const FLAG_USE_CUSTOM_LAYOUT = 'use-custom-layout';
-
     protected string $entityTypeCode;
     protected Mage_Eav_Model_Entity_Type $entityType;
 
-    /**
-     * Controller predispatch method
-     *
-     * @return Mage_Adminhtml_Controller_Action
-     */
     #[\Override]
     public function preDispatch()
     {
@@ -34,6 +27,17 @@ abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml
         return parent::preDispatch();
     }
 
+    #[\Override]
+    public function addActionLayoutHandles()
+    {
+        parent::addActionLayoutHandles();
+        $this->getLayout()->getUpdate()
+            ->removeHandle(strtolower($this->getFullActionName()))
+            ->addHandle(strtolower('adminhtml_eav_set_' . $this->getRequest()->getActionName()))
+            ->addHandle(strtolower($this->getFullActionName()));
+        return $this;
+    }
+
     protected function _initAction()
     {
         return $this->loadLayout();
@@ -41,32 +45,21 @@ abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml
 
     public function indexAction()
     {
-        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
-            $this->_initAction()
-                 ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set'))
-                 ->renderLayout();
-        }
+        $this->_initAction()
+            ->renderLayout();
     }
 
     public function setGridAction()
     {
-        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
-            $this->getResponse()->setBody(
-                $this->getLayout()
-                     ->createBlock('eav/adminhtml_attribute_set_grid')
-                     ->toHtml()
-            );
-        }
+        $this->_initAction()
+            ->renderLayout();
     }
 
     public function addAction()
     {
-        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
-            $this->_initAction()
-                 ->_title($this->__('New Set'))
-                 ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set_add'))
-                 ->renderLayout();
-        }
+        $this->_initAction()
+            ->_title($this->__('New Set'))
+            ->renderLayout();
     }
 
     public function editAction()
@@ -82,14 +75,9 @@ abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml
 
         Mage::register('current_attribute_set', $attributeSet);
 
-        if (!$this->getFlag('', self::FLAG_USE_CUSTOM_LAYOUT)) {
-            $this->_initAction()
-                 ->_addContent($this->getLayout()->createBlock('eav/adminhtml_attribute_set_main'))
-                 ->_title($attributeSet->getId() ? $attributeSet->getAttributeSetName() : $this->__('New Set'));
-
-            $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
-            $this->renderLayout();
-        }
+        $this->_initAction()
+            ->_title($attributeSet->getAttributeSetName())
+            ->renderLayout();
     }
 
     public function createFromSkeletonSetAction()

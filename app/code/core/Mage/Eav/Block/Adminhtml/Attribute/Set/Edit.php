@@ -15,7 +15,7 @@
  * @category    Mage
  * @package     Mage_Eav
  */
-class Mage_Eav_Block_Adminhtml_Attribute_Set_Main extends Mage_Adminhtml_Block_Template
+class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_Template
 {
     #[\Override]
     protected function _construct()
@@ -32,16 +32,6 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Main extends Mage_Adminhtml_Block_T
     protected function _prepareLayout()
     {
         $setId = $this->_getSetId();
-
-        $this->setChild(
-            'group_tree',
-            $this->getLayout()->createBlock('eav/adminhtml_attribute_set_main_tree_group')
-        );
-
-        $this->setChild(
-            'edit_set_form',
-            $this->getLayout()->createBlock('eav/adminhtml_attribute_set_main_formset')
-        );
 
         $this->setChild(
             'delete_group_button',
@@ -127,7 +117,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Main extends Mage_Adminhtml_Block_T
      */
     public function getSetFormHtml()
     {
-        return $this->getChildHtml('edit_set_form');
+        return $this->getChildHtml('set_form');
     }
 
     /**
