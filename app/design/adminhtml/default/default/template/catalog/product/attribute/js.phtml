@@ -11,29 +11,28 @@
  */
 ?>
 <script type="text/javascript">
-//<![CDATA[
-function saveAndContinueEdit(){
+function saveAndContinueEdit() {
     disableElements('save');
     var activeTab = product_attribute_tabsJsTabs.activeTab.id;
     if (editForm.submit($('edit_form').action+'back/edit/tab/' + activeTab) == false) {
         enableElements('save');
-     }
-    varienGlobalEvents.attachEventHandler('formValidateAjaxComplete', function (){
+    }
+    varienGlobalEvents.attachEventHandler('formValidateAjaxComplete', function () {
         enableElements('save');
     });
 }
 
-function saveAttribute(){
+function saveAttribute() {
     disableElements('save');
-    if (editForm.submit() == false){
+    if (editForm.submit() == false) {
         enableElements('save');
     }
-    varienGlobalEvents.attachEventHandler('formValidateAjaxComplete', function (){
+    varienGlobalEvents.attachEventHandler('formValidateAjaxComplete', function () {
         enableElements('save');
     });
 }
 
-function toggleApplyVisibility(select) {
+function toggleApplyVisibility(select) { // TODO
     if ($(select).value == 1) {
         $(select).next('select').removeClassName('no-display');
         $(select).next('select').removeClassName('ignore-validate');
@@ -48,42 +47,40 @@ function toggleApplyVisibility(select) {
     }
 }
 
-function checkOptionsPanelVisibility(){
-    if($('matage-options-panel')){
+function checkOptionsPanelVisibility() {
+    if($('matage-options-panel')) {
         var panel = $('matage-options-panel');
         if ($('frontend_input') && ['select', 'multiselect', 'customselect'].includes($('frontend_input').value)) {
             panel.show();
-        }
-        else {
+        }else {
             panel.hide();
         }
     }
 }
 
-function bindAttributeInputType()
-{
+function bindAttributeInputType() {
     checkOptionsPanelVisibility();
     switchDefaultValueField();
     checkIsConfigurableVisibility();
     if ($('frontend_input') && ['select', 'multiselect', 'price'].includes($('frontend_input').value)) {
-        if($('is_filterable') && !$('is_filterable').getAttribute('readonly')){
+        if($('is_filterable') && !$('is_filterable').getAttribute('readonly')) {
             $('is_filterable').disabled = false;
         }
-        if($('is_filterable_in_search') && !$('is_filterable_in_search').getAttribute('readonly')){
+        if($('is_filterable_in_search') && !$('is_filterable_in_search').getAttribute('readonly')) {
             $('is_filterable_in_search').disabled = false;
         }
-        if($('backend_type') && $('backend_type').options){
-            for(var i=0;i<$('backend_type').options.length;i++){
+        if($('backend_type') && $('backend_type').options) {
+            for(var i=0;i<$('backend_type').options.length;i++) {
                 if($('backend_type').options[i].value=='int') $('backend_type').selectedIndex = i;
             }
         }
     }
     else {
-        if($('is_filterable')){
+        if($('is_filterable')) {
             $('is_filterable').selectedIndex=0;
             $('is_filterable').disabled = true;
         }
-        if($('is_filterable_in_search')){
+        if($('is_filterable_in_search')) {
             $('is_filterable_in_search').disabled = true;
         }
     }
@@ -103,11 +100,12 @@ function bindAttributeInputType()
 
     setRowVisibility('is_wysiwyg_enabled', false);
     setRowVisibility('is_html_allowed_on_front', false);
+    console.log("FOO");
 
     switch ($('frontend_input').value) {
         case 'textarea':
             setRowVisibility('is_wysiwyg_enabled', true);
-            if($('is_wysiwyg_enabled').value == '0'){
+            if($('is_wysiwyg_enabled').value == '0') {
                 setRowVisibility('is_html_allowed_on_front', true);
                 $('is_html_allowed_on_front').disabled = false;
             }
@@ -145,7 +143,7 @@ function switchIsFilterable()
         if ($('is_filterable').selectedIndex == 0) {
             $('position').disabled = true;
         } else {
-            if (!$('position').getAttribute('readonly')){
+            if (!$('position').getAttribute('readonly')) {
                 $('position').disabled = false;
             }
         }
@@ -226,14 +224,14 @@ function switchDefaultValueField()
     }
 
     switch (currentValue) {
-        case 'media_image':
-            $('front_fieldset').previous().hide();
-            $('front_fieldset').hide();
+        // case 'media_image':
+        //     $('front_fieldset').previous().hide();
+        //     $('front_fieldset').hide();
 
-            setRowVisibility('is_required', false);
-            setRowVisibility('is_unique', false);
-            setRowVisibility('frontend_class', false);
-        break;
+        //     setRowVisibility('is_required', false);
+        //     setRowVisibility('is_unique', false);
+        //     setRowVisibility('frontend_class', false);
+        // break;
 
         <?php foreach (Mage::helper('catalog')->getAttributeHiddenFields() as $type=>$fields): ?>
             case '<?= $type ?>':
@@ -277,23 +275,20 @@ function switchDefaultValueField()
     }
 }
 
-function setRowVisibility(id, isVisible)
-{
-    if ($(id)) {
-        var td = $(id).parentNode;
-        var tr = $(td.parentNode);
-
+function setRowVisibility(id, isVisible) {
+    const el = document.getElementById(id);
+    if (el) {
+        const tr = el.closest('tr');
         if (isVisible) {
-            tr.show();
+            tr.classList.remove('no-display');
         } else {
             tr.blur();
-            tr.hide();
+            tr.classList.add('no-display');
         }
     }
 }
 
-function checkIsConfigurableVisibility()
-{
+function checkIsConfigurableVisibility() {
     if (!$('is_configurable') || !$('is_global') || !$('frontend_input')) return;
     if ($F('is_global')==1 && $F('frontend_input')=='select') {
         setRowVisibility('is_configurable', true);
@@ -311,7 +306,7 @@ function updateRequriedOptions()
     }
 }
 
-if($('frontend_input')){
+if($('frontend_input')) {
     Event.observe($('frontend_input'), 'change', updateRequriedOptions);
     Event.observe($('frontend_input'), 'change', bindAttributeInputType);
     Event.observe($('is_global'), 'change', checkIsConfigurableVisibility);
@@ -325,5 +320,4 @@ if ($('is_required')) {
     Event.observe($('is_required'), 'change', updateRequriedOptions);
 }
 bindAttributeInputType();
-//]]>
 </script>

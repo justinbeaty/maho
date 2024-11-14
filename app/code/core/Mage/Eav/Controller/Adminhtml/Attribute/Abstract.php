@@ -124,7 +124,7 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
         // Add website switcher if editing existing attribute and we have a scope table
         if (!Mage::app()->isSingleStoreMode()) {
             if ($id && $attribute->getResource()->hasScopeTable()) {
-                $this->_addLeft(
+                $this->getLayout()->getBlock('left')->insert(
                     $this->getLayout()->createBlock('adminhtml/website_switcher')
                         ->setDefaultWebsiteName($this->__('Default Values'))
                 );

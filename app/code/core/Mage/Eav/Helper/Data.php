@@ -194,6 +194,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
      *     - 'frontend_class': the "Input Validation" input
      *     - '_default_value': the various "Default Value" inputs
      *     - '_front_fieldset': the entire "Frontend Properties" fieldset
+     *     - '_scope': the saving scope dropdown
      * - disabled_types: (array) product types to remove from the "Apply To" dropdown, examples:
      *     - 'simple'
      *     - 'bundle'
