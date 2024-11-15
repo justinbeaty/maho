@@ -20,24 +20,36 @@
  */
 class Mage_Adminhtml_Block_Widget_Form_Element_Dependence extends Mage_Adminhtml_Block_Abstract
 {
+    public const MODE_AND = 'AND';
+    public const MODE_OR  = 'OR';
+
     /**
      * name => id mapper
      * @var array
      */
     protected $_fields = [];
 
+
+
     /**
      * Dependencies mapper (by names)
-     * array(
-     *     'dependent_name' => array(
+     * [
+     *     'dependent_name' => [
      *         'depends_from_1_name' => 'mixed value',
      *         'depends_from_2_name' => 'some another value',
      *         ...
-     *     )
-     * )
+     *     ]
+     * ]
      * @var array
      */
-    protected $_depends = [];
+    protected $_depends = [
+        // 'dependent_name' => [
+        //     'depends_from_1_name' => 'mixed value',
+        //     'OR' => [
+        //         'depends_from_1_name' => 'mixed value',
+        //     ],
+        // ]
+    ];
 
     /**
      * Additional configuration options for the dependencies javascript controller

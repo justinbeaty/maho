@@ -11,6 +11,12 @@
  */
 ?>
 <script type="text/javascript">
+
+const inputTypeHiddenFields = <?= Mage::helper('core')->jsonEncode(Mage::helper('eav')->getInputTypeHiddenFields('catalog_product')) ?>;
+
+
+
+
 function saveAndContinueEdit() {
     disableElements('save');
     var activeTab = product_attribute_tabsJsTabs.activeTab.id;
@@ -58,157 +64,35 @@ function checkOptionsPanelVisibility() {
     }
 }
 
-function bindAttributeInputType() {
+
+function getInputTypeValue()
+{
+    const el = document.getElementById('frontend_input');
+    if (el) {
+        return el.value;
+    }
+    return '';
+}
+
+function bindAttributeInputType()
+{
+    const inputType = getInputTypeValue();
+
     checkOptionsPanelVisibility();
     switchDefaultValueField();
     checkIsConfigurableVisibility();
-    if ($('frontend_input') && ['select', 'multiselect', 'price'].includes($('frontend_input').value)) {
-        if($('is_filterable') && !$('is_filterable').getAttribute('readonly')) {
-            $('is_filterable').disabled = false;
-        }
-        if($('is_filterable_in_search') && !$('is_filterable_in_search').getAttribute('readonly')) {
-            $('is_filterable_in_search').disabled = false;
-        }
-        if($('backend_type') && $('backend_type').options) {
-            for(var i=0;i<$('backend_type').options.length;i++) {
-                if($('backend_type').options[i].value=='int') $('backend_type').selectedIndex = i;
-            }
-        }
-    }
-    else {
-        if($('is_filterable')) {
-            $('is_filterable').selectedIndex=0;
-            $('is_filterable').disabled = true;
-        }
-        if($('is_filterable_in_search')) {
-            $('is_filterable_in_search').disabled = true;
-        }
-    }
 
-    if ($('frontend_input') && ($('frontend_input').value=='multiselect'
-        || $('frontend_input').value=='gallery'
-        || $('frontend_input').value=='textarea')) {
-        if ($('used_for_sort_by')) {
-            $('used_for_sort_by').disabled = true;
-        }
-    }
-    else {
-        if ($('used_for_sort_by') && !$('used_for_sort_by').getAttribute('readonly')) {
-            $('used_for_sort_by').disabled = false;
-        }
-    }
-
-    setRowVisibility('is_wysiwyg_enabled', false);
-    setRowVisibility('is_html_allowed_on_front', false);
-    console.log("FOO");
-
-    switch ($('frontend_input').value) {
-        case 'textarea':
-            setRowVisibility('is_wysiwyg_enabled', true);
-            if($('is_wysiwyg_enabled').value == '0') {
-                setRowVisibility('is_html_allowed_on_front', true);
-                $('is_html_allowed_on_front').disabled = false;
-            }
-            $('frontend_class').value = '';
-            $('frontend_class').disabled = true;
-            break;
-        case 'text':
-            setRowVisibility('is_html_allowed_on_front', true);
-            $('is_html_allowed_on_front').disabled = false;
-            if (!$('frontend_class').getAttribute('readonly')) {
-                $('frontend_class').disabled = false;
-            }
-            break;
-        case 'customselect':
-            if (!$('frontend_class').getAttribute('readonly')) {
-                $('frontend_class').disabled = false;
-            }
-            break;
-        case 'select':
-        case 'multiselect':
-            setRowVisibility('is_html_allowed_on_front', true);
-            $('is_html_allowed_on_front').disabled = false;
-            break;
-        default:
-            $('frontend_class').value = '';
-            $('frontend_class').disabled = true;
-    }
-
-    switchIsFilterable();
-}
-
-function switchIsFilterable()
-{
-    if ($('is_filterable')) {
-        if ($('is_filterable').selectedIndex == 0) {
-            $('position').disabled = true;
-        } else {
-            if (!$('position').getAttribute('readonly')) {
-                $('position').disabled = false;
-            }
-        }
-    }
-}
-
-function disableApplyToValue(value)
-{
-    var applyToSelect = $('apply_to');
-    for (i=0;i<applyToSelect.options.length;i++) {
-        if (value == applyToSelect.options[i].value) {
-            applyToSelect.options[i].disabled = true;
-            applyToSelect.options[i].selected = false;
-        }
-    }
-}
-
-function switchDefaultValueField()
-{
-    if (!$('frontend_input')) {
-        return;
-    }
-
-    var currentValue = $('frontend_input').value;
-
-    var defaultValueTextVisibility = false;
-    var defaultValueTextareaVisibility = false;
-    var defaultValueDateVisibility = false;
-    var defaultValueYesnoVisibility = false;
-    var scopeVisibility = true;
-
-    switch (currentValue) {
-        case 'select':
-        case 'customselect':
-            optionDefaultInputType = 'radio';
-            break;
-
-        case 'multiselect':
-            optionDefaultInputType = 'checkbox';
-            break;
-
-        case 'date':
-            defaultValueDateVisibility = true;
-            break;
-
-        case 'boolean':
-            defaultValueYesnoVisibility = true;
-            break;
-
-        case 'textarea':
-            defaultValueTextareaVisibility = true;
-            break;
-
-        case 'media_image':
-            defaultValueTextVisibility = false;
-            break;
-        case 'price':
-            scopeVisibility = false;
-        default:
-            defaultValueTextVisibility = true;
-            break;
-    }
+    // todo
+        // if($('backend_type') && $('backend_type').options) {
+        //     for(var i=0;i<$('backend_type').options.length;i++) {
+        //         if($('backend_type').options[i].value=='int') {
+        //             $('backend_type').selectedIndex = i;
+        //         }
+        //     }
+        // }
 
     var applyToSelect = $('apply_to');
-    switch (currentValue) {
+    switch (inputType) {
         <?php foreach (Mage::helper('catalog')->getAttributeDisabledTypes() as $type=>$disabled): ?>
             case '<?= $type ?>':
             <?php foreach ($disabled as $one): ?>
@@ -223,7 +107,84 @@ function switchDefaultValueField()
         break;
     }
 
-    switch (currentValue) {
+
+    // switch (inputType) {
+    //     case 'textarea':
+    //         setRowVisibility('is_wysiwyg_enabled', true);
+    //         if($('is_wysiwyg_enabled').value == '0') {
+    //             setRowVisibility('is_html_allowed_on_front', true);
+    //             $('is_html_allowed_on_front').disabled = false;
+    //         }
+    //         $('frontend_class').value = '';
+    //         $('frontend_class').disabled = true;
+    //         break;
+    //     case 'text':
+    //     case 'customselect':
+    //         setRowVisibility('is_html_allowed_on_front', true);
+    //         $('is_html_allowed_on_front').disabled = false;
+    //         if (!$('frontend_class').getAttribute('readonly')) {
+    //             $('frontend_class').disabled = false;
+    //         }
+    //         break;
+    //     case 'select':
+    //     case 'multiselect':
+    //         setRowVisibility('is_html_allowed_on_front', true);
+    //         $('is_html_allowed_on_front').disabled = false;
+    //         break;
+    //     default:
+    //         $('frontend_class').value = '';
+    //         $('frontend_class').disabled = true;
+    // }
+
+    switchIsFilterable();
+}
+
+
+function disableApplyToValue(value)
+{
+    var applyToSelect = $('apply_to');
+    for (i=0;i<applyToSelect.options.length;i++) {
+        if (value == applyToSelect.options[i].value) {
+            applyToSelect.options[i].disabled = true;
+            applyToSelect.options[i].selected = false;
+        }
+    }
+}
+
+function switchDefaultValueField()
+{
+    const inputType = getInputTypeValue();
+
+
+
+
+    var defaultValueTextVisibility = false;
+    var defaultValueTextareaVisibility = false;
+    var defaultValueDateVisibility = false;
+    var defaultValueYesnoVisibility = false;
+    var scopeVisibility = true;
+
+
+
+    switch (inputType) {
+        case 'select':
+        case 'customselect':
+            optionDefaultInputType = 'radio';
+            break;
+        case 'multiselect':
+            optionDefaultInputType = 'checkbox';
+            break;
+    }
+    var elems = document.getElementsByName('default[]');
+    for (var i = 0; i < elems.length; i++) {
+        elems[i].type = optionDefaultInputType;
+    }
+
+
+
+    setFieldsetVisibility('front_fieldset', true);
+
+    switch (inputType) {
         // case 'media_image':
         //     $('front_fieldset').previous().hide();
         //     $('front_fieldset').hide();
@@ -237,8 +198,7 @@ function switchDefaultValueField()
             case '<?= $type ?>':
                 <?php foreach ($fields as $one): ?>
                     <?php if ($one == '_front_fieldset'): ?>
-                        $('front_fieldset').previous().hide();
-                        $('front_fieldset').hide();
+                        setFieldsetVisibility('front_fieldset', false);
                     <?php elseif ($one == '_default_value'): ?>
                         defaultValueTextVisibility =
                         defaultValueTextareaVisibility =
@@ -254,8 +214,6 @@ function switchDefaultValueField()
         <?php endforeach ?>
 
         default:
-            $('front_fieldset').previous().show();
-            $('front_fieldset').show();
             setRowVisibility('is_required', true);
             setRowVisibility('is_unique', true);
             setRowVisibility('frontend_class', true);
@@ -269,10 +227,6 @@ function switchDefaultValueField()
     setRowVisibility('default_value_yesno', defaultValueYesnoVisibility);
     setRowVisibility('is_global', scopeVisibility);
 
-    var elems = document.getElementsByName('default[]');
-    for (var i = 0; i < elems.length; i++) {
-        elems[i].type = optionDefaultInputType;
-    }
 }
 
 function setRowVisibility(id, isVisible) {
@@ -288,6 +242,21 @@ function setRowVisibility(id, isVisible) {
     }
 }
 
+function setFieldsetVisibility(id, isVisible) {
+    const el = document.getElementById(id);
+    if (el) {
+        if (isVisible) {
+            el.classList.remove('no-display');
+            el.previousElementSibling.classList.remove('no-display');
+        } else {
+            el.classList.add('no-display');
+            el.previousElementSibling.classList.add('no-display');
+        }
+    }
+}
+
+
+// dependence
 function checkIsConfigurableVisibility() {
     if (!$('is_configurable') || !$('is_global') || !$('frontend_input')) return;
     if ($F('is_global')==1 && $F('frontend_input')=='select') {
@@ -296,6 +265,19 @@ function checkIsConfigurableVisibility() {
         setRowVisibility('is_configurable', false);
     }
 }
+// dependence
+function switchIsFilterable() {
+    if ($('is_filterable')) {
+        if ($('is_filterable').selectedIndex == 0) {
+            $('position').disabled = true;
+        } else {
+            if (!$('position').getAttribute('readonly')) {
+                $('position').disabled = false;
+            }
+        }
+    }
+}
+
 
 function updateRequriedOptions()
 {

@@ -238,6 +238,9 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
                 Mage::dispatchEvent($event, ['response' => $response]);
                 $inputTypes = $response->getTypes();
             }
+
+            // TODO, move keys here?
+
             $this->cacheInputTypes[$entityTypeCode] = $inputTypes;
         }
         return $this->cacheInputTypes[$entityTypeCode];
