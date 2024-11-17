@@ -619,6 +619,8 @@ class FormElementDependenceController {
      * @param {Object} condition - key/value pairs of field names and wanted values, or subconditions
      */
     trackChange(event, field, condition) {
+        console.log('dependence');
+
         const rowEl = this.findParentRow(field);
         if (!rowEl) {
             return;

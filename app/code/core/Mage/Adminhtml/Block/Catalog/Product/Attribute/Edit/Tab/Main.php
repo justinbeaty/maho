@@ -183,11 +183,38 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
         /** @var Mage_Adminhtml_Block_Widget_Form_Element_Dependence $block */
         $block = $this->getLayout()->createBlock('adminhtml/widget_form_element_dependence');
 
-        $block->addFieldMap('is_wysiwyg_enabled', 'wysiwyg_enabled')
-              ->addFieldMap('is_html_allowed_on_front', 'html_allowed_on_front')
-              ->addFieldMap('frontend_input', 'frontend_input_type')
-              ->addFieldDependence('wysiwyg_enabled', 'frontend_input_type', 'textarea')
-              ->addFieldDependence('html_allowed_on_front', 'wysiwyg_enabled', '0');
+
+        $block
+            ->addFieldDependence('frontend_class', 'frontend_input', ['text', 'customselect'])
+            ->addFieldDependence('is_filterable', 'frontend_input', ['select', 'multiselect', 'price'])
+            ->addFieldDependence('is_filterable_in_search', 'is_filterable', '1')
+            ->addComplexFieldDependence('is_required', $block::MODE_NOT, [
+                'frontend_input' => ['media_image'],
+            ])
+            ->addComplexFieldDependence('is_unique', $block::MODE_NOT, [
+                'frontend_input' => ['media_image'],
+            ])
+            ->addComplexFieldDependence('is_global', $block::MODE_NOT, [
+                'frontend_input' => ['price'],
+            ])
+            ->addComplexFieldDependence('is_configurable', $block::MODE_AND, [
+                'is_global' => '1',
+                'frontend_input' => ['select'],
+            ])
+            ->addComplexFieldDependence('position', $block::MODE_NOT, [
+                'is_filterable' => '0',
+            ])
+            ->addComplexFieldDependence('used_for_sort_by', $block::MODE_NOT, [
+                'frontend_input' => ['multiselect', 'textarea', 'gallery'],
+            ])
+            ->addComplexFieldDependence('is_html_allowed_on_front', $block::MODE_AND, [
+                'frontend_input' => ['text', 'textarea', 'select', 'multiselect', 'customselect'],
+            ])
+            ->addComplexFieldDependence('is_wysiwyg_enabled', $block::MODE_AND, [
+                'frontend_input' => 'textarea',
+                'is_html_allowed_on_front' => '1',
+            ]);
+
 
         Mage::dispatchEvent('adminhtml_catalog_product_attribute_edit_prepare_form', [
             'form'       => $form,
