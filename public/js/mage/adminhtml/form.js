@@ -448,16 +448,20 @@ class FormElementDependenceController {
     /**
      * @param {Object.<string, Object>} elementsMap - key/value pairs of target fields and their conditions to be visible
      * @param {Object} [config] - config options
+     * @param {string|false} [config.on_event] - the event name that triggers condition evaluation, false to disable, defaults to "change"
      * @param {Object.<string, string>} [config.field_map] - key/value pairs of field aliases to their associated DOM IDs.
      * @param {Object.<string, string>} [config.field_values] - key/value pairs of fallback values for fields not present in the form
      * @param {number} [config.levels_up] - deprecated: the number of ancestor elements to find the parent element to hide
      * @param {boolean} [config.can_edit_price] - deprecated: prevent enabling price inputs, only use this option if dependence block contains no other elements!
      */
     constructor(elementsMap, config = {}) {
+        console.log(elementsMap, config);
         this.config = config;
         for (let [targetField, condition] of Object.entries(elementsMap)) {
             this.trackChange(null, targetField, condition);
-            this.bindEventListeners(condition, [targetField, condition]);
+            if (this.config.on_event !== false) {
+                this.bindEventListeners(condition, [targetField, condition]);
+            }
         }
     }
 
@@ -490,7 +494,9 @@ class FormElementDependenceController {
             } else {
                 const dependentEl = document.getElementById(this.mapFieldId(dependentField));
                 if (dependentEl) {
-                    dependentEl.addEventListener('change', (event) => this.trackChange(event, ...eventArgs));
+                    dependentEl.addEventListener(this.config.on_event ?? 'change', (event) => {
+                        this.trackChange(event, ...eventArgs);
+                    });
                 }
             }
         }
@@ -619,7 +625,7 @@ class FormElementDependenceController {
      * @param {Object} condition - key/value pairs of field names and wanted values, or subconditions
      */
     trackChange(event, field, condition) {
-        console.log('dependence');
+        console.log('trigger', field);
 
         const rowEl = this.findParentRow(field);
         if (!rowEl) {
