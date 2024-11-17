@@ -238,10 +238,9 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
                 Mage::dispatchEvent($event, ['response' => $response]);
                 $inputTypes = $response->getTypes();
             }
-
-            // TODO, move keys here?
-
-            $this->cacheInputTypes[$entityTypeCode] = $inputTypes;
+            foreach ($inputTypes as $type) {
+                $this->cacheInputTypes[$entityTypeCode][$type['value']] = $type;
+            }
         }
         return $this->cacheInputTypes[$entityTypeCode];
     }
@@ -251,13 +250,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getAttributeBackendType(string $entityTypeCode, string $inputType): ?string
     {
-        $inputTypes = $this->getInputTypes($entityTypeCode);
-        foreach ($inputTypes as $type) {
-            if ($inputType === $type['value']) {
-                return $type['backend_type'] ?? null;
-            }
-        }
-        return null;
+        return $this->getInputTypes($entityTypeCode)[$inputType]['backend_type'] ?? null;
     }
 
     /**
@@ -265,13 +258,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getAttributeBackendModel(string $entityTypeCode, string $inputType): ?string
     {
-        $inputTypes = $this->getInputTypes($entityTypeCode);
-        foreach ($inputTypes as $type) {
-            if ($inputType === $type['value']) {
-                return $type['backend_model'] ?? null;
-            }
-        }
-        return null;
+        return $this->getInputTypes($entityTypeCode)[$inputType]['backend_model'] ?? null;
     }
 
     /**
@@ -279,13 +266,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getAttributeFrontendModel(string $entityTypeCode, string $inputType): ?string
     {
-        $inputTypes = $this->getInputTypes($entityTypeCode);
-        foreach ($inputTypes as $type) {
-            if ($inputType === $type['value']) {
-                return $type['frontend_model'] ?? null;
-            }
-        }
-        return null;
+        return $this->getInputTypes($entityTypeCode)[$inputType]['frontend_model'] ?? null;
     }
 
     /**
@@ -293,13 +274,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getAttributeSourceModel(string $entityTypeCode, string $inputType): ?string
     {
-        $inputTypes = $this->getInputTypes($entityTypeCode);
-        foreach ($inputTypes as $type) {
-            if ($inputType === $type['value']) {
-                return $type['source_model'] ?? null;
-            }
-        }
-        return null;
+        return $this->getInputTypes($entityTypeCode)[$inputType]['source_model'] ?? null;
     }
 
     /**
@@ -307,13 +282,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
      */
     public function getAttributeDefaultValueField(string $entityTypeCode, string $inputType): ?string
     {
-        $inputTypes = $this->getInputTypes($entityTypeCode);
-        foreach ($inputTypes as $type) {
-            if ($inputType === $type['value']) {
-                return $type['default_value_field'] ?? null;
-            }
-        }
-        return null;
+        return $this->getInputTypes($entityTypeCode)[$inputType]['default_value_field'] ?? null;
     }
 
     /**
@@ -322,9 +291,9 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
     public function getInputTypeHiddenFields(string $entityTypeCode): array
     {
         $hiddenFields = [];
-        foreach ($this->getInputTypes($entityTypeCode) as $type) {
+        foreach ($this->getInputTypes($entityTypeCode) as $key => $type) {
             if (isset($type['hide_fields'])) {
-                $hiddenFields[$type['value']] = $type['hide_fields'];
+                $hiddenFields[$key] = $type['hide_fields'];
             }
         }
         return $hiddenFields;
@@ -336,9 +305,9 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
     public function getInputTypeDisabledApplyToOptions(string $entityTypeCode): array
     {
         $disabledTypes = [];
-        foreach ($this->getInputTypes($entityTypeCode) as $type) {
+        foreach ($this->getInputTypes($entityTypeCode) as $key => $type) {
             if (isset($type['disabled_types'])) {
-                $disabledTypes[$type['value']] = $type['disabled_types'];
+                $disabledTypes[$key] = $type['disabled_types'];
             }
         }
         return $disabledTypes;

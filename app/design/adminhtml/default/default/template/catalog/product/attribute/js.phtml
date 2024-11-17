@@ -12,8 +12,7 @@
 ?>
 <script type="text/javascript">
 
-const inputTypeHiddenFields = <?= Mage::helper('core')->jsonEncode(Mage::helper('eav')->getInputTypeHiddenFields('catalog_product')) ?>;
-
+const inputTypeDefs = <?= Mage::helper('core')->jsonEncode(Mage::helper('eav')->getInputTypes('catalog_product')) ?>;
 
 
 function saveAndContinueEdit() {
@@ -38,12 +37,22 @@ function saveAttribute() {
 }
 
 
-function getInputTypeValue() {
-    const el = document.getElementById('frontend_input');
-    if (el) {
-        return el.value;
-    }
-    return '';
+function resetVisibility() {
+    console.log('reset everything');
+    const formEl = document.getElementById('edit_form');
+    formEl.querySelectorAll('tr.no-display').forEach((el) => {
+        el.classList.remove('no-display');
+    });
+    formEl.querySelectorAll('.fieldset.no-display').forEach((el) => {
+        el.classList.remove('no-display');
+        el.previousElementSibling.classList.remove('no-display');
+    });
+    formEl.querySelectorAll('input, select, textarea').forEach((el) => {
+            //const event = new CustomEvent('manualtrigger');
+            //el.dispatchEvent(event);
+    });
+    console.log('custom logic');
+    bindAttributeInputType();
 }
 
 function setRowVisibility(id, isVisible) {
@@ -72,7 +81,40 @@ function setFieldsetVisibility(id, isVisible) {
     }
 }
 
+function getInputTypeValue() {
+    const el = document.getElementById('frontend_input');
+    if (el) {
+        return el.value;
+    }
+    return '';
+}
 
+function bindAttributeInputType() {
+    const inputType = getInputTypeValue();
+
+    const hiddenFields = inputTypeDefs[inputType]?.hide_fields ?? [];
+    for (let field of hiddenFields) {
+        if (field === '_front_fieldset') {
+            setFieldsetVisibility('front_fieldset', false);
+        } else if (field === '_scope') {
+            setRowVisibility('is_global', false);
+        } else {
+            setRowVisibility(field, false);
+        }
+    }
+
+    // todo
+    // if($('backend_type') && $('backend_type').options) {
+    //     for(var i=0;i<$('backend_type').options.length;i++) {
+    //         if($('backend_type').options[i].value=='int') {
+    //             $('backend_type').selectedIndex = i;
+    //         }
+    //     }
+    // }
+
+    checkOptionsPanelVisibility();
+    switchDefaultValueField();
+}
 
 
 function checkOptionsPanelVisibility() {
@@ -106,82 +148,41 @@ function checkOptionsPanelVisibility() {
 
 
 
-function bindAttributeInputType()
-{
-    console.log('bindAttributeInputType');
-
+function switchDefaultValueField() {
     const inputType = getInputTypeValue();
+    const defaultValueField = inputTypeDefs[inputType]?.default_value_field;
 
-    checkOptionsPanelVisibility();
-
-    switchDefaultValueField();
-
-    // todo
-    // if($('backend_type') && $('backend_type').options) {
-    //     for(var i=0;i<$('backend_type').options.length;i++) {
-    //         if($('backend_type').options[i].value=='int') {
-    //             $('backend_type').selectedIndex = i;
-    //         }
-    //     }
-    // }
-
+    const fields = [
+        'default_value_text',
+        'default_value_textarea',
+        'default_value_date',
+        'default_value_yesno',
+    ];
+    for (let field of fields) {
+        setRowVisibility(field, field === defaultValueField);
+    }
 }
 
 
-function switchDefaultValueField()
-{
-    const inputType = getInputTypeValue();
+document.addEventListener('DOMContentLoaded', () => {
 
-
-    var defaultValueTextVisibility = false;
-    var defaultValueTextareaVisibility = false;
-    var defaultValueDateVisibility = false;
-    var defaultValueYesnoVisibility = false;
-
-
-    setFieldsetVisibility('front_fieldset', true);
-
-    switch (inputType) {
-        <?php foreach (Mage::helper('catalog')->getAttributeHiddenFields() as $type=>$fields): ?>
-            case '<?= $type ?>':
-                <?php foreach ($fields as $one): ?>
-                    <?php if ($one == '_front_fieldset'): ?>
-                        setFieldsetVisibility('front_fieldset', false);
-                    <?php elseif ($one == '_default_value'): ?>
-                        defaultValueTextVisibility =
-                        defaultValueTextareaVisibility =
-                        defaultValueDateVisibility =
-                        defaultValueYesnoVisibility = false;
-                    <?php elseif ($one == '_scope'): ?>
-                        scopeVisibility = false;
-                    <?php else: ?>
-                        setRowVisibility('<?= $one ?>', false);
-                    <?php endif ?>
-                <?php endforeach ?>
-            break;
-        <?php endforeach ?>
+    const formEl = document.getElementById('edit_form');
+    if (formEl) {
+        formEl.addEventListener('change', resetVisibility, { capture: true });
     }
 
-    setRowVisibility('default_value_text', defaultValueTextVisibility);
-    setRowVisibility('default_value_textarea', defaultValueTextareaVisibility);
-    setRowVisibility('default_value_date', defaultValueDateVisibility);
-    setRowVisibility('default_value_yesno', defaultValueYesnoVisibility);
+    // const frontendInputEl = document.getElementById('frontend_input');
+    // if (frontendInputEl) {
+    //     frontendInputEl.addEventListener('change', bindAttributeInputType);
+    // }
 
-}
+    // const isRequiredEl = document.getElementById('is_required');
+    // if (isRequiredEl) {
+    //     isRequiredEl.addEventListener('change', checkOptionsPanelVisibility);
+    // }
 
-
-
-const frontendInputEl = document.getElementById('frontend_input');
-if (frontendInputEl) {
-    frontendInputEl.addEventListener('change', bindAttributeInputType);
-}
-
-const isRequiredEl = document.getElementById('is_required');
-if (isRequiredEl) {
-    isRequiredEl.addEventListener('change', checkOptionsPanelVisibility);
-}
-
-bindAttributeInputType();
+    bindAttributeInputType();
+});
 
 
 ////////////////////////////////////////////////////////////////////////////////
