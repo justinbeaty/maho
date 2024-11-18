@@ -48,6 +48,7 @@ function resetVisibility() {
         el.previousElementSibling.classList.remove('no-display');
     });
     formEl.querySelectorAll('input, select, textarea').forEach((el) => {
+            el.dispatchEvent(new FormElementDependenceEvent('update'));
             //const event = new CustomEvent('manualtrigger');
             //el.dispatchEvent(event);
     });

@@ -436,6 +436,9 @@ SelectUpdater.prototype = {
     }
 };
 
+
+class FormElementDependenceEvent extends Event {}
+
 /**
  * Observer that watches for dependent form elements with support for complex conditions
  */
@@ -459,9 +462,7 @@ class FormElementDependenceController {
         this.config = config;
         for (let [targetField, condition] of Object.entries(elementsMap)) {
             this.trackChange(null, targetField, condition);
-            if (this.config.on_event !== false) {
-                this.bindEventListeners(condition, [targetField, condition]);
-            }
+            this.bindEventListeners(condition, [targetField, condition]);
         }
     }
 
@@ -494,8 +495,15 @@ class FormElementDependenceController {
             } else {
                 const dependentEl = document.getElementById(this.mapFieldId(dependentField));
                 if (dependentEl) {
-                    dependentEl.addEventListener(this.config.on_event ?? 'change', (event) => {
-                        this.trackChange(event, ...eventArgs);
+                    if (this.config.on_event !== false) {
+                        dependentEl.addEventListener(this.config.on_event ?? 'change', (event) => {
+                            this.trackChange(event, ...eventArgs);
+                        });
+                    }
+                    dependentEl.addEventListener('update', (event) => {
+                        if (event instanceof FormElementDependenceEvent) {
+                            this.trackChange(event, ...eventArgs);
+                        }
                     });
                 }
             }
@@ -625,7 +633,7 @@ class FormElementDependenceController {
      * @param {Object} condition - key/value pairs of field names and wanted values, or subconditions
      */
     trackChange(event, field, condition) {
-        console.log('trigger', field);
+        console.log('trigger', field, event?.constructor.name);
 
         const rowEl = this.findParentRow(field);
         if (!rowEl) {

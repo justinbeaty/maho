@@ -184,7 +184,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
         $block = $this->getLayout()->createBlock('adminhtml/widget_form_element_dependence');
 
 
-        $block//->addConfigOptions(['on_event' => 'manualtrigger'])
+        $block->addConfigOptions(['on_event' => false])
             ->addFieldDependence('frontend_class', 'frontend_input', ['text', 'customselect'])
             ->addFieldDependence('is_filterable', 'frontend_input', ['select', 'multiselect', 'price'])
             ->addFieldDependence('is_filterable_in_search', 'is_filterable', '1')
