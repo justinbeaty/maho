@@ -67,6 +67,146 @@ class Mage_Adminhtml_Block_Widget_Form_Element_Dependence extends Mage_Adminhtml
     }
 
     /**
+     * Create a new (sub) condition
+     *
+     * @see self::addComplexFieldDependence()
+     * @param self::MODE_* $operator one of MODE_NOT, MODE_AND, MODE_OR, MODE_XOR
+     * @param array $condition
+     * @return array
+     */
+    public function createCondition(string $operator, array $condition): array
+    {
+        if (!$this->isLogicalOperator($operator)) {
+            Mage::throwException($this->__("Invalid operator '%s', must be one of NOT, AND, OR, XOR", $operator));
+        }
+        return ['operator' => $operator, 'condition' => $condition];
+    }
+
+    /**
+     * Register field dependency with specified values
+     *
+     * Note: Calling this method multiple times with the same $targetField will create an AND condition
+     *
+     * Example 1: `result` field will be shown if `source == 'foo'`
+     *
+     * $block->addFieldDependence('result', 'source', 'foo');
+     *
+     * Example 2: `result` field will be shown if `source == 'foo' OR source == 'bar'`
+     *
+     * $block->addFieldDependence('result', 'source', ['foo', 'bar']);
+     *
+     * Example 3: `result` field will be shown if `source_1 == 'foo' AND source_2 == 'bar'`
+     *
+     * $block->addFieldDependence('result', 'source_1', 'foo')
+     *       ->addFieldDependence('result', 'source_2', 'bar');
+     *
+     * @param string $targetField field to be toggled
+     * @param string $dependentField field that triggers the display of $targetField
+     * @param string|array $refValues wanted value(s) of the $dependentField element
+     * @return $this
+     */
+    public function addFieldDependence($targetField, $dependentField, $refValues)
+    {
+        if ($this->isLogicalOperator($dependentField)) {
+            Mage::throwException($this->__("Invalid field name '%s', must not be one of NOT, AND, OR, XOR", $dependentField));
+        }
+        $refValues = is_array($refValues) ? $refValues : [$refValues];
+        if (isset($this->_depends[$targetField][$dependentField])) {
+            $this->_depends[$targetField][$dependentField] = array_unique(
+                array_merge($this->_depends[$targetField][$dependentField], $refValues)
+            );
+        } else {
+            $this->_depends[$targetField][$dependentField] = $refValues;
+        }
+        return $this;
+    }
+
+    /**
+     * Register field dependency with complex condition
+     *
+     * Note: Calling this method multiple times with the same $targetField will create an AND condition
+     *
+     * Example 1: `result` field will be shown if `source_1 == 'foo' AND source_2 == 'bar'`
+     *
+     * $block->addComplexFieldDependence('result', $block::MODE_AND, [
+     *     'source_1' => 'foo',
+     *     'source_2' => 'bar',
+     * ]);
+     *
+     * Example 2: `result` field will be shown if `source_1 == 'foo' OR source_2 == 'bar'`
+     *
+     * $block->addComplexFieldDependence('result', $block::MODE_OR, [
+     *     'source_1' => 'foo',
+     *     'source_2' => 'bar',
+     * ]);
+     *
+     * Example 3: `result` field will be shown if `source_1 != 'foo' AND source_2 != 'bar'`
+     *
+     * $block->addComplexFieldDependence('result', $block::MODE_NOT, [
+     *     'source_1' => 'foo',
+     *     'source_2' => 'bar',
+     * ]);
+     *
+     * Example 4: `result` field will be shown if `source_1 == 'foo' XOR source_2 == 'bar'`
+     * If more than two conditions are provided, returns true if exactly one condition is true
+     *
+     * $block->addComplexFieldDependence('result', $block::MODE_XOR, [
+     *     'source_1' => 'foo',
+     *     'source_2' => 'bar',
+     * ]);
+     *
+     * Example 5: `result` field will be shown if `(source_1 == 'foo') OR (source_2 == 'bar' AND source_3 == 'baz')`
+     *
+     * $block->addComplexFieldDependence('result', $block::MODE_OR, [
+     *     'source_1' => 'foo',
+     *     $block->createCondition($block::MODE_AND, [
+     *         'source_2' => 'bar',
+     *         'source_3' => 'baz',
+     *     ]),
+     * ]);
+     *
+     * @param string $targetField field to be toggled
+     * @param self::MODE_* $operator one of MODE_NOT, MODE_AND, MODE_OR, MODE_XOR
+     * @param array $condition
+     * @return $this
+     */
+    public function addComplexFieldDependence(string $targetField, string $operator, array $condition): self
+    {
+        $this->_depends[$targetField][] = $this->createCondition($operator, $condition);
+        return $this;
+    }
+
+    /**
+     * Return a field's full simple or complex field dependence condition
+     */
+    public function getRawFieldDependence(string $targetField): ?array
+    {
+        return $this->_depends[$targetField] ?? null;
+    }
+
+    /**
+     * Set a field's full simple or complex field dependence condition
+     */
+    public function setRawFieldDependence(string $targetField, array $condition): self
+    {
+        // Complex conditions must be wrapped in an array
+        if ($this->isLogicalOperator($condition['operator'] ?? null) && is_array($condition['condition'] ?? null)) {
+            $condition = [$condition];
+        }
+        $this->_depends[$targetField] = $condition;
+        return $this;
+    }
+
+    /**
+     * Clear a field's full simple or complex field dependence condition
+     */
+    public function clearFieldDependence(string $targetField): self
+    {
+        unset($this->_depends[$targetField]);
+        return $this;
+    }
+
+    /**
      * Add field alias to id mapping
      *
      * @param string $fieldId element ID in DOM
@@ -80,98 +220,26 @@ class Mage_Adminhtml_Block_Widget_Form_Element_Dependence extends Mage_Adminhtml
     }
 
     /**
-     * Register field dependency with specified values
+     * Add configuration option to the javascript dependencies controller
      *
-     * Note: Calling this method multiple times with the same $dependentField value will overwrite the previous condition
-     *
-     * Example 1: `field_a` will be shown if `field_b == 'foo'`
-     *
-     * $block->addFieldDependence('field_a', 'field_b', 'foo');
-     *
-     * Example 2: `field_a` will be shown if `field_b == 'foo' OR field_b == 'bar'`
-     *
-     * $block->addFieldDependence('field_a', 'field_b', ['foo', 'bar']);
-     *
-     * Example 3: `field_a` will be shown if `field_b == 'foo' AND field_c == 'bar'`
-     *
-     * $block->addFieldDependence('field_a', 'field_b', 'foo')
-     *       ->addFieldDependence('field_a', 'field_c', 'bar');
-     *
-     * @param string $targetField field to be toggled
-     * @param string $dependentField field that triggers the display of $targetField
-     * @param string|array $refValues wanted value(s) of the $dependentField element
-     * @return $this
+     * @see self::addConfigOptions()
      */
-    public function addFieldDependence($targetField, $dependentField, $refValues)
+    public function addConfigOption(string $option, $value): self
     {
-        if ($this->isLogicalOperator($dependentField)) {
-            Mage::throwException($this->__("Invalid field name '%s', must not be one of NOT, AND, OR, XOR", $dependentField));
-        }
-        $this->_depends[$targetField][$dependentField] = $refValues;
+        $this->_configOptions[$option] = $value;
         return $this;
     }
 
     /**
-     * Register field dependency with complex condition
+     * Add multiple configuration options to the javascript dependencies controller
      *
-     * Note: Calling this method multiple times with the same $operator value will overwrite the previous condition
-     *
-     * Example 1: `field_a` will be shown if `field_b == 'foo' AND field_c == 'bar'`
-     *
-     * $block->addComplexFieldDependence('field_a', $block::MODE_AND, [
-     *     'field_b' => 'foo',
-     *     'field_c' => 'bar',
-     * ]);
-     *
-     * Example 2: `field_a` will be shown if `field_b == 'foo' OR field_c == 'bar'`
-     *
-     * $block->addComplexFieldDependence('field_a', $block::MODE_OR, [
-     *     'field_b' => 'foo',
-     *     'field_c' => 'bar',
-     * ]);
-     *
-     * Example 3: `field_a` will be shown if `field_b != 'foo' AND field_c != 'bar'`
-     *
-     * $block->addComplexFieldDependence('field_a', $block::MODE_NOT, [
-     *     'field_b' => 'foo',
-     *     'field_c' => 'bar',
-     * ]);
-     *
-     * Example 4: `field_a` will be shown if `field_b == 'foo' XOR field_c == 'bar'`
-     * If more than two conditions are provided, returns true if exactly one condition is true
-     *
-     * $block->addComplexFieldDependence('field_a', $block::MODE_XOR, [
-     *     'field_b' => 'foo',
-     *     'field_c' => 'bar',
-     * ]);
-     *
-     * Example 5: `field_a` will be shown if `field_b == 'foo' AND (field_c == 'bar' OR field_d == 'baz')`
-     *
-     * $block->addComplexFieldDependence('field_a', $block::MODE_AND, [
-     *     'field_b' => 'foo',
-     *     $block::MODE_OR => [
-     *         'field_c' => 'bar',
-     *         'field_d' => 'baz',
-     *     ],
-     * ]);
-     *
-     * @param string $targetField field to be toggled
-     * @param string $operator one of NOT, AND, OR
-     * @param array $condition
-     * @return $this
-     */
-    public function addComplexFieldDependence(string $targetField, string $operator, array $condition): self
-    {
-        if (!$this->isLogicalOperator($operator)) {
-            Mage::throwException($this->__("Invalid operator '%s', must be one of NOT, AND, OR, XOR", $operator));
-        }
-        $this->_depends[$targetField][$operator] = $condition;
-        return $this;
-    }
-
-    /**
-     * Add misc configuration options to the javascript dependencies controller
-     *
+     * @param array $options {
+     *     on_event: string,    // the event name that triggers condition evaluation, false to disable, defaults to "change"
+     *     field_map: array,    // key/value pairs of field aliases to their associated DOM IDs.
+     *     field_values: array, // key/value pairs of fallback values for fields not present in the form
+     *     levels_up: int,      // deprecated: the number of ancestor elements to find the parent element to hide
+     *     can_edit_price: bool // deprecated: prevent enabling fields, only use if dependence block contains no other elements
+     * }
      * @return $this
      */
     public function addConfigOptions(array $options)
@@ -200,7 +268,7 @@ class Mage_Adminhtml_Block_Widget_Form_Element_Dependence extends Mage_Adminhtml
         if (!$this->_depends) {
             return '';
         }
-        return "<script>new FormElementDependenceController({$this->_getDependsJson()}, {$this->_getConfigJson()})</script>";
+        return "<script>new FormElementDependenceController({$this->_getDependsJson()}, {$this->_getConfigJson()})</script>\n";
     }
 
     /**
@@ -220,8 +288,11 @@ class Mage_Adminhtml_Block_Widget_Form_Element_Dependence extends Mage_Adminhtml
      */
     protected function _getConfigJson()
     {
-        $this->_configOptions['field_map'] = $this->_fields;
-        $this->_configOptions['field_values'] = $this->_fieldValues;
-        return Mage::helper('core')->jsonEncode($this->_configOptions);
+        $config = [
+            'field_map' => $this->_fields,
+            'field_values' => $this->_fieldValues,
+            ...$this->_configOptions,
+        ];
+        return Mage::helper('core')->jsonEncode($config);
     }
 }

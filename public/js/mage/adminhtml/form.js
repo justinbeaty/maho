@@ -5,6 +5,7 @@
  * @package     Mage_Adminhtml
  * @copyright   Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
  * @copyright   Copyright (c) 2017-2023 The OpenMage Contributors (https://openmage.org)
+ * @copyright   Copyright (c) 2024 Maho (https://mahocommerce.com)
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 var varienForm = new Class.create();
@@ -436,8 +437,17 @@ SelectUpdater.prototype = {
     }
 };
 
-
-class FormElementDependenceEvent extends Event {}
+/**
+ * Custom event that can be dispatched on dependent form elements to trigger an update
+ */
+class FormElementDependenceEvent extends Event {
+    /**
+     * @param {string} [eventName] - the name of the event, defaults to 'update', no other values are currently supported
+     */
+    constructor(eventName = 'update') {
+        super(eventName);
+    }
+}
 
 /**
  * Observer that watches for dependent form elements with support for complex conditions
@@ -450,12 +460,12 @@ class FormElementDependenceController {
 
     /**
      * @param {Object.<string, Object>} elementsMap - key/value pairs of target fields and their conditions to be visible
-     * @param {Object} [config] - config options
-     * @param {string|false} [config.on_event] - the event name that triggers condition evaluation, false to disable, defaults to "change"
-     * @param {Object.<string, string>} [config.field_map] - key/value pairs of field aliases to their associated DOM IDs.
-     * @param {Object.<string, string>} [config.field_values] - key/value pairs of fallback values for fields not present in the form
-     * @param {number} [config.levels_up] - deprecated: the number of ancestor elements to find the parent element to hide
-     * @param {boolean} [config.can_edit_price] - deprecated: prevent enabling price inputs, only use this option if dependence block contains no other elements!
+     * @param {Object} [config] - config options, see Mage_Adminhtml_Block_Widget_Form_Element_Dependence::addConfigOptions()
+     * @param {string|false} [config.on_event]
+     * @param {Object.<string, string>} [config.field_map]
+     * @param {Object.<string, string>} [config.field_values]
+     * @param {number} [config.levels_up]
+     * @param {boolean} [config.can_edit_price]
      */
     constructor(elementsMap, config = {}) {
         console.log(elementsMap, config);
@@ -490,8 +500,8 @@ class FormElementDependenceController {
      */
     bindEventListeners(condition, eventArgs = []) {
         for (let [dependentField, subcondition] of Object.entries(condition)) {
-            if (this.isLogicalOperator(dependentField)) {
-                this.bindEventListeners(subcondition, eventArgs);
+            if (this.isLogicalOperator(subcondition?.operator)) {
+                this.bindEventListeners(subcondition.condition, eventArgs);
             } else {
                 const dependentEl = document.getElementById(this.mapFieldId(dependentField));
                 if (dependentEl) {
@@ -583,7 +593,7 @@ class FormElementDependenceController {
      * Recursively evaluate a complex condition
      *
      * @param {Object} condition - key/value pairs of field names and wanted values, or subconditions
-     * @param {string} [mode] - logical operation to evaluate with, can be "AND" or "OR"
+     * @param {string} [mode] - logical operation to evaluate with, defaults to "AND"
      */
     evalCondition(condition, mode = FormElementDependenceController.MODE_AND) {
         // If there are no subconditions, evaluate to true
@@ -593,10 +603,9 @@ class FormElementDependenceController {
         const results = [];
         for (let [dependentField, subcondition] of Object.entries(condition)) {
             let result = false;
-            if (this.isLogicalOperator(dependentField)) {
-                // If subcondition is an NOT/AND/OR object, recurse
-                const operator = dependentField;
-                result = this.evalCondition(subcondition, operator);
+            if (this.isLogicalOperator(subcondition?.operator)) {
+                // If we have a logical operator, recurse
+                result = this.evalCondition(subcondition.condition, subcondition.operator);
             } else {
                 // Otherwise check if we have this element in the form, or use fallback value
                 let dependentValues = [];
@@ -633,8 +642,6 @@ class FormElementDependenceController {
      * @param {Object} condition - key/value pairs of field names and wanted values, or subconditions
      */
     trackChange(event, field, condition) {
-        console.log('trigger', field, event?.constructor.name);
-
         const rowEl = this.findParentRow(field);
         if (!rowEl) {
             return;
