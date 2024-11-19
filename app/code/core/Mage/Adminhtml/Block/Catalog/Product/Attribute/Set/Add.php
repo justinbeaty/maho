@@ -19,7 +19,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Add extends Mage_Eav_Bl
     #[\Override]
     protected function _construct()
     {
-        // TODO, merge template and delete
         $this->setTemplateIfExists('catalog/product/attribute/set/add.phtml');
     }
 }
