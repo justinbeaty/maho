@@ -281,21 +281,4 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
 
         return $this;
     }
-
-    /**
-     * Processing block html after rendering
-     * Adding js block to the end of this block
-     *
-     * @param   string $html
-     * @return  string
-     */
-    #[\Override]
-    protected function _afterToHtml($html)
-    {
-        $jsScripts = $this->getLayout()->createBlock('adminhtml/template')
-            ->setTemplate('eav/attribute/js.phtml')
-            ->toHtml();
-
-        return $html . $jsScripts;
-    }
 }

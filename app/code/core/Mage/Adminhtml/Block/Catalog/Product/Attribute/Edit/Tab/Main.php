@@ -227,23 +227,4 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
             'apply' => Mage::getConfig()->getBlockClassName('adminhtml/catalog_product_helper_form_apply'),
         ];
     }
-
-    /**
-     * Processing block html after rendering
-     * Adding js block to the end of this block
-     *
-     * @param   string $html
-     * @return  string
-     */
-    #[\Override]
-    protected function _afterToHtml($html)
-    {
-        // TODO, check if template exists
-
-        $jsScripts = $this->getLayout()->createBlock('adminhtml/template')
-            ->setTemplate('catalog/product/attribute/js.phtml')
-            ->toHtml();
-
-        return $html . $jsScripts;
-    }
 }

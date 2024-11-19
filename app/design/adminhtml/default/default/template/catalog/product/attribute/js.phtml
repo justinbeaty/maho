@@ -14,22 +14,17 @@
 const inputTypeDefs = <?= Mage::helper('core')->jsonEncode(Mage::helper('eav')->getInputTypes('catalog_product')) ?>;
 
 function saveAndContinueEdit() {
-    disableElements('save');
-    var activeTab = product_attribute_tabsJsTabs.activeTab.id;
-    if (editForm.submit($('edit_form').action+'back/edit/tab/' + activeTab) == false) {
-        enableElements('save');
-    }
-    varienGlobalEvents.attachEventHandler('formValidateAjaxComplete', function () {
-        enableElements('save');
-    });
+    const activeTab = product_attribute_tabsJsTabs.activeTab.id;
+    const action = document.getElementById(editForm.formId).action;
+    saveAttribute(`${action}back/edit/tab/${activeTab}`);
 }
 
-function saveAttribute() {
+function saveAttribute(url = null) {
     disableElements('save');
-    if (editForm.submit() == false) {
+    if (editForm.submit(url) == false) {
         enableElements('save');
     }
-    varienGlobalEvents.attachEventHandler('formValidateAjaxComplete', function () {
+    varienGlobalEvents.attachEventHandler('formValidateAjaxComplete', () => {
         enableElements('save');
     });
 }
@@ -64,7 +59,7 @@ function toggleApplyVisibility(select) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new EavAttributeEditForm('edit_form', inputTypeDefs, {
+    new EavAttributeEditForm(editForm.formId, inputTypeDefs, {
         callbacks: {
             afterUpdateForm: updateApplyToValues,
         },
