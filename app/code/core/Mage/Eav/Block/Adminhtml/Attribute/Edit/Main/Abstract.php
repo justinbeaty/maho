@@ -181,6 +181,23 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
     }
 
     /**
+     * Return dependency block object
+     *
+     * @return Mage_Adminhtml_Block_Widget_Form_Element_Dependence
+     */
+    protected function _getDependence()
+    {
+        if (!$this->getChild('form_after')) {
+            /** @var Mage_Adminhtml_Block_Widget_Form_Element_Dependence $block */
+            $block = $this->getLayout()->createBlock('adminhtml/widget_form_element_dependence');
+            $block->addConfigOption('on_event', false)
+                ->addFieldDependence('frontend_class', 'frontend_input', ['text', 'customselect']);
+            $this->setChild('form_after', $block);
+        }
+        return $this->getChild('form_after');
+    }
+
+    /**
      * Initialize form fields values
      *
      * @inheritDoc

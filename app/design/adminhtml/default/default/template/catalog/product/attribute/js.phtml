@@ -10,10 +10,8 @@
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<script type="text/javascript">
-
+<script>
 const inputTypeDefs = <?= Mage::helper('core')->jsonEncode(Mage::helper('eav')->getInputTypes('catalog_product')) ?>;
-
 
 function saveAndContinueEdit() {
     disableElements('save');
@@ -36,207 +34,40 @@ function saveAttribute() {
     });
 }
 
-
-function resetVisibility() {
-    console.log('reset everything');
-    const formEl = document.getElementById('edit_form');
-    formEl.querySelectorAll('tr.no-display').forEach((el) => {
-        el.classList.remove('no-display');
-    });
-    formEl.querySelectorAll('.fieldset.no-display').forEach((el) => {
-        el.classList.remove('no-display');
-        el.previousElementSibling.classList.remove('no-display');
-    });
-    formEl.querySelectorAll('input, select, textarea').forEach((el) => {
-            el.dispatchEvent(new FormElementDependenceEvent('update'));
-            //const event = new CustomEvent('manualtrigger');
-            //el.dispatchEvent(event);
-    });
-    console.log('custom logic');
-    bindAttributeInputType();
-}
-
-function setRowVisibility(id, isVisible) {
-    const el = document.getElementById(id);
-    if (el) {
-        const tr = el.closest('tr');
-        if (isVisible) {
-            tr.classList.remove('no-display');
-        } else {
-            tr.blur();
-            tr.classList.add('no-display');
-        }
-    }
-}
-
-function setFieldsetVisibility(id, isVisible) {
-    const el = document.getElementById(id);
-    if (el) {
-        if (isVisible) {
-            el.classList.remove('no-display');
-            el.previousElementSibling.classList.remove('no-display');
-        } else {
-            el.classList.add('no-display');
-            el.previousElementSibling.classList.add('no-display');
-        }
-    }
-}
-
-function getInputTypeValue() {
-    const el = document.getElementById('frontend_input');
-    if (el) {
-        return el.value;
-    }
-    return '';
-}
-
-function bindAttributeInputType() {
-    const inputType = getInputTypeValue();
-
-    const hiddenFields = inputTypeDefs[inputType]?.hide_fields ?? [];
-    for (let field of hiddenFields) {
-        if (field === '_front_fieldset') {
-            setFieldsetVisibility('front_fieldset', false);
-        } else if (field === '_scope') {
-            setRowVisibility('is_global', false);
-        } else {
-            setRowVisibility(field, false);
-        }
-    }
-
-    // todo
-    // if($('backend_type') && $('backend_type').options) {
-    //     for(var i=0;i<$('backend_type').options.length;i++) {
-    //         if($('backend_type').options[i].value=='int') {
-    //             $('backend_type').selectedIndex = i;
-    //         }
-    //     }
-    // }
-
-    checkOptionsPanelVisibility();
-    switchDefaultValueField();
-}
-
-
-function checkOptionsPanelVisibility() {
-    const panelEl = document.querySelector('#manage-options-panel, #matage-options-panel');
-    if (!panelEl) {
+function updateApplyToValues() {
+    const inputTypeEl = document.getElementById('frontend_input');
+    const applyToEl = document.getElementById('apply_to');
+    if (!inputTypeEl || !applyToEl) {
         return;
     }
-
-    const optionDefaultInputTypes = {
-        select: 'radio',
-        customselect: 'radio',
-        multiselect: 'checkbox',
-    }
-    const optionDefaultInputType = optionDefaultInputTypes[getInputTypeValue()];
-
-    if (optionDefaultInputType) {
-        panelEl.classList.remove('no-display');
-        panelEl.querySelectorAll('default[]').forEach((el) => {
-            el.type = optionDefaultInputType;
-        });
-    } else {
-        panelEl.classList.add('no-display');
-    }
-
-    if ($F('frontend_input')=='select' && $F('is_required')==1) {
-        $('option-count-check').addClassName('required-options-count');
-    } else {
-        $('option-count-check').removeClassName('required-options-count');
-    }
-}
-
-
-
-function switchDefaultValueField() {
-    const inputType = getInputTypeValue();
-    const defaultValueField = inputTypeDefs[inputType]?.default_value_field;
-
-    const fields = [
-        'default_value_text',
-        'default_value_textarea',
-        'default_value_date',
-        'default_value_yesno',
-    ];
-    for (let field of fields) {
-        setRowVisibility(field, field === defaultValueField);
-    }
-}
-
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    const formEl = document.getElementById('edit_form');
-    if (formEl) {
-        formEl.addEventListener('change', resetVisibility, { capture: true });
-    }
-
-    // const frontendInputEl = document.getElementById('frontend_input');
-    // if (frontendInputEl) {
-    //     frontendInputEl.addEventListener('change', bindAttributeInputType);
-    // }
-
-    // const isRequiredEl = document.getElementById('is_required');
-    // if (isRequiredEl) {
-    //     isRequiredEl.addEventListener('change', checkOptionsPanelVisibility);
-    // }
-
-    bindAttributeInputType();
-});
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Product attribute specific code
-
-function updateApplyToValues() {
-    const inputType = getInputTypeValue();
-
-    var applyToSelect = $('apply_to');
-    switch (inputType) {
-        <?php foreach (Mage::helper('catalog')->getAttributeDisabledTypes() as $type=>$disabled): ?>
-            case '<?= $type ?>':
-            <?php foreach ($disabled as $one): ?>
-                disableApplyToValue('<?= $one ?>');
-            <?php endforeach ?>
-            break;
-        <?php endforeach ?>
-        default:
-        for (i=0;i<applyToSelect.options.length;i++) {
-            applyToSelect.options[i].disabled = false;
+    const disabledTypes = inputTypeDefs[inputTypeEl.value]?.disabled_types ?? [];
+    for (let optionEl of applyToEl.options) {
+        if (disabledTypes.includes(optionEl.value)) {
+            optionEl.disabled = true;
+            optionEl.selected = false;
+        } else {
+            optionEl.disabled = false;
         }
-        break;
     }
 }
 
 function toggleApplyVisibility(select) {
-    if ($(select).value == 1) {
-        $(select).next('select').removeClassName('no-display');
-        $(select).next('select').removeClassName('ignore-validate');
-
+    const applyToEl = document.getElementById('apply_to');
+    if (!applyToEl) {
+        return;
+    }
+    if (select.value == 1) {
+        applyToEl.classList.remove('no-display', 'ignore-validate');
     } else {
-        $(select).next('select').addClassName('no-display');
-        $(select).next('select').addClassName('ignore-validate');
-        var options = $(select).next('select').options;
-        for( var i=0; i < options.length; i++) {
-            options[i].selected = false;
-        }
+        applyToEl.classList.add('no-display', 'ignore-validate');
     }
 }
 
-function disableApplyToValue(value) {
-    var applyToSelect = $('apply_to');
-    for (i=0;i<applyToSelect.options.length;i++) {
-        if (value == applyToSelect.options[i].value) {
-            applyToSelect.options[i].disabled = true;
-            applyToSelect.options[i].selected = false;
-        }
-    }
-}
-
-if($('frontend_input')) {
-    Event.observe($('frontend_input'), 'change', updateApplyToValues);
-}
-updateApplyToValues();
-
+document.addEventListener('DOMContentLoaded', () => {
+    new EavAttributeEditForm('edit_form', inputTypeDefs, {
+        callbacks: {
+            afterUpdateForm: updateApplyToValues,
+        },
+    });
+});
 </script>

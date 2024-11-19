@@ -1,20 +1,17 @@
 /**
  *
  */
-class EavAttributeForm {
+class EavAttributeEditForm {
 
     constructor(formId, inputTypeDefs, config = {}) {
         this.inputTypeDefs = inputTypeDefs;
         this.config = config;
-
         this.formEl = document.getElementById(formId);
         if (!this.formEl) {
             throw new Error(`Form with ID ${formId} not found in DOM`);
         }
-        document.addEventListener('DOMContentLoaded', () => {
-            this.bindEventListeners();
-            this.updateForm();
-        });
+        this.bindEventListeners();
+        this.updateForm();
     }
 
     bindEventListeners() {
@@ -67,10 +64,10 @@ class EavAttributeForm {
 
         // Manually trigger dependence block conditions
         this.formEl.querySelectorAll('input, select, textarea').forEach((el) => {
-            el.dispatchEvent(new FormElementDependenceEvent('update'));
+            el.dispatchEvent(new FormElementDependenceEvent());
         });
 
-        //
+        // Hide fields defined in config.xml eav_inputtypes nodes
         const inputType = this.getInputTypeValue();
         const hiddenFields = this.inputTypeDefs[inputType]?.hide_fields ?? [];
 
@@ -93,12 +90,30 @@ class EavAttributeForm {
         //     }
         // }
 
-        checkOptionsPanelVisibility();
-        switchDefaultValueField();
+        this.switchDefaultValueField();
+        this.updateOptionsPanel();
+
+        if (typeof this.config.callbacks?.afterUpdateForm === 'function') {
+            this.config.callbacks.afterUpdateForm();
+        }
     }
 
+    switchDefaultValueField() {
+        const inputType = this.getInputTypeValue();
+        const defaultValueField = this.inputTypeDefs[inputType]?.default_value_field;
 
-    checkOptionsPanelVisibility() {
+        const fields = [
+            'default_value_text',
+            'default_value_textarea',
+            'default_value_date',
+            'default_value_yesno',
+        ];
+        for (let field of fields) {
+            this.setRowVisibility(field, field === defaultValueField);
+        }
+    }
+
+    updateOptionsPanel() {
         const panelEl = document.querySelector('#manage-options-panel, #matage-options-panel');
         if (!panelEl) {
             return;
@@ -109,7 +124,7 @@ class EavAttributeForm {
             customselect: 'radio',
             multiselect: 'checkbox',
         }
-        const optionDefaultInputType = optionDefaultInputTypes[getInputTypeValue()];
+        const optionDefaultInputType = optionDefaultInputTypes[this.getInputTypeValue()];
 
         if (optionDefaultInputType) {
             panelEl.classList.remove('no-display');
@@ -126,22 +141,4 @@ class EavAttributeForm {
             $('option-count-check').removeClassName('required-options-count');
         }
     }
-
-
-
-    switchDefaultValueField() {
-        const inputType = this.getInputTypeValue();
-        const defaultValueField = this.inputTypeDefs[inputType]?.default_value_field;
-
-        const fields = [
-            'default_value_text',
-            'default_value_textarea',
-            'default_value_date',
-            'default_value_yesno',
-        ];
-        for (let field of fields) {
-            setRowVisibility(field, field === defaultValueField);
-        }
-    }
-
 }
