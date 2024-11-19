@@ -53,6 +53,11 @@ class EavAttributeEditForm {
     }
 
     updateForm() {
+        // Before update form callback
+        if (typeof this.config.callbacks?.beforeUpdateForm === 'function') {
+            this.config.callbacks.beforeUpdateForm();
+        }
+
         // Reset visibility of all rows and fieldsets
         this.formEl.querySelectorAll('tr.no-display').forEach((el) => {
             el.classList.remove('no-display');
@@ -67,19 +72,7 @@ class EavAttributeEditForm {
             el.dispatchEvent(new FormElementDependenceEvent());
         });
 
-        // Hide fields defined in config.xml eav_inputtypes nodes
         const inputType = this.getInputTypeValue();
-        const hiddenFields = this.inputTypeDefs[inputType]?.hide_fields ?? [];
-
-        for (let field of hiddenFields) {
-            if (field === '_front_fieldset') {
-                this.setFieldsetVisibility('front_fieldset', false);
-            } else if (field === '_scope') {
-                this.setRowVisibility('is_global', false);
-            } else {
-                this.setRowVisibility(field, false);
-            }
-        }
 
         // todo
         // if($('backend_type') && $('backend_type').options) {
@@ -90,55 +83,31 @@ class EavAttributeEditForm {
         //     }
         // }
 
-        this.switchDefaultValueField();
-        this.updateOptionsPanel();
+        // Hide fields defined in config.xml eav_inputtypes nodes
+        const hiddenFields = this.inputTypeDefs[inputType]?.hide_fields ?? [];
+        for (let field of hiddenFields) {
+            if (field === '_front_fieldset') {
+                this.setFieldsetVisibility('front_fieldset', false);
+            } else if (field === '_scope') {
+                this.setRowVisibility('is_global', false);
+            } else {
+                // TODO, check if is fieldset
+                this.setRowVisibility(field, false);
+            }
+        }
 
+        // Show default value field defined in config.xml eav_inputtypes nodes
+        let defaultValueField = this.inputTypeDefs[inputType]?.default_value_field;
+        if (hiddenFields.includes('_default_value')) {
+            defaultValueField = '';
+        }
+        for (let field of ['text', 'textarea', 'date', 'yesno']) {
+            this.setRowVisibility(`default_value_${field}`, `default_value_${field}` === defaultValueField);
+        }
+
+        // After update form callback
         if (typeof this.config.callbacks?.afterUpdateForm === 'function') {
             this.config.callbacks.afterUpdateForm();
-        }
-    }
-
-    switchDefaultValueField() {
-        const inputType = this.getInputTypeValue();
-        const defaultValueField = this.inputTypeDefs[inputType]?.default_value_field;
-
-        const fields = [
-            'default_value_text',
-            'default_value_textarea',
-            'default_value_date',
-            'default_value_yesno',
-        ];
-        for (let field of fields) {
-            this.setRowVisibility(field, field === defaultValueField);
-        }
-    }
-
-    updateOptionsPanel() {
-        const panelEl = document.querySelector('#manage-options-panel, #matage-options-panel');
-        if (!panelEl) {
-            return;
-        }
-
-        const optionDefaultInputTypes = {
-            select: 'radio',
-            customselect: 'radio',
-            multiselect: 'checkbox',
-        }
-        const optionDefaultInputType = optionDefaultInputTypes[this.getInputTypeValue()];
-
-        if (optionDefaultInputType) {
-            panelEl.classList.remove('no-display');
-            panelEl.querySelectorAll('default[]').forEach((el) => {
-                el.type = optionDefaultInputType;
-            });
-        } else {
-            panelEl.classList.add('no-display');
-        }
-
-        if ($F('frontend_input')=='select' && $F('is_required')==1) {
-            $('option-count-check').addClassName('required-options-count');
-        } else {
-            $('option-count-check').removeClassName('required-options-count');
         }
     }
 }
