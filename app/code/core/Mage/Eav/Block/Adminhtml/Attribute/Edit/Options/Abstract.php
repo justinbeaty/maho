@@ -85,6 +85,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
      */
     public function getOptionValues()
     {
+        // TODO, use new eav helper method
         $attributeType = $this->getAttributeObject()->getFrontendInput();
         $defaultValues = $this->getAttributeObject()->getDefaultValue();
         if (in_array($attributeType, ['select', 'multiselect', 'customselect'])) {
