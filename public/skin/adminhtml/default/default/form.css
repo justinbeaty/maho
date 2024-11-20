@@ -248,6 +248,7 @@ button {
   font-size: 18px; }
 
 td:has(input.swatch-option) {
+  position: relative;
   display: flex;
   gap: 2px; }
   td:has(input.swatch-option) .swatch-delete {

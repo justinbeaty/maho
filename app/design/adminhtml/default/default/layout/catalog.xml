@@ -274,6 +274,9 @@ Layout handle for configurable products
             <action method="addJs">
                 <script>mage/adminhtml/eav/attribute.js</script>
             </action>
+            <action method="addJs">
+                <script>mage/adminhtml/eav/options.js</script>
+            </action>
         </reference>
         <reference name="left">
             <block type="eav/adminhtml_attribute_edit_tabs" name="attribute_edit_tabs"></block>

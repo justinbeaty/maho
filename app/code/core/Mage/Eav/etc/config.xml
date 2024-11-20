@@ -173,17 +173,20 @@
                     <value>multiselect</value>
                     <backend_type>text</backend_type>
                     <backend_model>eav/entity_attribute_backend_array</backend_model>
+                    <options_panel><type>checkbox</type></options_panel>
                 </multiselect>
                 <select translate="label" module="eav">
                     <label>Dropdown</label>
                     <value>select</value>
                     <backend_type>int</backend_type>
+                    <options_panel><type>radio</type></options_panel>
                 </select>
                 <customselect translate="label" module="eav">
                     <label>Dropdown with Other Option</label>
                     <value>customselect</value>
                     <backend_type>varchar</backend_type>
                     <source_model>eav/entity_attribute_source_table</source_model>
+                    <options_panel><type>radio</type></options_panel>
                 </customselect>
             </default>
         </eav_inputtypes>

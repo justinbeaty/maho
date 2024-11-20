@@ -25,42 +25,19 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
     }
 
     /**
-     * Preparing layout, adding buttons
-     *
-     * @inheritDoc
-     */
-    #[\Override]
-    protected function _prepareLayout()
-    {
-        $this->setChild(
-            'delete_button',
-            $this->getLayout()->createBlock('adminhtml/widget_button')
-                ->setData([
-                    'label' => Mage::helper('eav')->__('Delete'),
-                    'class' => 'delete delete-option'
-                ])
-        );
-
-        $this->setChild(
-            'add_button',
-            $this->getLayout()->createBlock('adminhtml/widget_button')
-                ->setData([
-                    'label' => Mage::helper('eav')->__('Add Option'),
-                    'class' => 'add',
-                    'id'    => 'add_new_option_button'
-                ])
-        );
-        return parent::_prepareLayout();
-    }
-
-    /**
-     * Retrieve HTML of delete button
+     * Retrieve HTML of delete button, returns new instance for each call so IDs are unique
      *
      * @return string
      */
     public function getDeleteButtonHtml()
     {
-        return $this->getChildHtml('delete_button');
+        /** @var Mage_Adminhtml_Block_Widget_Button $block */
+        $block = $this->getLayout()->createBlock('adminhtml/widget_button');
+        $block->setData([
+            'label' => Mage::helper('eav')->__('Delete'),
+            'class' => 'delete delete-option'
+        ]);
+        return $block->toHtml();
     }
 
     /**
@@ -70,6 +47,16 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
      */
     public function getAddNewButtonHtml()
     {
+        if (!$this->getChild('add_button')) {
+            /** @var Mage_Adminhtml_Block_Widget_Button $block */
+            $block = $this->getLayout()->createBlock('adminhtml/widget_button');
+            $block->setData([
+                'label' => Mage::helper('eav')->__('Add Option'),
+                'class' => 'add',
+                'id'    => 'add_new_option_button'
+            ]);
+            $this->setChild('add_button', $block);
+        }
         return $this->getChildHtml('add_button');
     }
 

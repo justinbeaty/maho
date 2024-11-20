@@ -46,10 +46,7 @@ class EavAttributeEditForm {
 
     getInputTypeValue() {
         const el = document.getElementById('frontend_input');
-        if (el) {
-            return el.value;
-        }
-        return '';
+        return el ? el.value : '';
     }
 
     updateForm() {

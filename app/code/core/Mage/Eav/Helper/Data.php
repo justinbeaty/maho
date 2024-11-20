@@ -201,6 +201,8 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
      *     - 'configurable'
      *     - 'grouped'
      *     - 'virtual'
+     * - options_panel: (object) configuration options for the "Manage Options" panel
+     *     - 'type': (string) the HTML input type to use for "Is Default" boxes, can be 'radio' or 'checkbox'
      *
      * See <eav_inputtypes> nodes in various config.xml files for examples
      */
@@ -311,6 +313,20 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
         return $disabledTypes;
+    }
+
+    /**
+     * Return options panel info per input type when editing attribute for entity type
+     */
+    public function getInputTypeOptionsPanelInfo(string $entityTypeCode): array
+    {
+        $optionsPanel = [];
+        foreach ($this->getInputTypes($entityTypeCode) as $key => $type) {
+            if (isset($type['options_panel'])) {
+                $optionsPanel[$key] = $type['options_panel'];
+            }
+        }
+        return $optionsPanel;
     }
 
     /**
