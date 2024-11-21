@@ -74,6 +74,12 @@ class EavAttributeOptionsForm {
         tbody.insertBefore(row, tbody.childNodes[1]);
         this.bindRowEventListeners(row);
 
+        if (option.swatch) {
+            tdEl.querySelectorAll('input[type="color"]').forEach((el) => {
+                el.value = option.swatch;
+            });
+        }
+
         this.itemCount++;
         this.totalItems++;
         this.updateItemsCountField();
@@ -100,33 +106,36 @@ class EavAttributeOptionsForm {
     }
 
     swatch(event) {
-        const trEl = event.target.closest('tr');
-        if (!trEl) {
+        console.log('onswatch');
+        const tdEl = event.target.closest('td.swatch-option');
+        if (!tdEl) {
             return;
         }
-        trEl.querySelectorAll('.swatch-value').forEach((el) => {
+        tdEl.querySelectorAll('input[type="hidden"]').forEach((el) => {
             el.disabled = false;
             el.value = event.target.value;
         });
-        event.target.classList.remove('swatch-disabled');
+        tdEl.classList.remove('swatch-disabled');
     }
 
     swatchRemove(event) {
-        if (!confirm(event.target.getAttribute('data-msg-delete'))) {
+        console.log('onswatchremove');
+        const msg = Translator.translate('Are you sure to delete this fallback color?');
+        if (!confirm(msg)) {
             return;
         }
-        const trEl = event.target.closest('tr');
-        if (!trEl) {
+        const tdEl = event.target.closest('td.swatch-option');
+        if (!tdEl) {
             return;
         }
-        trEl.querySelectorAll('.swatch-value').forEach((el) => {
+        tdEl.querySelectorAll('input[type="hidden"]').forEach((el) => {
             el.disabled = false;
-            el.value = '';
+            el.removeAttribute('value');
         });
-        trEl.querySelectorAll('.swatch-option').forEach((el) => {
-            el.value = '';
-            el.classList.add('swatch-disabled');
+        tdEl.querySelectorAll('input[type="color"]').forEach((el) => {
+            el.removeAttribute('value');
         });
+        tdEl.classList.add('swatch-disabled');
     }
 
     updateItemsCountField() {

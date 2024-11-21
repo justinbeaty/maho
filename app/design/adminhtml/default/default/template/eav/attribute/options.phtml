@@ -83,10 +83,10 @@
 <template id="row-template">
     <tr class="option-row" title="ID: {{id}}">
         <?php if ($this->isConfigurableSwatchesEnabled()): ?>
-        <td>
-            <input type="hidden" name="option[swatch][{{id}}]" value="{{swatch}}" class="swatch-value" disabled />
-            <input type="color" value="{{swatch}}" class="swatch-option input-color-html5 validate-hex-color-hash {{swatch_class}}" />
-            <span class="swatch-delete" data-msg-delete="<?= $this->escapeHtml($this->__('Are you sure to delete this fallback color?')) ?>">X</span>
+        <td class="swatch-option {{swatch_class}}">
+            <input type="hidden" name="option[swatch][{{id}}]" class="swatch-value" disabled />
+            <input type="color" class="input-color-html5 validate-hex-color-hash" />
+            <button title="Delete Swatch" type="button" class="swatch-delete">X</button>
         </td>
         <?php endif ?>
         <?php foreach ($this->getStores() as $store): ?>
