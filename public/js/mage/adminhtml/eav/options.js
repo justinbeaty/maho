@@ -35,12 +35,12 @@ class EavAttributeOptionsForm {
         if (deleteOptionBtn) {
             deleteOptionBtn.addEventListener('click', this.remove.bind(this));
         }
-        const swatchInputEl = row.querySelector('input[type="color"]');
+        const swatchInputEl = row.querySelector('.swatch-option input[type="color"]');
         if (swatchInputEl) {
             swatchInputEl.addEventListener('click', this.swatch.bind(this));
             swatchInputEl.addEventListener('change', this.swatch.bind(this));
         }
-        const swatchDeleteBtn = row.querySelector('.swatch-delete');
+        const swatchDeleteBtn = row.querySelector('.swatch-option .swatch-delete');
         if (swatchDeleteBtn) {
             swatchDeleteBtn.addEventListener('click', this.swatchRemove.bind(this));
         }
@@ -76,7 +76,7 @@ class EavAttributeOptionsForm {
         this.bindRowEventListeners(row);
 
         if (option.swatch) {
-            tdEl.querySelectorAll('input[type="color"]').forEach((el) => {
+            row.querySelectorAll('input[type="color"]').forEach((el) => {
                 el.value = option.swatch;
             });
         }
