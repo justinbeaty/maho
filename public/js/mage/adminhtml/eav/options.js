@@ -20,9 +20,9 @@ class EavAttributeOptionsForm {
     }
 
     bindEventListeners() {
-        const addNewOptionButton = document.getElementById('add_new_option_button');
-        if (addNewOptionButton) {
-            addNewOptionButton.addEventListener('click', () => this.add());
+        const addNewOptionBtn = document.getElementById('add_new_option_button');
+        if (addNewOptionBtn) {
+            addNewOptionBtn.addEventListener('click', () => this.add());
         }
         const frontendInputEl = document.getElementById('frontend_input');
         if (frontendInputEl) {
@@ -31,17 +31,18 @@ class EavAttributeOptionsForm {
     }
 
     bindRowEventListeners(row) {
-        const deleteOptionButton = row.querySelector('.delete-option');
-        if (deleteOptionButton) {
-            deleteOptionButton.addEventListener('click', this.remove.bind(this));
+        const deleteOptionBtn = row.querySelector('.delete-option');
+        if (deleteOptionBtn) {
+            deleteOptionBtn.addEventListener('click', this.remove.bind(this));
         }
-        const swatchOptionButton = row.querySelector('.swatch-option');
-        if (swatchOptionButton) {
-            swatchOptionButton.addEventListener('click', this.swatch.bind(this));
+        const swatchInputEl = row.querySelector('input[type="color"]');
+        if (swatchInputEl) {
+            swatchInputEl.addEventListener('click', this.swatch.bind(this));
+            swatchInputEl.addEventListener('change', this.swatch.bind(this));
         }
-        const swatchDeleteButton = row.querySelector('.swatch-delete');
-        if (swatchDeleteButton) {
-            swatchDeleteButton.addEventListener('click', this.swatchRemove.bind(this));
+        const swatchDeleteBtn = row.querySelector('.swatch-delete');
+        if (swatchDeleteBtn) {
+            swatchDeleteBtn.addEventListener('click', this.swatchRemove.bind(this));
         }
     }
 
@@ -106,8 +107,7 @@ class EavAttributeOptionsForm {
     }
 
     swatch(event) {
-        console.log('onswatch');
-        const tdEl = event.target.closest('td.swatch-option');
+        const tdEl = event.target.closest('td');
         if (!tdEl) {
             return;
         }
@@ -119,12 +119,11 @@ class EavAttributeOptionsForm {
     }
 
     swatchRemove(event) {
-        console.log('onswatchremove');
         const msg = Translator.translate('Are you sure to delete this fallback color?');
         if (!confirm(msg)) {
             return;
         }
-        const tdEl = event.target.closest('td.swatch-option');
+        const tdEl = event.target.closest('td');
         if (!tdEl) {
             return;
         }

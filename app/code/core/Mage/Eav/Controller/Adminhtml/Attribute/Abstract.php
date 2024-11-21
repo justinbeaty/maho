@@ -230,7 +230,7 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
             }
 
             // Entity type check
-            if ($attribute->getEntityTypeId() !== $this->entityType->getEntityTypeId()) {
+            if ($attribute->getEntityTypeId() != $this->entityType->getEntityTypeId()) {
                 $session->addError(
                     $this->__('This attribute cannot be updated.')
                 );
