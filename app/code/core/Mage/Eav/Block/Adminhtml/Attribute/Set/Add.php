@@ -42,11 +42,6 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Te
                     'class' => 'back'
                 ])
         );
-
-        $this->setChild(
-            'setForm',
-            $this->getLayout()->createBlock('eav/adminhtml_attribute_set_edit_formset')
-        );
         return parent::_prepareLayout();
     }
 
