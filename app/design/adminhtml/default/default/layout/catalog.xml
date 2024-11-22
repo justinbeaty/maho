@@ -324,8 +324,13 @@ Layout handle for configurable products
         </reference>
     </adminhtml_eav_set_edit>
 
+    <!--                        -->
 
-
+    <adminhtml_catalog_product_attribute_index>
+        <reference name="content">
+            <block type="adminhtml/catalog_product_attribute" name="attribute_grid"></block>
+        </reference>
+    </adminhtml_catalog_product_attribute_index>
 
     <adminhtml_catalog_product_attribute_edit>
         <reference name="left">
@@ -344,7 +349,8 @@ Layout handle for configurable products
 
     <adminhtml_catalog_product_set_index>
         <reference name="content">
-            <block type="adminhtml/catalog_product_attribute_set" name="attribute_set"></block>
+            <block type="adminhtml/catalog_product_attribute_set_toolbar_main" name="attribute_set"></block>
+            <block type="adminhtml/catalog_product_attribute_set_grid" name="attribute_set_grid"></block>
         </reference>
     </adminhtml_catalog_product_set_index>
 
@@ -353,6 +359,14 @@ Layout handle for configurable products
             <block type="adminhtml/catalog_product_attribute_set_grid" name="attribute_set_grid"/>
         </block>
     </adminhtml_catalog_product_set_setgrid>
+
+    <adminhtml_catalog_product_set_add>
+        <reference name="content">
+            <block type="adminhtml/catalog_product_attribute_set_toolbar_add" name="attribute_set_add">
+                <block type="adminhtml/catalog_product_attribute_set_main_formset" name="set_form"></block>
+            </block>
+        </reference>
+    </adminhtml_catalog_product_set_add>
 
     <adminhtml_catalog_product_set_edit>
         <reference name="content">
