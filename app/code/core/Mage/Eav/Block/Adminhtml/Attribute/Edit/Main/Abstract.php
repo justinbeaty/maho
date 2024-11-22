@@ -38,44 +38,24 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
         return $this->_attribute ?? Mage::registry('entity_attribute');
     }
 
-    /**
-     * Retrieve Tab label
-     *
-     * @return string
-     */
     #[\Override]
     public function getTabLabel()
     {
         return Mage::helper('eav')->__('Properties');
     }
 
-    /**
-     * Retrieve Tab title
-     *
-     * @return string
-     */
     #[\Override]
     public function getTabTitle()
     {
         return Mage::helper('eav')->__('Properties');
     }
 
-    /**
-     * Can show tab flag
-     *
-     * @return bool
-     */
     #[\Override]
     public function canShowTab()
     {
         return true;
     }
 
-    /**
-     * Check is a hidden tab
-     *
-     * @return bool
-     */
     #[\Override]
     public function isHidden()
     {
@@ -226,10 +206,8 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
 
     /**
      * Return dependency block object
-     *
-     * @return Mage_Adminhtml_Block_Widget_Form_Element_Dependence
      */
-    protected function _getDependence()
+    protected function _getDependence(): Mage_Adminhtml_Block_Widget_Form_Element_Dependence
     {
         if (!$this->getChild('form_after')) {
             /** @var Mage_Adminhtml_Block_Widget_Form_Element_Dependence $block */

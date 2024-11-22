@@ -24,44 +24,24 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
         $this->setTemplate('eav/attribute/options.phtml');
     }
 
-    /**
-     * Retrieve Tab label
-     *
-     * @return string
-     */
     #[\Override]
     public function getTabLabel()
     {
         return Mage::helper('eav')->__('Manage Label / Options');
     }
 
-    /**
-     * Retrieve Tab title
-     *
-     * @return string
-     */
     #[\Override]
     public function getTabTitle()
     {
         return Mage::helper('eav')->__('Manage Label / Options');
     }
 
-    /**
-     * Can show tab flag
-     *
-     * @return bool
-     */
     #[\Override]
     public function canShowTab()
     {
         return true;
     }
 
-    /**
-     * Check is a hidden tab
-     *
-     * @return bool
-     */
     #[\Override]
     public function isHidden()
     {
@@ -129,8 +109,13 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
      */
     public function getOptionValues()
     {
+
+
         // TODO, use new eav helper method
         $attributeType = $this->getAttributeObject()->getFrontendInput();
+
+
+
         $defaultValues = $this->getAttributeObject()->getDefaultValue();
         if (in_array($attributeType, ['select', 'multiselect', 'customselect'])) {
             $defaultValues = explode(',', (string)$defaultValues);
