@@ -11,12 +11,12 @@
  */
 
 /**
- * Product attribute add/edit form main tab
+ * EAV attribute add/edit form main tab
  *
  * @category   Mage
  * @package    Mage_Eav
  */
-abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mage_Adminhtml_Block_Widget_Form
+abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mage_Adminhtml_Block_Widget_Form implements Mage_Adminhtml_Block_Widget_Tab_Interface
 {
     protected $_attribute = null;
 
@@ -36,6 +36,50 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
     public function getAttributeObject()
     {
         return $this->_attribute ?? Mage::registry('entity_attribute');
+    }
+
+    /**
+     * Retrieve Tab label
+     *
+     * @return string
+     */
+    #[\Override]
+    public function getTabLabel()
+    {
+        return Mage::helper('eav')->__('Properties');
+    }
+
+    /**
+     * Retrieve Tab title
+     *
+     * @return string
+     */
+    #[\Override]
+    public function getTabTitle()
+    {
+        return Mage::helper('eav')->__('Properties');
+    }
+
+    /**
+     * Can show tab flag
+     *
+     * @return bool
+     */
+    #[\Override]
+    public function canShowTab()
+    {
+        return true;
+    }
+
+    /**
+     * Check is a hidden tab
+     *
+     * @return bool
+     */
+    #[\Override]
+    public function isHidden()
+    {
+        return false;
     }
 
     /**

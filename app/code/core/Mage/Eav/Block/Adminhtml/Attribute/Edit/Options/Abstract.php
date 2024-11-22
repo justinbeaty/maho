@@ -11,17 +11,61 @@
  */
 
 /**
- * Attribute add/edit form options tab
+ * EAV Attribute add/edit form options tab
  *
  * @category   Mage
  * @package    Mage_Eav
  */
-abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends Mage_Adminhtml_Block_Widget
+abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends Mage_Adminhtml_Block_Widget implements Mage_Adminhtml_Block_Widget_Tab_Interface
 {
     public function __construct()
     {
         parent::__construct();
         $this->setTemplate('eav/attribute/options.phtml');
+    }
+
+    /**
+     * Retrieve Tab label
+     *
+     * @return string
+     */
+    #[\Override]
+    public function getTabLabel()
+    {
+        return Mage::helper('eav')->__('Manage Label / Options');
+    }
+
+    /**
+     * Retrieve Tab title
+     *
+     * @return string
+     */
+    #[\Override]
+    public function getTabTitle()
+    {
+        return Mage::helper('eav')->__('Manage Label / Options');
+    }
+
+    /**
+     * Can show tab flag
+     *
+     * @return bool
+     */
+    #[\Override]
+    public function canShowTab()
+    {
+        return true;
+    }
+
+    /**
+     * Check is a hidden tab
+     *
+     * @return bool
+     */
+    #[\Override]
+    public function isHidden()
+    {
+        return false;
     }
 
     /**

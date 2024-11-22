@@ -279,7 +279,10 @@ Layout handle for configurable products
             </action>
         </reference>
         <reference name="left">
-            <block type="eav/adminhtml_attribute_edit_tabs" name="attribute_edit_tabs"></block>
+            <block type="eav/adminhtml_attribute_edit_tabs" name="attribute_edit_tabs">
+                <action method="addTab"><name>main</name><block>eav/adminhtml_attribute_edit_tab_main</block></action>
+                <action method="addTab"><name>labels</name><block>eav/adminhtml_attribute_edit_tab_options</block></action>
+            </block>
         </reference>
         <reference name="content">
             <block type="eav/adminhtml_attribute_edit" name="attribute_edit_content"></block>
@@ -326,7 +329,10 @@ Layout handle for configurable products
 
     <adminhtml_catalog_product_attribute_edit>
         <reference name="left">
-            <block type="adminhtml/catalog_product_attribute_edit_tabs" name="attribute_edit_tabs"></block>
+            <block type="adminhtml/catalog_product_attribute_edit_tabs" name="attribute_edit_tabs">
+                <action method="addTab"><name>main</name><block>adminhtml/catalog_product_attribute_edit_tab_main</block></action>
+                <action method="addTab"><name>labels</name><block>adminhtml/catalog_product_attribute_edit_tab_options</block></action>
+            </block>
         </reference>
         <reference name="content">
             <block type="adminhtml/catalog_product_attribute_edit" name="attribute_edit_content"></block>
