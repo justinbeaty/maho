@@ -16,14 +16,18 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit extends Mage_Adminhtml_Block_Widget_Form_Container
+class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit extends Mage_Eav_Block_Adminhtml_Attribute_Edit
 {
     public function __construct()
     {
+        $this->entityType = Mage::registry('entity_type');
+        $this->entityAttribute = Mage::registry('entity_attribute');
+
         $this->_objectId = 'attribute_id';
+        $this->_blockGroup = 'adminhtml';
         $this->_controller = 'catalog_product_attribute';
 
-        parent::__construct();
+        Mage_Adminhtml_Block_Widget_Form_Container::__construct();
 
         if ($this->getRequest()->getParam('popup')) {
             $this->_removeButton('back');
@@ -44,43 +48,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit extends Mage_Adminhtml
         $this->_updateButton('save', 'label', Mage::helper('catalog')->__('Save Attribute'));
         $this->_updateButton('save', 'onclick', 'saveAttribute()');
 
-        if (!Mage::registry('entity_attribute')->getIsUserDefined()) {
-            $this->_removeButton('delete');
+        if ($this->entityAttribute->getIsUserDefined()) {
+            $this->_updateButton('delete', 'label', $this->__('Delete Attribute'));
         } else {
-            $this->_updateButton('delete', 'label', Mage::helper('catalog')->__('Delete Attribute'));
+            $this->_removeButton('delete');
         }
-    }
-
-    /**
-     * @return string
-     */
-    #[\Override]
-    public function getHeaderText()
-    {
-        if (Mage::registry('entity_attribute')->getId()) {
-            $frontendLabel = Mage::registry('entity_attribute')->getFrontendLabel();
-            if (is_array($frontendLabel)) {
-                $frontendLabel = $frontendLabel[0];
-            }
-            return Mage::helper('catalog')->__('Edit Product Attribute "%s"', $this->escapeHtml($frontendLabel));
-        }
-        return Mage::helper('catalog')->__('New Product Attribute');
-    }
-
-    /**
-     * @return string
-     */
-    public function getValidationUrl()
-    {
-        return $this->getUrl('*/*/validate', ['_current' => true]);
-    }
-
-    /**
-     * @return string
-     */
-    #[\Override]
-    public function getSaveUrl()
-    {
-        return $this->getUrl('*/' . $this->_controller . '/save', ['_current' => true, 'back' => null]);
     }
 }
