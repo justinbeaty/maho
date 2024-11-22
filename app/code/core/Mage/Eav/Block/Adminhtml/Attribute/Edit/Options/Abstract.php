@@ -18,10 +18,31 @@
  */
 abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends Mage_Adminhtml_Block_Widget implements Mage_Adminhtml_Block_Widget_Tab_Interface
 {
+    /** @var Mage_Eav_Model_Entity_Attribute $_attribute */
+    protected $_attribute = null;
+
     public function __construct()
     {
         parent::__construct();
         $this->setTemplate('eav/attribute/options.phtml');
+    }
+
+    /**
+     * @param Mage_Eav_Model_Entity_Attribute $attribute
+     * @return $this
+     */
+    public function setAttributeObject($attribute)
+    {
+        $this->_attribute = $attribute;
+        return $this;
+    }
+
+    /**
+     * @return Mage_Eav_Model_Entity_Attribute_Abstract
+     */
+    public function getAttributeObject()
+    {
+        return $this->_attribute ?? Mage::registry('entity_attribute');
     }
 
     #[\Override]
@@ -109,66 +130,55 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
      */
     public function getOptionValues()
     {
-
-
-        // TODO, use new eav helper method
-        $attributeType = $this->getAttributeObject()->getFrontendInput();
-
-
-
-        $defaultValues = $this->getAttributeObject()->getDefaultValue();
-        if (in_array($attributeType, ['select', 'multiselect', 'customselect'])) {
-            $defaultValues = explode(',', (string)$defaultValues);
-        } else {
-            $defaultValues = [];
-        }
-
-        switch ($attributeType) {
-            case 'select':
-            case 'customselect':
-                $inputType = 'radio';
-                break;
-            case 'multiselect':
-                $inputType = 'checkbox';
-                break;
-            default:
-                $inputType = '';
-                break;
-        }
-
         $values = $this->getData('option_values');
-        if (is_null($values)) {
-            $values = [];
+        if (!is_null($values)) {
+            return $values;
+        }
+        $values = [];
+
+        $attributeObject = $this->getAttributeObject();
+        $entityTypeCode = $attributeObject->getEntityType()->getEntityTypeCode();
+        $inputType = $attributeObject->getFrontendInput();
+
+        // Get the <options_panel> config.xml node for this $inputType
+        $optionsInfo = Mage::helper('eav')->getInputTypeOptionsPanelInfo($entityTypeCode)[$inputType] ?? [];
+
+        if (!empty($optionsInfo)) {
+            $defaultValues = explode(',', (string)$attributeObject->getDefaultValue());
+
             $optionCollection = Mage::getResourceModel('eav/entity_attribute_option_collection')
-                ->setAttributeFilter($this->getAttributeObject()->getId())
+                ->setAttributeFilter($attributeObject->getId())
                 ->setPositionOrder('desc', true)
                 ->load();
 
-            $helper = Mage::helper('core');
             /** @var Mage_Eav_Model_Entity_Attribute_Option $option */
             foreach ($optionCollection as $option) {
-                $value = [];
+                $value = new Varien_Object();
                 if (in_array($option->getId(), $defaultValues)) {
                     $value['checked'] = 'checked="checked"';
                 } else {
                     $value['checked'] = '';
                 }
 
-                $value['intype'] = $inputType;
+                $value['intype'] = $optionsInfo['intype'];
                 $value['id'] = $option->getId();
                 $value['sort_order'] = $option->getSortOrder();
                 foreach ($this->getStores() as $store) {
                     $storeValues = $this->getStoreOptionValues($store->getId());
-                    $value['store' . $store->getId()] = isset($storeValues[$option->getId()])
-                        ? $helper->escapeHtml($storeValues[$option->getId()]) : '';
+                    if (isset($storeValues[$option->getId()])) {
+                        $value['store' . $store->getId()] = Mage::helper('core')->escapeHtml($storeValues[$option->getId()]);
+                    } else {
+                        $value['store' . $store->getId()] = '';
+                    }
                 }
                 if ($this->isConfigurableSwatchesEnabled()) {
                     $value['swatch'] = $option->getSwatchValue();
                 }
-                $values[] = new Varien_Object($value);
+                $values[] = $value;
             }
-            $this->setData('option_values', $values);
         }
+
+        $this->setData('option_values', $values);
         return $values;
     }
 
@@ -216,16 +226,6 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
             $this->setData('store_option_values_' . $storeId, $values);
         }
         return $values;
-    }
-
-    /**
-     * Retrieve attribute object from registry
-     *
-     * @return Mage_Eav_Model_Entity_Attribute_Abstract
-     */
-    public function getAttributeObject()
-    {
-        return Mage::registry('entity_attribute');
     }
 
     /**

@@ -202,7 +202,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
      *     - 'grouped'
      *     - 'virtual'
      * - options_panel: (object) configuration options for the "Manage Options" panel
-     *     - 'type': (string) the HTML input type to use for "Is Default" boxes, can be 'radio' or 'checkbox'
+     *     - 'intype': (string) the HTML input type to use for "Is Default" boxes, can be 'radio' or 'checkbox'
      *
      * See <eav_inputtypes> nodes in various config.xml files for examples
      */

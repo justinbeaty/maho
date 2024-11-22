@@ -71,15 +71,6 @@ class EavAttributeEditForm {
 
         const inputType = this.getInputTypeValue();
 
-        // todo
-        // if($('backend_type') && $('backend_type').options) {
-        //     for(var i=0;i<$('backend_type').options.length;i++) {
-        //         if($('backend_type').options[i].value=='int') {
-        //             $('backend_type').selectedIndex = i;
-        //         }
-        //     }
-        // }
-
         // Hide fields defined in config.xml eav_inputtypes nodes
         const hiddenFields = this.inputTypeDefs[inputType]?.hide_fields ?? [];
         for (let field of hiddenFields) {

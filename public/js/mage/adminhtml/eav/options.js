@@ -16,6 +16,7 @@ class EavAttributeOptionsForm {
         // PrototypeJS Template Instance
         this.template = new Template(template, /(^|.|\r|\n)({{(\w+)}})/);
 
+        this.updateOptionsPanel();
         this.bindEventListeners();
     }
 
@@ -46,25 +47,21 @@ class EavAttributeOptionsForm {
         }
     }
 
-    getInputTypeValue() {
-        const el = document.getElementById('frontend_input');
+    getFormValue(id) {
+        const el = document.getElementById(id);
         return el ? el.value : '';
-    }
-
-    getOptionInputType() {
-        const inputType = this.getInputTypeValue();
-        return this.inputTypeOptionsInfo[inputType]?.type;
     }
 
     add(option = {}) {
         if (!this.panelEl) {
             return;
         }
+        const inputType = this.getFormValue('frontend_input');
 
         const dummyEl = document.createElement('table');
         dummyEl.innerHTML = this.template.evaluate({
             id: `option_${this.itemCount}`,
-            intype: this.getOptionInputType(),
+            intype: this.inputTypeOptionsInfo[inputType]?.type,
             swatch_class: option.swatch ? '' : 'swatch-disabled',
             ...option,
         });
@@ -149,19 +146,26 @@ class EavAttributeOptionsForm {
             return;
         }
 
-        const type = this.getOptionInputType();
+        // Get the <options_panel> config.xml node for this inputType
+        const inputType = this.getFormValue('frontend_input');
+        const optionsInfo = this.inputTypeOptionsInfo[inputType];
 
-        if (type) {
+        // Show / hide options panel and switch "Use Default" inputs to radio / checkbox
+        if (optionsInfo) {
             this.panelEl.classList.remove('no-display');
-            this.panelEl.querySelectorAll('input[name="default[]"]').forEach((el) => el.type = type);
+            this.panelEl.querySelectorAll('input[name="default[]"]').forEach((el) => el.type = optionsInfo.intype);
         } else {
             this.panelEl.classList.add('no-display');
         }
 
-        if ($F('frontend_input')=='select' && $F('is_required')==1) {
-            $('option-count-check').addClassName('required-options-count');
-        } else {
-            $('option-count-check').removeClassName('required-options-count');
+        // Add required options validation check
+        const optionsCountCheckEl = document.getElementById('option-count-check');
+        if (optionsCountCheckEl) {
+            if (inputType === 'select' && this.getFormValue('is_required')) {
+                optionsCountCheckEl.classList.add('required-options-count');
+            } else {
+                optionsCountCheckEl.classList.remove('required-options-count');
+            }
         }
     }
 }
