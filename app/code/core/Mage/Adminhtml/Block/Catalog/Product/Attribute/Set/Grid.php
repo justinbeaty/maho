@@ -20,8 +20,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Grid extends Mage_Eav_B
     {
         // For backwards compatibility, register entity_type if not already defined
         if (!Mage::registry('entity_type')) {
-            $entityType = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY);
-            Mage::register('entity_type', $entityType);
+            Mage::register('entity_type', Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY));
         }
         parent::__construct();
     }

@@ -9,7 +9,7 @@
  */
 
 /**
- * Adminhtml attribute sets block
+ * EAV attribute sets grid container
  */
 class Mage_Eav_Block_Adminhtml_Attribute_Set extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
