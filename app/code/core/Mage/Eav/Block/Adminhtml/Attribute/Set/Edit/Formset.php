@@ -16,6 +16,13 @@
  */
 class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit_Formset extends Mage_Adminhtml_Block_Widget_Form
 {
+    protected Mage_Eav_Model_Entity_Type $entityType;
+
+    public function __construct()
+    {
+        $this->entityType = Mage::registry('entity_type');
+    }
+
     #[\Override]
     protected function _prepareForm()
     {
@@ -39,9 +46,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit_Formset extends Mage_Adminhtml
                 'value' => '1'
             ]);
 
-            $sets = Mage::getModel('eav/entity_attribute_set')
-                ->getResourceCollection()
-                ->setEntityTypeFilter(Mage::registry('entity_type')->getEntityTypeId())
+            $sets = $this->entityType->getAttributeSetCollection()
                 ->setOrder('attribute_set_name', 'asc')
                 ->load()
                 ->toOptionArray();

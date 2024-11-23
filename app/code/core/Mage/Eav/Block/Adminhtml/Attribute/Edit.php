@@ -11,7 +11,7 @@
  */
 
 /**
- * EAV attribute edit page
+ * Adminhtml generic EAV attribute edit page
  *
  * @category   Mage
  * @package    Mage_Eav

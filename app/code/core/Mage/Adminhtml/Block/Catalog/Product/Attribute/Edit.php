@@ -22,8 +22,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit extends Mage_Eav_Block
     {
         // For backwards compatibility, register entity_type if not already defined
         if (!Mage::registry('entity_type')) {
-            $entityType = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY);
-            Mage::register('entity_type', $entityType);
+            Mage::register('entity_type', Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY));
         }
 
         $this->entityType = Mage::registry('entity_type');

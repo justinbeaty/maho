@@ -18,9 +18,16 @@
  */
 class Mage_Eav_Block_Adminhtml_Attribute_Edit_Tabs extends Mage_Adminhtml_Block_Widget_Tabs
 {
+    protected Mage_Eav_Model_Entity_Type $entityType;
+    protected Mage_Eav_Model_Entity_Attribute $entityAttribute;
+
     public function __construct()
     {
+        $this->entityType = Mage::registry('entity_type');
+        $this->entityAttribute = Mage::registry('entity_attribute');
+
         parent::__construct();
+
         $this->setId('eav_attribute_tabs');
         $this->setDestElementId('edit_form');
         $this->setTitle(Mage::helper('eav')->__('Attribute Information'));

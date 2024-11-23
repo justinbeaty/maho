@@ -17,9 +17,13 @@
  */
 class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_Template
 {
-    #[\Override]
-    protected function _construct()
+    protected Mage_Eav_Model_Entity_Type $entityType;
+    protected Mage_Eav_Model_Entity_Attribute_Set $attributeSet;
+
+    protected function __construct()
     {
+        $this->entityType = Mage::registry('entity_type');
+        $this->attributeSet = Mage::registry('attribute_set');
         $this->setTemplate('eav/attribute/set/main.phtml');
     }
 
@@ -167,10 +171,8 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_T
             ->setSortOrder()
             ->load();
 
-        /* @var $entityType Mage_Eav_Model_Entity_Type */
-        $entityType = Mage::registry('entity_type');
-
-        $hiddenAttributes = Mage::helper('eav')->getHiddenAttributes($entityType->getEntityTypeCode());
+        // Get global/eav_attributes/$entityType/$attributeCode/hidden config.xml nodes
+        $hiddenAttributes = Mage::helper('eav')->getHiddenAttributes($this->entityType->getEntityTypeCode());
 
         /* @var $node Mage_Eav_Model_Entity_Attribute_Group */
         foreach ($groups as $node) {
@@ -182,8 +184,8 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_T
             $item['allowDrag']  = true;
 
             /** @var Mage_Eav_Model_Entity_Attribute $nodeChildren */
-            $nodeChildren = Mage::getResourceModel($entityType->getEntityAttributeCollection());
-            $nodeChildren->setEntityTypeFilter($entityType->getEntityTypeId())
+            $nodeChildren = Mage::getResourceModel($this->entityType->getEntityAttributeCollection());
+            $nodeChildren->setEntityTypeFilter($this->entityType->getEntityTypeId())
                          ->setNotCodeFilter($hiddenAttributes)
                          ->setAttributeGroupFilter($node->getId())
                          ->load();
@@ -223,12 +225,9 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_T
         $items = [];
         $setId = $this->_getSetId();
 
-        /* @var $entityType Mage_Eav_Model_Entity_Type */
-        $entityType = Mage::registry('entity_type');
-
         /** @var Mage_Eav_Model_Resource_Entity_Attribute_Collection $collection */
-        $collection = Mage::getResourceModel($entityType->getEntityAttributeCollection());
-        $collection->setEntityTypeFilter($entityType->getEntityTypeId())
+        $collection = Mage::getResourceModel($this->entityType->getEntityAttributeCollection());
+        $collection->setEntityTypeFilter($this->entityType->getEntityTypeId())
                    ->setAttributeSetFilter($setId)
                    ->load();
 
@@ -239,8 +238,8 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_T
         }
 
         /** @var Mage_Eav_Model_Resource_Entity_Attribute_Collection $attributes */
-        $attributes = Mage::getResourceModel($entityType->getEntityAttributeCollection());
-        $attributes->setEntityTypeFilter($entityType->getEntityTypeId())
+        $attributes = Mage::getResourceModel($this->entityType->getEntityAttributeCollection());
+        $attributes->setEntityTypeFilter($this->entityType->getEntityTypeId())
                    ->setAttributesExcludeFilter($attributesIds)
                    ->setOrder('attribute_code', 'asc')
                    ->load();
@@ -353,7 +352,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_T
      */
     protected function _getAttributeSet()
     {
-        return Mage::registry('current_attribute_set');
+        return $this->attributeSet;
     }
 
     /**
@@ -375,7 +374,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_T
     {
         $isDefault = $this->getData('is_current_set_default');
         if (is_null($isDefault)) {
-            $defaultSetId = Mage::registry('entity_type')->getDefaultAttributeSetId();
+            $defaultSetId = $this->entityType->getDefaultAttributeSetId();
             $isDefault = $this->_getSetId() == $defaultSetId;
             $this->setData('is_current_set_default', $isDefault);
         }
@@ -401,8 +400,8 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit extends Mage_Adminhtml_Block_T
     #[\Override]
     protected function _toHtml()
     {
-        $type = Mage::registry('entity_type')->getEntityTypeCode();
-        Mage::dispatchEvent("adminhtml_{$type}_attribute_set_main_html_before", ['block' => $this]);
+        $entityTypeCode = $this->entityType->getEntityTypeCode();
+        Mage::dispatchEvent("adminhtml_{$entityTypeCode}_attribute_set_main_html_before", ['block' => $this]);
         return parent::_toHtml();
     }
 }

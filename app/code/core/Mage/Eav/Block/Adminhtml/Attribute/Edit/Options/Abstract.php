@@ -140,7 +140,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Options_Abstract extends 
         $entityTypeCode = $attributeObject->getEntityType()->getEntityTypeCode();
         $inputType = $attributeObject->getFrontendInput();
 
-        // Get the <options_panel> config.xml node for this $inputType
+        // Get global/eav_inputtypes/$inputType/options_panel config.xml node
         $optionsInfo = Mage::helper('eav')->getInputTypeOptionsPanelInfo($entityTypeCode)[$inputType] ?? [];
 
         if (!empty($optionsInfo)) {

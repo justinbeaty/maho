@@ -177,7 +177,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
             $form->getElement('apply_to')->addClass('no-display ignore-validate');
         }
 
+        /** @var Mage_Adminhtml_Block_Widget_Form_Element_Dependence $block */
         $block = $this->_getDependence();
+
         $block
             ->addFieldDependence('is_filterable', 'frontend_input', ['select', 'multiselect', 'price'])
             ->addFieldDependence('is_filterable_in_search', 'frontend_input', ['select', 'multiselect', 'price'])

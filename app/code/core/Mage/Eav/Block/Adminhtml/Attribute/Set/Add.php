@@ -15,9 +15,11 @@
  */
 class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Template
 {
-    #[\Override]
-    protected function _construct()
+    protected Mage_Eav_Model_Entity_Type $entityType;
+
+    protected function __construct()
     {
+        $this->entityType = Mage::registry('entity_type');
         $this->setTemplate('eav/attribute/set/add.phtml');
     }
 
@@ -50,7 +52,10 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Te
      */
     protected function _getHeader()
     {
-        return Mage::helper('eav')->__('Add New Attribute Set');
+        return Mage::helper('eav')->__(
+            'Add New %s Attribute Set',
+            Mage::helper('eav')->formatTypeCode($this->entityType->getEntityTypeCode())
+        );
     }
 
     /**

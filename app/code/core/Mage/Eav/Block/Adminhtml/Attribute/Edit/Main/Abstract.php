@@ -84,9 +84,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
     }
 
     /**
-     * Preparing default form elements for editing attribute
-     *
-     * @inheritDoc
+     * Prepare default form elements for editing attribute
      */
     #[\Override]
     protected function _prepareForm()
