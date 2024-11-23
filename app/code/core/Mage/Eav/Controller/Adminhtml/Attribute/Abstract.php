@@ -56,6 +56,15 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
 
     public function editAction()
     {
+
+        print_r([
+            'controller_action_predispatch_' . $this->getRequest()->getRouteName(), // Mage_Core_Controller_Varien_Action
+            'controller_action_predispatch_' . $this->getFullActionName(), // Mage_Core_Controller_Varien_Action
+        ]);
+        die();
+
+
+
         $id = $this->getRequest()->getParam('attribute_id');
 
         /** @var Mage_Eav_Model_Entity_Attribute $attribute */

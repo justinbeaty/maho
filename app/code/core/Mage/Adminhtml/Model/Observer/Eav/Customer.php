@@ -11,7 +11,7 @@
 /**
  * Customer EAV Observer
  */
-class Mage_Adminhtml_Model_Customer_Observer
+class Mage_Adminhtml_Model_Observer_Eav_Customer
 {
     /**
      * Modify customer and customer_address attribute edit forms

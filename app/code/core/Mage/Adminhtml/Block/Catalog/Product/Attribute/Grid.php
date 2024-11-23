@@ -18,16 +18,6 @@
  */
 class Mage_Adminhtml_Block_Catalog_Product_Attribute_Grid extends Mage_Eav_Block_Adminhtml_Attribute_Grid_Abstract
 {
-    public function __construct()
-    {
-        // For backwards compatibility, register entity_type if not already defined
-        if (!Mage::registry('entity_type')) {
-            $entityType = Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY);
-            Mage::register('entity_type', $entityType);
-        }
-        parent::__construct();
-    }
-
     /**
      * Prepare product attributes grid collection object
      *

@@ -130,7 +130,7 @@
             <adminhtml_customer_attribute_edit_prepare_form>
                 <observers>
                     <eav>
-                        <class>adminhtml/customer_observer</class>
+                        <class>adminhtml/observer_eav_customer</class>
                         <method>attributeEditPrepareForm</method>
                     </eav>
                 </observers>
@@ -138,7 +138,7 @@
             <adminhtml_customer_address_attribute_edit_prepare_form>
                 <observers>
                     <eav>
-                        <class>adminhtml/customer_observer</class>
+                        <class>adminhtml/observer_eav_customer</class>
                         <method>attributeEditPrepareForm</method>
                     </eav>
                 </observers>
