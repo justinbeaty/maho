@@ -202,6 +202,13 @@
         </events>
     </global>
     <adminhtml>
+        <layout>
+            <updates>
+                <eav>
+                    <file>eav.xml</file>
+                </eav>
+            </updates>
+        </layout>
         <translate>
             <modules>
                 <Mage_Eav>
@@ -223,19 +230,4 @@
             </modules>
         </translate>
     </frontend>
-    <default>
-        <general>
-            <validator_data>
-                <input_types>
-                    <text>text</text>
-                    <textarea>textarea</textarea>
-                    <date>date</date>
-                    <boolean>boolean</boolean>
-                    <multiselect>multiselect</multiselect>
-                    <customselect>customselect</customselect>
-                    <select>select</select>
-                </input_types>
-            </validator_data>
-        </general>
-    </default>
 </config>
