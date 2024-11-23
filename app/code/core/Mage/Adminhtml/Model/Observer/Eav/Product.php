@@ -21,5 +21,6 @@ class Mage_Adminhtml_Model_Observer_Eav_Product
         if (!Mage::registry('entity_type')) {
             Mage::register('entity_type', Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY));
         }
+        return $this;
     }
 }
