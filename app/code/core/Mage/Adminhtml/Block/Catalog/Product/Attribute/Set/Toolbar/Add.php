@@ -20,11 +20,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Toolbar_Add extends Mag
 {
     public function __construct()
     {
-        // For backwards compatibility, register entity_type if not already defined
-        if (!Mage::registry('entity_type')) {
-            Mage::register('entity_type', Mage::getSingleton('eav/config')->getEntityType(Mage_Catalog_Model_Product::ENTITY));
-        }
-
         parent::__construct();
 
         $this->setTemplateIfExists('catalog/product/attribute/set/toolbar/add.phtml');
