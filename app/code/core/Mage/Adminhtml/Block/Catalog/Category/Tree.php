@@ -154,15 +154,15 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return $this->getUrl('*/catalog_category/move', ['store' => $this->getRequest()->getParam('store')]);
     }
 
-    public function getTree($parenNodeCategory = null)
+    public function getTree($parentNodeCategory = null)
     {
-        $rootArray = $this->_getNodeJson($this->getRoot($parenNodeCategory));
+        $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory));
         return $rootArray['children'] ?? [];
     }
 
-    public function getTreeJson($parenNodeCategory = null)
+    public function getTreeJson($parentNodeCategory = null)
     {
-        $rootArray = $this->_getNodeJson($this->getRoot($parenNodeCategory));
+        $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory, null));
         return Mage::helper('core')->jsonEncode($rootArray['children'] ?? []);
     }
 
@@ -213,9 +213,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         $item = [];
         $item['text'] = $this->buildNodeName($node);
 
-        /* $rootForStores = Mage::getModel('core/store')
-            ->getCollection()
-            ->loadByCategoryIds(array($node->getEntityId())); */
         $rootForStores = in_array($node->getEntityId(), $this->getRootIds());
 
         $item['id']  = $node->getId();
@@ -237,10 +234,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
 
         if ($node->hasChildren()) {
             $item['children'] = [];
-            if (!($this->getUseAjax() && $node->getLevel() > 1 && !$isParent)) {
-                foreach ($node->getChildren() as $child) {
-                    $item['children'][] = $this->_getNodeJson($child, $level + 1);
-                }
+            foreach ($node->getChildren() as $child) {
+                $item['children'][] = $this->_getNodeJson($child, $level + 1);
             }
         }
 

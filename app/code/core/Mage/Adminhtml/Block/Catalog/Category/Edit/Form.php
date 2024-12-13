@@ -177,7 +177,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
     {
         if ($this->hasStoreRootCategory()) {
             if ($this->getCategoryId()) {
-                return $this->getCategoryName();
+                $categoryIdText = Mage::helper('catalog')->__('ID: %s', $this->getCategoryId());
+                return $this->getCategoryName() . " ($categoryIdText)";
             } else {
                 $parentId = (int) $this->getRequest()->getParam('parent');
                 if ($parentId && ($parentId != Mage_Catalog_Model_Category::TREE_ROOT_ID)) {

@@ -37,6 +37,19 @@ function parseSidUrl(baseUrl, urlExt) {
     return baseUrl+urlExt+sid;
 }
 
+function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+}
+
+function unescapeHTML(str) {
+    const doc = new DOMParser().parseFromString(str, 'text/html');
+    return doc.documentElement.textContent;
+}
+
 /**
  * Formats currency using patern
  * format - JSON (pattern, decimal, decimalsDelimeter, groupsDelimeter)

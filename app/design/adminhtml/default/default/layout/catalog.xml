@@ -32,7 +32,7 @@
     <adminhtml_catalog_product_new>
         <update handle="editor"/>
         <reference name="head">
-            <action method="addItem"><type>js</type><name>html5sortable.min.js</name><params/></action>
+            <action method="addJs"><name>html5sortable.min.js</name></action>
         </reference>
         <reference name="content">
             <block type="adminhtml/catalog_product_edit" name="product_edit"></block>
@@ -49,7 +49,8 @@
     <adminhtml_catalog_product_edit>
         <update handle="editor"/>
         <reference name="head">
-            <action method="addItem"><type>js</type><name>html5sortable.min.js</name><params/></action>
+            <action method="addJs"><name>html5sortable.min.js</name></action>
+            <action method="addJs"><name>maho-tree.js</name></action>
         </reference>
         <reference name="content">
             <block type="adminhtml/catalog_product_edit" name="product_edit"></block>
@@ -273,13 +274,27 @@ Layout handle for configurable products
         </reference>
     </adminhtml_catalog_product_attribute_edit>
 
+    <adminhtml_catalog_product_set_edit>
+        <reference name="head">
+            <action method="addJs"><name>html5sortable.min.js</name></action>
+            <action method="addJs"><name>Sortable.min.js</name></action>
+            <action method="addJs"><name>maho-tree.js</name></action>
+            <action method="addJs"><name>mage/adminhtml/eav/set.js</name></action>
+        </reference>
+    </adminhtml_catalog_product_set_edit>
+
     <adminhtml_catalog_category_edit>
         <update handle="editor"/>
+        <reference name="head">
+            <action method="addJs"><name>Sortable.min.js</name></action>
+            <action method="addJs"><name>maho-tree.js</name></action>
+            <action method="addJs"><name>mage/adminhtml/catalog/category.js</name></action>
+        </reference>
         <reference name="left">
             <block name="category.tree" type="adminhtml/catalog_category_tree" template="catalog/category/tree.phtml" />
         </reference>
         <reference name="content">
-            <block name="category.edit"  type="adminhtml/catalog_category_edit" template="catalog/category/edit.phtml" />
+            <block name="category.edit" type="adminhtml/catalog_category_edit" template="catalog/category/edit.phtml" />
         </reference>
         <reference name="js">
             <block type="core/template" template="catalog/wysiwyg/js.phtml" name="catalog.wysiwyg.js" />

@@ -1523,6 +1523,7 @@ dialog #contents .nm img { vertical-align:bottom; }
 .np                 { padding:0 !important; }
 .no-display         { display:none; }
 .no-show            { display:none; }
+.inline-block       { display:inline-block; }
 .nowrap, .nobr      { white-space:nowrap; }
 .wrap               { white-space:normal !important; }
 .no-float           { float:none !important; }

@@ -14,15 +14,13 @@
 ?>
 
 <div class="content-header">
-        <h3><?= $this->escapeHtml($this->getHeader()) . ($this->getCategoryId() ? ' (' . Mage::helper('catalog')->__('ID: %s', $this->getCategoryId()) . ')' : '') ?></h3>
-        <p class="content-buttons form-buttons">
-            <?= $this->getResetButtonHtml() ?>
-            <?php if($this->getCategoryId()): ?>
-                    <?= $this->getDeleteButtonHtml() ?>
-            <?php endif ?>
-            <?= $this->getAdditionalButtonsHtml() ?>
-            <?= $this->getSaveButtonHtml() ?>
-        </p>
+    <h3><?= $this->escapeHtml($this->getHeader()) ?></h3>
+    <p class="content-buttons form-buttons">
+        <?= $this->getResetButtonHtml() ?>
+        <?= $this->getCategoryId() ? $this->getDeleteButtonHtml() : '' ?>
+        <?= $this->getAdditionalButtonsHtml() ?>
+        <?= $this->getSaveButtonHtml() ?>
+    </p>
 </div>
 <?php if($this->hasStoreRootCategory()): ?>
     <?= $this->getTabsHtml() ?>
@@ -31,18 +29,15 @@
     <?= Mage::helper('catalog')->__('Set root category for this store in the <a href="%s">configuration</a>', $this->getStoreConfigurationUrl()) ?>
 </div>
 <?php endif ?>
-<iframe name="iframeSave" style="display:none; width:100%;"></iframe>
-<form target="iframeSave" id="category_edit_form" action="<?= $this->getSaveUrl() ?>" method="post" enctype="multipart/form-data">
-    <div class="no-display">
-        <input type="hidden" name="isIframe" value="1" />
-        <input name="form_key" type="hidden" value="<?= $this->getFormKey() ?>" />
-        <input type="hidden" name="category_products" id="in_category_products" value="" />
-        <input type="hidden" name="active_tab_id" id="active_tab_id" value="" />
-    </div>
+
+<form id="category_edit_form" action="<?= $this->getSaveUrl() ?>" method="post" enctype="multipart/form-data">
+    <input name="form_key" type="hidden" value="<?= $this->getFormKey() ?>" />
     <div id="category_tab_content"></div>
 </form>
+
+
+     <!--
 <script type="text/javascript">
-//<![CDATA[
     categoryForm = new varienForm('category_edit_form');
 
     categoryForm.submit= function (url) {
@@ -242,5 +237,5 @@
     }
     $('active_tab_id').tabsJsObject = <?= $_tabsJsObject ?>;
 <?php endif ?>
-//]]>
 </script>
+    -->

@@ -9,20 +9,46 @@
  * @copyright   Copyright (c) 2024 Maho (https://mahocommerce.com)
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-?>
-<?php
-/**
- * Template for Mage_Adminhtml_Block_Catalog_Category_Container
- *
- * @var Mage_Adminhtml_Block_Catalog_Category_Edit $this
- */
+
+/** @var Mage_Adminhtml_Block_Catalog_Category_Edit $this */
+
+$treeBlock = $this->getLayout()->getBlock('category.tree');
+$tabsBlock = $this->getLayout()->getBlock('tabs')
 ?>
 
 <div id="category-edit-container" class="category-content">
     <?= $this->getChildHtml('form') ?>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const categoryForm = new CategoryEditForm({
+            editUrl: '<?= $treeBlock->getEditUrl() ?>',
+            loadTreeUrl: '<?= $treeBlock->getLoadTreeUrl() ?>',
+
+            containerDiv: 'category-edit-container',
+            treeDiv: 'tree-div',
+            messagesDiv: 'messages',
+
+            tabsJsObjectName: '<?= $tabsBlock->getJsObjectName() ?>',
+
+        });
+
+        window.tree = {
+            collapseTree: categoryForm.tree.collapseAll.bind(categoryForm.tree),
+            expandTree: categoryForm.tree.expandAll.bind(categoryForm.tree),
+        }
+        window.addNew = categoryForm.addNew.bind(categoryForm);
+        window.categoryReset = categoryForm.categoryReset.bind(categoryForm);
+        window.categoryDelete = categoryForm.categoryDelete.bind(categoryForm);
+        window.categorySubmit = categoryForm.categorySubmit.bind(categoryForm);
+
+    });
+</script>
+
+<!--
 <script type="text/javascript">
-//<![CDATA[
+
 
     function categoryReset(url,useAjax){
         if(useAjax){
@@ -174,10 +200,5 @@
             }
         }
     }
-
-    function displayLoadingMask()
-    {
-        showLoader();
-    }
-//]]>
 </script>
+    -->
