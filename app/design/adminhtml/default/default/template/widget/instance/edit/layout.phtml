@@ -437,7 +437,7 @@ var WidgetInstance = {
     }
 };
 
-Ext.onReady(function(){
+document.addEventListener('DOMContentLoaded', () => {
     <?php foreach ($this->getPageGroups() as $pageGroup): ?>
         WidgetInstance.addPageGroup(<?= Zend_Json::encode($pageGroup) ?>);
     <?php endforeach ?>
