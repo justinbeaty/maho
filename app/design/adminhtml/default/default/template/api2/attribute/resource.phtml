@@ -55,9 +55,9 @@
     }
 
     const tree = new MahoTree('resource-tree', {
-        checkbox: true,
-        callbacks: {
-            afterUpdate: updateValue,
+        selectable: {
+            mode: 'nested',
+            onSelect: updateValue,
         },
     });
     tree.buildRootNode(<?= $this->getResTreeJson() ?>);

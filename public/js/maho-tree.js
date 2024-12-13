@@ -98,7 +98,7 @@ class MahoTree {
     buildNode({ children, ...obj }, parentEl = null) {
 
         const liEl = document.createElement('li');
-        const hasChildren = Array.isArray(children);
+        const hasChildren = Array.isArray(children) && children.length;
 
         (parentEl ?? this.rootEl).appendChild(liEl);
         this.nodeDataMap.set(liEl, obj);
@@ -129,7 +129,7 @@ class MahoTree {
         divEl.querySelector('span:not(.icon)').textContent = unescapeHTML(obj.text);
         liEl.dataset.text = obj.text;
 
-        const icons = (obj.icon ?? obj.cls ?? '').trim().split(/\s+/);
+        const icons = (obj.icon ?? obj.cls ?? '').trim().split(/\s+/).filter(Boolean);
         if (icons.length === 0) {
             icons.push(hasChildren ? this.config.iconFolder : this.config.iconLeaf);
         }
