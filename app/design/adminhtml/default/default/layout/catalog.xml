@@ -33,6 +33,7 @@
         <update handle="editor"/>
         <reference name="head">
             <action method="addJs"><name>html5sortable.min.js</name></action>
+            <action method="addJs"><name>maho-tree.js</name></action>
         </reference>
         <reference name="content">
             <block type="adminhtml/catalog_product_edit" name="product_edit"></block>

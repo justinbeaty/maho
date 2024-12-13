@@ -218,8 +218,6 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
             $this->_setActiveMenu('catalog/products');
         }
 
-        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
-
         $block = $this->getLayout()->getBlock('catalog.wysiwyg.js');
         if ($block) {
             $block->setStoreId($product->getStoreId());
@@ -270,8 +268,6 @@ class Mage_Adminhtml_Catalog_ProductController extends Mage_Adminhtml_Controller
                     $this->getUrl('*/*/*', ['_current' => true, 'active_tab' => null, 'tab' => null, 'store' => null])
                 );
         }
-
-        $this->getLayout()->getBlock('head')->setCanLoadExtJs(true);
 
         $block = $this->getLayout()->getBlock('catalog.wysiwyg.js');
         if ($block) {
