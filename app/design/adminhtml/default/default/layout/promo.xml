@@ -20,7 +20,6 @@
     </adminhtml_promo_catalog_index>
     <adminhtml_promo_catalog_edit>
         <reference name="head">
-            <action method="setCanLoadExtJs"><flag>1</flag></action>
             <action method="setCanLoadRulesJs"><flag>1</flag></action>
         </reference>
         <reference name="left">
@@ -49,7 +48,6 @@
     </adminhtml_promo_quote_index>
     <adminhtml_promo_quote_edit>
         <reference name="head">
-            <action method="setCanLoadExtJs"><flag>1</flag></action>
             <action method="setCanLoadRulesJs"><flag>1</flag></action>
         </reference>
         <reference name="left">
