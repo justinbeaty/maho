@@ -14,47 +14,55 @@ class ReviewEditForm {
     constructor(config = {}) {
         this.config = config;
         this.bindEventListeners();
-
-        // ratingItemsUrl
-        // Add:  $this->getUrl('*/*/ratingItems')
-        // Edit: $this->getUrl('*/*/ratingItems', ['_current' => true])
     }
 
     bindEventListeners() {
-        const storeSelectEl = document.getElementById('select_stores');
-        if (storeSelectEl) {
-            storeSelectEl.addEventListener('change', () => this.updateRating());
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('select_stores')?.addEventListener('change', this.updateRating.bind(this));
+        });
+    }
+
+    toggleSaveButton(isEnabled = true) {
+        const saveBtn = document.getElementById('save_button');
+        if (saveBtn) {
+            saveBtn.disabled = !isEnabled;
         }
     }
 
+    toggleForm(isVisible = true) {
+        document.getElementById('add_review_form')?.parentNode.classList.toggle('no-display', !isVisible);
+        document.getElementById('reviewProductGrid')?.classList.toggle('no-display', !!isVisible);
+        document.getElementById('save_button')?.classList.toggle('no-display', !isVisible);
+        document.getElementById('reset_button')?.classList.toggle('no-display', !isVisible);
+    }
+
     showForm() {
-        toggleParentVis('add_review_form');
-        toggleVis('reviewProductGrid');
-        toggleVis('save_button');
-        toggleVis('reset_button');
+        this.toggleForm(true);
     }
 
     hideForm() {
-        toggleParentVis('add_review_form');
-        toggleVis('save_button');
-        toggleVis('reset_button');
+        this.toggleForm(false);
     }
 
-
-    gridRowClick(data, event) {
-        console.log(data, event)
-        const url = event.target.closest('tr').title;
-        if (url) {
-            this.loadProductData(url);
+    async gridRowClick(data, event) {
+        const url = event.target.closest('tr')?.title;
+        const success = await this.loadProductData(url);
+        if (success) {
             this.showForm();
         }
     }
 
     async loadProductData(url) {
-        // Backwards compatibility
-        url ??= this.productInfoUrl;
+        let success = false;
+        showLoader();
 
         try {
+            // Backwards compatibility: old code would store URL in `this.productInfoUrl`
+            // from `gridRowClick()` and then call this function with no parameters
+            if (!(url ??= this.productInfoUrl)) {
+                throw new Error('Product info URL not found');
+            }
+
             const response = await fetch(url, {
                 method: 'POST',
                 body: new URLSearchParams({
@@ -71,45 +79,61 @@ class ReviewEditForm {
                 throw new Error(data.message);
             }
 
-            const linkEl = document.createElement('a');
-            linkEl.setAttribute('href', this.config.productEditUrl + `id/${data.id}`);
-            linkEl.setAttribute('target', '_blank');
-            linkEl.textContent = data.name;
+            if (this.config.productEditUrl) {
+                const linkEl = document.createElement('a');
+                linkEl.setAttribute('href', this.config.productEditUrl + `id/${data.id}`);
+                linkEl.setAttribute('target', '_blank');
+                linkEl.textContent = data.name;
+                document.getElementById('product_name').replaceChildren(linkEl);
+            } else {
+                document.getElementById('product_name').textContent = data.name;
+            }
 
-            document.getElementById('product_name').replaceChildren(linkEl);
             document.getElementById('product_id').value = data.id;
-
-            this.showForm();
+            success = true;
 
         } catch (error) {
             console.error(`Error loading product: ${error}`);
         }
+
+        hideLoader();
+        return success;
     }
 
-    updateRating() {
-        elements = [
-            $("select_stores"),
-            $("rating_detail").getElementsBySelector("input[type=\'radio\']")
-        ].flatten();
-        $('save_button').disabled = true;
-        var params = Form.serializeElements(elements);
-        if (!params.isAjax) {
-            params.isAjax = "true";
-        }
-        if (!params.form_key) {
-            params.form_key = FORM_KEY;
-        }
-        new Ajax.Updater(
-            "rating_detail",
-            this.config.ratingItemsUrl,
-            {
-                parameters:params,
-                evalScripts: true,
-                onComplete:function(){
-                    $('save_button').disabled = false;
-                }
+    async updateRating() {
+        this.toggleSaveButton(false);
+
+        try {
+            if (!this.config.ratingItemsUrl) {
+                throw new Error('Rating Items URL not found');
             }
-        );
-    }
 
+            const body = new URLSearchParams({
+                isAjax: 'true',
+                form_key: FORM_KEY,
+            });
+
+            const elements = [
+                document.getElementById('select_stores'),
+                ...document.querySelectorAll('#rating_detail input[type=radio]'),
+            ];
+
+            for (const el of elements) {
+                body.append(el.name, el.value);
+            }
+
+            const response = await fetch(this.config.ratingItemsUrl, { method: 'POST', body });
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const html = await response.text();
+            updateElementHTML(document.getElementById('rating_detail'), html);
+
+        } catch (error) {
+            console.error(`Error loading rating details: ${error}`);
+        }
+
+        this.toggleSaveButton(true);
+    }
 }

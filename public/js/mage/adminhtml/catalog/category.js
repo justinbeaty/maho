@@ -170,14 +170,14 @@ class CategoryEditForm {
                     throw new Error(data.error);
                 }
                 if (data.content) {
-                    this.setInnerHTML(this.containerEl, data.content);
+                    updateElementHTML(this.containerEl, data.content);
                     //this.containerEl.innerHTML = data.content;
                 }
                 if (data.messages) {
                     this.setMessageHTML(data.messages);
                 }
             } else {
-                this.setInnerHTML(this.containerEl, data);
+                updateElementHTML(this.containerEl, data);
             }
 
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();
@@ -204,21 +204,4 @@ class CategoryEditForm {
     setMessageHTML(html) {
         document.getElementById('messages').innerHTML = html;
     }
-
-
-    // https://stackoverflow.com/a/47614491
-    setInnerHTML(targetEl, html) {
-        targetEl.innerHTML = html;
-
-        Array.from(targetEl.querySelectorAll('script')).forEach((oldScriptEl) => {
-            const newScriptEl = document.createElement('script');
-
-            Array.from(oldScriptEl.attributes).forEach((attr) => {
-                newScriptEl.setAttribute(attr.name, attr.value)
-            });
-            newScriptEl.appendChild(document.createTextNode(oldScriptEl.innerHTML));
-            oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
-        });
-    }
-
 }

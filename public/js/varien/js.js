@@ -37,17 +37,49 @@ function parseSidUrl(baseUrl, urlExt) {
     return baseUrl+urlExt+sid;
 }
 
-function escapeHTML(str) {
+/**
+ * Alternative to PrototypeJS's string.escapeHTML() method
+ */
+function escapeHTML(str, escapeQuotes = false) {
     const div = document.createElement('div');
     div.textContent = str;
-    return div.innerHTML
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+    return escapeQuotes
+        ? div.innerHTML.replaceAll('"', '&quot;').replaceAll("'", '&#039;')
+        : div.innerHTML;
 }
 
+/**
+ * Alternative to PrototypeJS's string.unescapeHTML() method
+ */
 function unescapeHTML(str) {
     const doc = new DOMParser().parseFromString(str, 'text/html');
     return doc.documentElement.textContent;
+}
+
+/**
+ * Alternative to PrototypeJS's evalScripts option for Ajax.Updater
+ *
+ * Note that unlike Prototype, scripts will executed in the global scope
+ *
+ * @param {HTMLElement} targetEl - The element to update
+ * @param {string} html - The element's new HTML
+ * @param {boolean} executeExternalScripts - Whether to execute `<script src=""></script>` tags
+ * @see {@link https://stackoverflow.com/a/47614491}
+ * @see {@link http://api.prototypejs.org/ajax/Ajax/Updater/index.html}
+*/
+function updateElementHTML(targetEl, html, executeExternalScripts = false) {
+    targetEl.innerHTML = html;
+    Array.from(targetEl.querySelectorAll('script')).forEach((oldScriptEl) => {
+        if (oldScriptEl.src && !executeExternalScripts) {
+            return;
+        }
+        const newScriptEl = document.createElement('script');
+        Array.from(oldScriptEl.attributes).forEach((attr) => {
+            newScriptEl.setAttribute(attr.name, attr.value)
+        });
+        newScriptEl.appendChild(document.createTextNode(oldScriptEl.innerHTML));
+        oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
+    });
 }
 
 /**

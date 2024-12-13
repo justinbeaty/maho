@@ -79,7 +79,9 @@ class Mage_Adminhtml_Block_Review_Edit extends Mage_Adminhtml_Block_Widget_Form_
         }
 
         $this->_formInitScripts[] = <<<JS
-            const review = new ReviewEditForm();
+            const review = new ReviewEditForm({
+                ratingItemsUrl: '{$this->getUrl('*/*/ratingItems', ['_current' => true])}',
+            });
         JS;
     }
 

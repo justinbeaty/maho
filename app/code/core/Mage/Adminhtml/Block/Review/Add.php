@@ -31,7 +31,10 @@ class Mage_Adminhtml_Block_Review_Add extends Mage_Adminhtml_Block_Widget_Form_C
         $this->_updateButton('reset', 'id', 'reset_button');
 
         $this->_formInitScripts[] = <<<JS
-            const review = new ReviewEditForm();
+            const review = new ReviewEditForm({
+                ratingItemsUrl: '{$this->getUrl('*/*/ratingItems')}',
+                productEditUrl: '{$this->getUrl('*/catalog_product/edit')}',
+            });
         JS;
         $this->_formScripts[] = <<<JS
             review.hideForm();
