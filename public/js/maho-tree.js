@@ -126,8 +126,9 @@ class MahoTree {
             divEl.innerHTML = '<span class="icon"></span><span></span>';
         }
 
-        divEl.querySelector('span:not(.icon)').textContent = unescapeHTML(obj.text);
-        liEl.dataset.text = obj.text;
+        const name = obj.name ?? obj.text ?? (hasChildren ? 'Folder' : 'Node');
+        divEl.querySelector('span:not(.icon)').textContent = unescapeHTML(name);
+        liEl.dataset.text = name;
 
         const icons = (obj.icon ?? obj.cls ?? '').trim().split(/\s+/).filter(Boolean);
         if (icons.length === 0) {
