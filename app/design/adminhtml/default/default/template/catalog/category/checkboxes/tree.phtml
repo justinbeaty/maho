@@ -9,21 +9,43 @@
  * @copyright   Copyright (c) 2024 Maho (https://mahocommerce.com)
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
+/** @var Mage_Adminhtml_Block_Catalog_Category_Checkboxes_Tree $this */
 ?>
 
-<?php $_divId = 'tree-div_' . time() ?>
-<div id="<?= $_divId ?>" class="tree"></div>
+<?php $divId = 'tree-div_' . uniqid() ?>
+<div id="<?= $divId ?>" class="tree"></div>
 
+<?php if ($rootNode = $this->getRootNode()): ?>
+<script type="module">
+    const tree = new MahoTree('<?= $divId ?>', {
+        rootVisible: <?= var_export((bool) $rootNode->getIsVisible()) ?>,
+        selectable: {
+            mode: 'simple',
+            onSelect: (selected) => {
+                window.<?= $this->getJsFormObject() ?>.updateElement.value = selected.map((obj) => obj.id).join(',');
+                //window.varienElementMethods.setHasChanges(node.getUI().checkbox);
+            },
+        },
+    });
+    tree.buildRootNode({
+        id: '<?= $rootNode->getId() ?>',
+        text: '<?= $this->jsQuoteEscape($this->buildNodeName($rootNode)) ?>',
+        expanded: true,
+        checked: <?= var_export((bool) $rootNode->getChecked()) ?>,
+        disabled: <?= var_export((bool) $rootNode->getDisabled()) ?>,
+        children: <?= $this->getTreeJson() ?>
+    });
+</script>
+<?php endif ?>
+
+<?php $_divId = $divId ?>
 <script type="text/javascript">
-//<![CDATA[
-
-// TODO: cleanup this script. It was copypasted from catalog/category/tree
+        /*
 
 var tree;
 
-/**
- * Fix ext compatibility with prototype 1.6
- */
+
 Ext.lib.Event.getTarget = function(e) {
     var ee = e.browserEvent || e;
     return ee.target ? Event.element(ee) : null;
@@ -181,5 +203,5 @@ Ext.onReady(function()
     tree.loadTree({parameters:parameters, data:<?= $this->getTreeJson() ?>},true);
 
 });
-//]]>
+        */
 </script>
