@@ -1038,7 +1038,7 @@ ul.item-options li { padding-left:.7em; }
 .rule-tree ul.maho-tree,
 .rule-tree ul.maho-tree ul      { padding-left:0 !important; border-left:none !important; }
 .rule-param .label              { font-weight:bold; color:black; }
-.rule-param .label:hover        { font-weight:bold; color:blue; }
+.rule-param .label:hover        { font-weight:bold; color:#0090FF; }
 .rule-param .label-disabled     { color:black; cursor:default; text-decoration:none; }
 .rule-param .label-disabled:hover { color:black;}
 .rule-param .element            { display:none; }
@@ -1047,12 +1047,6 @@ ul.item-options li { padding-left:.7em; }
 .rule-param select.multiselect  { vertical-align:top; }
 .rule-param-edit .label         { display:none; }
 .rule-param-edit .element       { display:inline; }
-.rule-param-add                 { font-weight:normal; color:green; text-decoration:none; }
-.rule-param-add:hover           { font-weight:normal; color:blue; text-decoration:none; }
-.rule-param-apply               { font-weight:normal; color:green; text-decoration:none; }
-.rule-param-apply:hover         { font-weight:normal; color:blue; text-decoration:none; }
-.rule-param-remove              { font-weight:normal; color:red; text-decoration:none; }
-.rule-param-remove:hover        { font-weight:normal; color:blue; text-decoration:none; }
 .rule-chooser                   { border:solid 1px #CCC; margin:5px; padding:5px; display:none; }
 .rule-param-wait                { padding-left:20px; background-image:url(images/loading.svg); background-repeat:no-repeat; background-position:0 50%; }
 

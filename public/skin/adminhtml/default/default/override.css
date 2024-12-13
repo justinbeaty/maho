@@ -914,10 +914,6 @@ table.actions td {
   width: 50px !important;
 }
 
-.rule-param .label {
-  font-weight: 600;
-}
-
 a.rule-param-remove img {
   padding-left: 13px;
   box-sizing: border-box;
