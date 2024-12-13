@@ -5,6 +5,8 @@ class MahoTree {
             throw new Error(`Element with ID ${container} not found in DOM`);
         }
 
+        this.nodeDataMap = new WeakMap();
+
         this.config = Object.assign({
             selectable: false, // single, simple, nested (true)
             sortable: false, // true or object
@@ -93,16 +95,17 @@ class MahoTree {
         }
     }
 
-    buildNode(obj, parentEl = null) {
-        const hasChildren = Array.isArray(obj.children);
+    buildNode({ children, ...obj }, parentEl = null) {
 
         const liEl = document.createElement('li');
+        const hasChildren = Array.isArray(children);
+
+        (parentEl ?? this.rootEl).appendChild(liEl);
+        this.nodeDataMap.set(liEl, obj);
+
         if (obj.id) {
             liEl.id = obj.id;
         }
-
-        //
-        (parentEl ?? this.rootEl).appendChild(liEl);
 
         const divEl = document.createElement('div');
         divEl.classList.add('label');
@@ -124,6 +127,7 @@ class MahoTree {
         }
 
         divEl.querySelector('span:not(.icon)').textContent = unescapeHTML(obj.text);
+        liEl.dataset.text = obj.text;
 
         const icons = (obj.icon ?? obj.cls ?? '').trim().split(/\s+/);
         if (icons.length === 0) {
@@ -144,19 +148,13 @@ class MahoTree {
             liEl.appendChild(detailsEl);
 
             const ulEl = detailsEl.querySelector('ul');
-            for (const child of obj.children) {
+            for (const child of children) {
                 this.buildNode(child, ulEl);
             }
             this.bindDraggableJs(ulEl);
         } else {
             liEl.appendChild(divEl);
         }
-
-        const data = {...obj};
-        delete data.children;
-        liEl.dataset.obj = JSON.stringify(data);
-
-        liEl.dataset.text = obj.text;
     }
 
     expandAll() {
@@ -178,7 +176,7 @@ class MahoTree {
 
     getChecked() {
         return Array.from(this.rootEl.querySelectorAll('input[type=checkbox]:checked')).map((el) => {
-            return JSON.parse(el.closest('li').dataset.obj);
+            return this.nodeDataMap.get(el.closest('li'));
         });
     }
 
@@ -200,7 +198,6 @@ class MahoTree {
                 }
             });
         }
-
         if (typeof this.selectableOpts.onSelect === 'function') {
             this.selectableOpts.onSelect(this.getChecked());
         }
