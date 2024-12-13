@@ -27,15 +27,15 @@ class Mage_Adminhtml_Block_Catalog_Category_Checkboxes_Tree extends Mage_Adminht
         return $this;
     }
 
-
+    /**
+     * @return array
+     */
     public function getCategoryIds()
     {
         return $this->_selectedIds;
     }
 
     /**
-     *
-     *
      * @param array $ids
      * @return $this
      */
@@ -50,31 +50,28 @@ class Mage_Adminhtml_Block_Catalog_Category_Checkboxes_Tree extends Mage_Adminht
         return $this;
     }
 
-    /**
-     * Returns root node and sets 'checked' flag (if necessary)
-     */
-    public function getRootNode(): Varien_Data_Tree_Node
-    {
-        $root = $this->getRoot();
-        if ($root && in_array($root->getId(), $this->getCategoryIds())) {
-            $root->setChecked(true);
-        }
-        return $root;
-    }
-
     #[\Override]
     protected function _getNodeJson($node, $level = 1)
     {
         $item = parent::_getNodeJson($node, $level);
-
-        if ($this->_isParentSelectedCategory($node)) {
-            $item['expanded'] = true;
-        }
 
         if (in_array($node->getId(), $this->getCategoryIds())) {
             $item['checked'] = true;
         }
 
         return $item;
+    }
+
+    #[\Override]
+    protected function _isParentSelectedCategory($node)
+    {
+        if (!$node) {
+            return false;
+        }
+
+        $allChildrenIds = array_keys($node->getAllChildNodes());
+        $selectedChildren = array_intersect($this->getCategoryIds(), $allChildrenIds);
+
+        return count($selectedChildren) > 0;
     }
 }

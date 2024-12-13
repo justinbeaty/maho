@@ -261,6 +261,12 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return $result;
     }
 
+    /**
+     * Check if the node can be moved
+     *
+     * @param Varien_Object $node
+     * @return bool
+     */
     protected function _isCategoryMoveable($node)
     {
         $options = new Varien_Object([
@@ -276,6 +282,12 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return $options->getIsMoveable();
     }
 
+    /**
+     * Check if the node contains children categories that are selected
+     *
+     * @param Varien_Object $node
+     * @return bool
+     */
     protected function _isParentSelectedCategory($node)
     {
         if ($node && $this->getCategory()) {

@@ -181,6 +181,10 @@ class MahoTree {
         });
     }
 
+    setHasChanges() {
+        window.varienElementMethods?.setHasChanges(this.rootEl);
+    }
+
     updateChildCheckboxes(event) {
         const targetEl = event.target;
         if (targetEl.tagName !== 'INPUT' || targetEl.type !== 'checkbox') {
@@ -202,6 +206,7 @@ class MahoTree {
         if (typeof this.selectableOpts.onSelect === 'function') {
             this.selectableOpts.onSelect(this.getChecked());
         }
+        this.setHasChanges();
     }
 
     updateParentCheckboxes() {
