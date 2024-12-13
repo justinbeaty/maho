@@ -71,8 +71,6 @@
         #dialog-ok:hover {
             background-color: #45a049;
         }
-        dialog .x-tree-node>div {height:auto!important}
-        dialog .x-tree-node-ct {position:relative !important}
     `;
     document.head.appendChild(style);
 

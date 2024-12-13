@@ -1089,12 +1089,6 @@ ul.tabs a.changed span.changed {
     outline: var(--outline-style);
     outline-offset: 1px;
 }
-/*
-.x-tree-node .x-tree-selected a span {
-  background: lightgrey;
-  color: #2f2f2f;
-}
-*/
 
 .maho-tree summary {
     display: flex;
