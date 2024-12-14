@@ -349,7 +349,7 @@ WysiwygWidget.chooser.prototype = {
             title:this.config.buttons.open,
             top:50,
             width:950,
-            height:500,
+            //height:500,
             zIndex:9000,
             recenterAuto:false,
             hideEffect:Element.hide,
