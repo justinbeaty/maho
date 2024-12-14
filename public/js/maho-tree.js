@@ -81,11 +81,13 @@ class MahoTree {
 	}
     }
 
-    storeNode(key, obj) {
-        this.nodeDataMap.set(key, {
-            ...obj,
-            getPath: () => obj.path,
-        });
+    storeNode(key, node) {
+        const obj = {
+            ...node,
+            getPath: () => node.path,
+        }
+        delete obj.children;
+        this.nodeDataMap.set(key, obj);
     }
 
     getRootNode() {
@@ -98,23 +100,23 @@ class MahoTree {
         }
     }
 
-    buildRootNode(data) {
-        console.log(data);
-        if (typeof data !== 'object') {
+    buildRootNode(node) {
+        console.log(node);
+        if (typeof node !== 'object') {
             throw new Error('Root node must be an object or array');
         }
 
-        if (Array.isArray(data)) {
+        if (Array.isArray(node)) {
             this.config.rootVisible = false;
             this.rootNode = {
                 id: 'root',
                 text: 'Root',
-                children: data,
+                children: node,
             }
         } else {
             this.rootNode = {
                 children: [],
-                ...data
+                ...node,
             };
         }
 
@@ -132,10 +134,10 @@ class MahoTree {
         }
     }
 
-    buildNode({ children, ...obj }, parentEl = null, prepend = false) {
+    buildNode(node, parentEl = null, prepend = false) {
 
         const liEl = document.createElement('li');
-        const hasChildren = Array.isArray(children);
+        const hasChildren = Array.isArray(node.children);
 
         if (prepend) {
             (parentEl ?? this.rootEl).prepend(liEl);
@@ -143,32 +145,32 @@ class MahoTree {
             (parentEl ?? this.rootEl).append(liEl);
         }
 
-        this.storeNode(liEl, obj);
+        this.storeNode(liEl, node);
 
-        if (obj.id) {
-            liEl.id = obj.id;
+        if (node.id) {
+            liEl.id = node.id;
 
             if (parentEl) {
-                obj.path = this.getNodeById(parentEl.closest('li').id).path + '/' + obj.id;
-                console.log(obj.path)
+                node.path = this.getNodeById(parentEl.closest('li').id).path + '/' + node.id;
+                console.log(node.path)
             } else {
-                obj.path = obj.id
+                node.path = node.id
             }
         }
 
         const divEl = document.createElement('div');
         divEl.classList.add('label');
 
-        if (obj.selectable ?? this.config.selectable) {
+        if (node.selectable ?? this.config.selectable) {
             divEl.innerHTML = '<span class="icon"></span><label><input type="checkbox"><span></span></label>';
             const inputEl = divEl.querySelector('input');
-            if (obj.name) {
-                inputEl.setAttribute('name', obj.name);
+            if (node.name) {
+                inputEl.setAttribute('name', node.name);
             }
-            if (obj.checked) {
+            if (node.checked) {
                 inputEl.setAttribute('checked', '');
             }
-            if (obj.disabled) {
+            if (node.disabled) {
                 inputEl.setAttribute('disabled', '');
             }
             if (this.selectableOpts.mode === 'radio') {
@@ -179,35 +181,35 @@ class MahoTree {
             divEl.innerHTML = '<span class="icon"></span><span></span>';
         }
 
-        const name = obj.name ?? obj.text ?? (hasChildren ? 'Folder' : 'Node');
+        const name = node.name ?? node.text ?? (hasChildren ? 'Folder' : 'Node');
         divEl.querySelector('span:not(.icon)').textContent = unescapeHTML(name);
         liEl.dataset.text = name;
 
-        const icons = (obj.icon ?? obj.cls ?? '').trim().split(/\s+/).filter(Boolean);
+        const icons = (node.icon ?? node.cls ?? '').trim().split(/\s+/).filter(Boolean);
         if (icons.length === 0) {
             icons.push(hasChildren ? this.config.iconFolder : this.config.iconLeaf);
         }
-        if (obj.disabled) {
+        if (node.disabled) {
             icons.push('disabled');
         }
         divEl.querySelector('span.icon').classList.add(...icons);
 
         if (hasChildren) {
             const detailsEl = document.createElement('details');
-            if (obj.expanded) {
+            if (node.expanded) {
                 detailsEl.setAttribute('open', '');
             }
             detailsEl.innerHTML = '<summary></summary><ul></ul>';
             detailsEl.querySelector('summary').append(divEl);
             liEl.append(detailsEl);
 
-            if (children.length) {
+            if (node.children.length) {
                 const ulEl = detailsEl.querySelector('ul');
-                for (const child of children) {
+                for (const child of node.children) {
                     this.buildNode(child, ulEl);
                 }
                 this.bindDraggableJs(ulEl);
-                obj.hasLoadedChildren = true;
+                node.hasLoadedChildren = true;
             } else if (this.config.treeLoaderUrl) {
                 detailsEl.addEventListener('toggle', this.onDetailsToggle.bind(this));
             }
