@@ -81,6 +81,15 @@ class MahoTree {
 	}
     }
 
+    getRootNode() {
+        return this.getNodeById('root');
+    }
+
+    getNodeById(id) {
+        const liEl = this.rootEl.querySelector('#' + id);
+        return this.nodeDataMap.get(liEl);
+    }
+
     buildRootNode(data) {
         console.log(data)
 
@@ -108,7 +117,7 @@ class MahoTree {
     buildNode({ children, ...obj }, parentEl = null, prepend = false) {
 
         const liEl = document.createElement('li');
-        const hasChildren = Array.isArray(children) && children.length;
+        const hasChildren = Array.isArray(children);
 
         if (prepend) {
             (parentEl ?? this.rootEl).prepend(liEl);
@@ -166,14 +175,62 @@ class MahoTree {
             detailsEl.querySelector('summary').append(divEl);
             liEl.append(detailsEl);
 
+            if (children.length) {
+                const ulEl = detailsEl.querySelector('ul');
+                for (const child of children) {
+                    this.buildNode(child, ulEl);
+                }
+                this.bindDraggableJs(ulEl);
+                obj.hasLoadedChildren = true;
+            } else if (this.config.treeLoaderUrl) {
+                detailsEl.addEventListener('toggle', this.onDetailsToggle.bind(this));
+            }
+        } else {
+            liEl.append(divEl);
+        }
+    }
+
+    async onDetailsToggle(event) {
+        const detailsEl = event.target;
+        if (detailsEl.open === false) {
+            return;
+        }
+
+        const obj = this.nodeDataMap.get(detailsEl.closest('li'));
+        if (obj.hasLoadedChildren === true) {
+            return;
+        }
+
+        try {
+            console.log('loading');
+
+            const options = {
+                method: 'POST',
+                body: new URLSearchParams({
+                    form_key: FORM_KEY,
+                    node: obj.id,
+                }),
+            }
+
+            //await new Promise(r => setTimeout(r, 1000));
+
+            const response = await fetch(this.config.treeLoaderUrl, options);
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const children = await response.json();
+
             const ulEl = detailsEl.querySelector('ul');
             for (const child of children) {
                 this.buildNode(child, ulEl);
             }
-            this.bindDraggableJs(ulEl);
-        } else {
-            liEl.append(divEl);
+
+            obj.hasLoadedChildren = true;
+        } catch (error) {
+            console.error('Error loading children:', error)
         }
+
     }
 
     expandAll() {

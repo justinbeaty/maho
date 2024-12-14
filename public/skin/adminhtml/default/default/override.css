@@ -1078,6 +1078,7 @@ ul.tabs a.changed span.changed {
 
 .maho-tree.hide-checkbox {
     padding-right: 3px;
+    padding-bottom: 3px;
 }
 .maho-tree.hide-checkbox .label:has(input:is([type=checkbox], [type=radio])) label {
     cursor: pointer;
