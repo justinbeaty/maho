@@ -81,32 +81,50 @@ class MahoTree {
 	}
     }
 
+    storeNode(key, obj) {
+        this.nodeDataMap.set(key, {
+            ...obj,
+            getPath: () => obj.path,
+        });
+    }
+
     getRootNode() {
-        return this.getNodeById('root');
+        return this.rootNode;
     }
 
     getNodeById(id) {
-        const liEl = this.rootEl.querySelector('#' + id);
-        return this.nodeDataMap.get(liEl);
+        if (id) {
+            return this.nodeDataMap.get(this.rootEl.querySelector(`#${id}`));
+        }
     }
 
     buildRootNode(data) {
-        console.log(data)
+        console.log(data);
+        if (typeof data !== 'object') {
+            throw new Error('Root node must be an object or array');
+        }
 
-        let nodes = []
         if (Array.isArray(data)) {
-            nodes = data;
-        } else if (typeof data === 'object' && data !== null) {
-            if (this.config.rootVisible) {
-                nodes = [data];
-            } else {
-                nodes = data.children ?? [];
+            this.config.rootVisible = false;
+            this.rootNode = {
+                id: 'root',
+                text: 'Root',
+                children: data,
+            }
+        } else {
+            this.rootNode = {
+                children: [],
+                ...data
+            };
+        }
+
+        if (this.config.rootVisible) {
+            this.buildNode(this.rootNode);
+        } else {
+            for (const child of this.rootNode.children) {
+                this.buildNode(child);
             }
         }
-        for (const node of nodes) {
-            this.buildNode(node);
-        }
-
 
         this.bindDraggableJs(this.rootEl);
         if (this.selectableOpts.mode === 'nested') {
@@ -124,10 +142,18 @@ class MahoTree {
         } else {
             (parentEl ?? this.rootEl).append(liEl);
         }
-        this.nodeDataMap.set(liEl, obj);
+
+        this.storeNode(liEl, obj);
 
         if (obj.id) {
             liEl.id = obj.id;
+
+            if (parentEl) {
+                obj.path = this.getNodeById(parentEl.closest('li').id).path + '/' + obj.id;
+                console.log(obj.path)
+            } else {
+                obj.path = obj.id
+            }
         }
 
         const divEl = document.createElement('div');
