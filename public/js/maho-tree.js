@@ -134,28 +134,25 @@ class MahoTree {
         }
     }
 
-    buildNode(node, parentEl = null, prepend = false) {
+    buildNode(node, parentNode = null, prepend = false) {
 
         const liEl = document.createElement('li');
-        const hasChildren = Array.isArray(node.children);
 
+        node.liEl = liEl;
+        if (parentNode) {
+            node.parentEl = parentNode.liEl.querySelector('ul');
+        }
         if (prepend) {
-            (parentEl ?? this.rootEl).prepend(liEl);
+            (node.parentEl ?? this.rootEl).prepend(liEl);
         } else {
-            (parentEl ?? this.rootEl).append(liEl);
+            (node.parentEl ?? this.rootEl).append(liEl);
         }
 
         this.storeNode(liEl, node);
 
         if (node.id) {
             liEl.id = node.id;
-
-            if (parentEl) {
-                node.path = this.getNodeById(parentEl.closest('li').id).path + '/' + node.id;
-                console.log(node.path)
-            } else {
-                node.path = node.id
-            }
+            node.path = parentNode ? `${parentNode.id}/${node.id}` : node.id;
         }
 
         const divEl = document.createElement('div');
@@ -181,6 +178,8 @@ class MahoTree {
             divEl.innerHTML = '<span class="icon"></span><span></span>';
         }
 
+        const hasChildren = Array.isArray(node.children);
+
         const name = node.name ?? node.text ?? (hasChildren ? 'Folder' : 'Node');
         divEl.querySelector('span:not(.icon)').textContent = unescapeHTML(name);
         liEl.dataset.text = name;
@@ -204,11 +203,10 @@ class MahoTree {
             liEl.append(detailsEl);
 
             if (node.children.length) {
-                const ulEl = detailsEl.querySelector('ul');
                 for (const child of node.children) {
-                    this.buildNode(child, ulEl);
+                    this.buildNode(child, node);
                 }
-                this.bindDraggableJs(ulEl);
+                this.bindDraggableJs(detailsEl.querySelector('ul'));
                 node.hasLoadedChildren = true;
             } else if (this.config.treeLoaderUrl) {
                 detailsEl.addEventListener('toggle', this.onDetailsToggle.bind(this));
@@ -224,19 +222,20 @@ class MahoTree {
             return;
         }
 
-        const obj = this.nodeDataMap.get(detailsEl.closest('li'));
-        if (obj.hasLoadedChildren === true) {
+        const node = this.nodeDataMap.get(detailsEl.closest('li'));
+        if (node.hasLoadedChildren === true) {
             return;
         }
 
         try {
             console.log('loading');
+            console.log(detailsEl)
 
             const options = {
                 method: 'POST',
                 body: new URLSearchParams({
                     form_key: FORM_KEY,
-                    node: obj.id,
+                    node: node.id,
                 }),
             }
 
@@ -249,12 +248,11 @@ class MahoTree {
 
             const children = await response.json();
 
-            const ulEl = detailsEl.querySelector('ul');
             for (const child of children) {
-                this.buildNode(child, ulEl);
+                this.buildNode(child, node);
             }
 
-            obj.hasLoadedChildren = true;
+            node.hasLoadedChildren = true;
         } catch (error) {
             console.error('Error loading children:', error)
         }
