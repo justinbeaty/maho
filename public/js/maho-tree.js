@@ -85,6 +85,8 @@ class MahoTree {
         const obj = {
             ...node,
             getPath: () => node.path,
+            select: () => true,
+            //getUI().checkbox
         }
         delete obj.children;
         this.nodeDataMap.set(key, obj);
