@@ -21,7 +21,8 @@
         selectable: {
             mode: 'simple',
             onSelect: (selected) => {
-                <?= $this->getJsFormObject() ?>.updateElement.value = selected.map((obj) => obj.id).join(',');
+                const formJsObject = <?= $this->getJsFormObject() ?>;
+                formJsObject.updateElement.value = selected.map((obj) => obj.id).join(',');
             },
         },
     });

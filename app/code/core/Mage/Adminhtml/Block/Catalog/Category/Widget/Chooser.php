@@ -112,6 +112,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Widget_Chooser extends Mage_Adminhtm
         }
         return $result;
     }
+
     /**
      * Category Tree node onClick listener js function
      *
@@ -123,24 +124,20 @@ class Mage_Adminhtml_Block_Catalog_Category_Widget_Chooser extends Mage_Adminhtm
             return $this->getData('node_click_listener');
         }
         if ($this->getUseMassaction()) {
-            $js = '
-                function (node, e) {
-                    if (node.ui.toggleCheck) {
-                        node.ui.toggleCheck(true);
-                    }
+            return <<<JS
+                function (selected) {
                 }
-            ';
+            JS;
         } else {
             $chooserJsObject = $this->getId();
-            $js = '
-                function (node, e) {
-                    ' . $chooserJsObject . '.setElementValue("category/" + node.attributes.id);
-                    ' . $chooserJsObject . '.setElementLabel(node.text);
-                    ' . $chooserJsObject . '.close();
+            return <<<JS
+                function ([node]) {
+                    {$chooserJsObject}.setElementValue("category/" + node.id);
+                    {$chooserJsObject}.setElementLabel(node.text);
+                    {$chooserJsObject}.close();
                 }
-            ';
+            JS;
         }
-        return $js;
     }
 
     /**
@@ -177,6 +174,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Widget_Chooser extends Mage_Adminhtm
      * Tree JSON source URL
      *
      * @return string
+     * @deprecated
      */
     #[\Override]
     public function getLoadTreeUrl($expanded = null)

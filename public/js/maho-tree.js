@@ -8,22 +8,23 @@ class MahoTree {
         this.nodeDataMap = new WeakMap();
 
         this.config = Object.assign({
-            selectable: false, // single, simple, nested (true)
+            selectable: false, // radio, single, simple, nested (true)
             sortable: false, // true or object
 
             rootVisible: true,
             iconFolder: 'folder',
-            iconLeaf: 'paper',
+            iconLeaf: 'leaf',
             cssVars: {},
         }, config);
 
         this.selectableOpts = {
             mode: this.config.selectable === true ? 'nested' : this.config.selectable,
             hideInputs: false,
+            radioName: [...Array(6)].map(() => Math.random().toString(36)[2]).join(''),
         }
 
         this.sortableOpts = {
-	    group: 'sortable',
+	    group: this.config.sortable === true ? 'sortable' : this.config.sortable,
 	    animation: 150,
 	    fallbackOnBody: true,
 	    swapThreshold: 0.65,
@@ -95,12 +96,16 @@ class MahoTree {
         }
     }
 
-    buildNode({ children, ...obj }, parentEl = null) {
+    buildNode({ children, ...obj }, parentEl = null, prepend = false) {
 
         const liEl = document.createElement('li');
         const hasChildren = Array.isArray(children) && children.length;
 
-        (parentEl ?? this.rootEl).appendChild(liEl);
+        if (prepend) {
+            (parentEl ?? this.rootEl).prepend(liEl);
+        } else {
+            (parentEl ?? this.rootEl).append(liEl);
+        }
         this.nodeDataMap.set(liEl, obj);
 
         if (obj.id) {
@@ -112,15 +117,19 @@ class MahoTree {
 
         if (obj.selectable ?? this.config.selectable) {
             divEl.innerHTML = '<span class="icon"></span><label><input type="checkbox"><span></span></label>';
-            const checkbox = divEl.querySelector('input');
+            const inputEl = divEl.querySelector('input');
             if (obj.name) {
-                checkbox.setAttribute('name', obj.name);
+                inputEl.setAttribute('name', obj.name);
             }
             if (obj.checked) {
-                checkbox.setAttribute('checked', '');
+                inputEl.setAttribute('checked', '');
             }
             if (obj.disabled) {
-                checkbox.setAttribute('disabled', '');
+                inputEl.setAttribute('disabled', '');
+            }
+            if (this.selectableOpts.mode === 'radio') {
+                inputEl.type = 'radio';
+                inputEl.name = this.selectableOpts.radioName;
             }
         } else {
             divEl.innerHTML = '<span class="icon"></span><span></span>';
@@ -145,8 +154,8 @@ class MahoTree {
                 detailsEl.setAttribute('open', '');
             }
             detailsEl.innerHTML = '<summary></summary><ul></ul>';
-            detailsEl.querySelector('summary').appendChild(divEl);
-            liEl.appendChild(detailsEl);
+            detailsEl.querySelector('summary').append(divEl);
+            liEl.append(detailsEl);
 
             const ulEl = detailsEl.querySelector('ul');
             for (const child of children) {
@@ -154,7 +163,7 @@ class MahoTree {
             }
             this.bindDraggableJs(ulEl);
         } else {
-            liEl.appendChild(divEl);
+            liEl.append(divEl);
         }
     }
 
@@ -176,7 +185,7 @@ class MahoTree {
     }
 
     getChecked() {
-        return Array.from(this.rootEl.querySelectorAll('input[type=checkbox]:checked')).map((el) => {
+        return Array.from(this.rootEl.querySelectorAll('input:checked')).map((el) => {
             return this.nodeDataMap.get(el.closest('li'));
         });
     }
@@ -187,7 +196,7 @@ class MahoTree {
 
     updateChildCheckboxes(event) {
         const targetEl = event.target;
-        if (targetEl.tagName !== 'INPUT' || targetEl.type !== 'checkbox') {
+        if (targetEl.tagName !== 'INPUT' || ['checkbox', 'radio'].includes(targetEl.type) === false) {
             return;
         }
         if (this.selectableOpts.mode === 'nested') {

@@ -9,13 +9,43 @@
  * @copyright   Copyright (c) 2024 Maho (https://mahocommerce.com)
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
+/** @var Mage_Adminhtml_Block_Catalog_Category_Widget_Chooser $this */
 ?>
 
-<?php $_divId = 'tree' . $this->getId() ?>
-<div id="<?= $_divId ?>" class="tree"></div>
+<?php $divId = 'tree' . $this->getId() ?>
+<div id="<?= $divId ?>" class="tree"></div>
 
+<script type="module">
+    const useMassaction = <?= var_export((bool) $this->getUseMassaction()) ?>;
+    const isAnchorOnly = <?= var_export((bool)$this->getIsAnchorOnly()) ?>;
+
+    const tree = new MahoTree('<?= $divId ?>', {
+        selectable: {
+            mode: useMassaction ? 'simple' : 'radio',
+            hideInputs: !useMassaction,
+            allowDeselect: false,
+            onSelect: <?= $this->getNodeClickListener() ?? 'null' ?>,
+        },
+    });
+    tree.buildRootNode(<?= $this->getTreeJson() ?>);
+
+<?php if ($this->getWithEmptyNode()): ?>
+    const emptyNode = {
+        id: 'none',
+        text: '<?= Mage::helper('core')->jsQuoteEscape($this->__('View All Products')) ?>',
+        path: '1/none',
+        cls: 'leaf',
+    }
+    tree.buildNode(emptyNode, null, true);
+<?php endif ?>
+</script>
+
+
+
+<?php $_divId = 'tree' . $this->getId() ?>
 <script type="text/javascript">
-//<![CDATA[
+     /*
 
 var tree<?= $this->getId() ?>;
 
@@ -184,5 +214,5 @@ Ext.onReady(function()
     tree<?= $this->getId() ?>.loadTree({parameters:parameters, data:<?= $this->getTreeJson() ?>},true);
 
 });
-//]]>
+     */
 </script>
