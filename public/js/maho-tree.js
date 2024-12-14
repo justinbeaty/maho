@@ -82,6 +82,7 @@ class MahoTree {
     }
 
     storeNode(key, node) {
+        // todo, create MahoTreeNode class
         const obj = {
             ...node,
             getPath: () => node.path,
@@ -90,6 +91,7 @@ class MahoTree {
         }
         delete obj.children;
         this.nodeDataMap.set(key, obj);
+        return obj;
     }
 
     getRootNode() {
@@ -111,7 +113,7 @@ class MahoTree {
         if (Array.isArray(node)) {
             this.config.rootVisible = false;
             this.rootNode = {
-                id: 'root',
+                id: '__root__',
                 text: 'Root',
                 children: node,
             }
@@ -149,8 +151,6 @@ class MahoTree {
         } else {
             (node.parentEl ?? this.rootEl).append(liEl);
         }
-
-        this.storeNode(liEl, node);
 
         if (node.id) {
             liEl.id = node.id;
@@ -216,6 +216,8 @@ class MahoTree {
         } else {
             liEl.append(divEl);
         }
+
+        return this.storeNode(liEl, node);
     }
 
     async onDetailsToggle(event) {

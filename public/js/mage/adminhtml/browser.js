@@ -240,16 +240,14 @@ Mediabrowser.prototype = {
                     this.onAjaxSuccess(transport);
                     if (transport.responseText.isJSON()) {
                         var response = transport.responseText.evalJSON();
-                        var newNode = new Ext.tree.AsyncTreeNode({
+                        var newNode = this.tree.buildNode({
                             text: response.short_name,
-                            draggable:false,
-                            id:response.id,
-                            expanded: true
-                        });
-                        var child = this.currentNode.appendChild(newNode);
-                        this.tree.expandPath(child.getPath(), '', function(success, node) {
-                            this.selectFolder(node);
-                        }.bind(this));
+                            id: response.id,
+                            expanded: true,
+                            children: [],
+                        } , this.currentNode);
+                        //this.currentNode.expand();
+                        this.selectFolder(newNode);
                     }
                 } catch (e) {
                     alert(e.message);
