@@ -126,6 +126,10 @@ class Mage_Adminhtml_Block_Catalog_Category_Widget_Chooser extends Mage_Adminhtm
         if ($this->getUseMassaction()) {
             return <<<JS
                 function (selected) {
+                    this.dispatchEvent(new CustomEvent('category:changed', {
+                        bubbles: true,
+                        detail: { selected },
+                    }));
                 }
             JS;
         } else {

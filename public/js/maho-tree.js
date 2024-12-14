@@ -45,8 +45,13 @@ class MahoTree {
         this.rootEl = document.createElement('ul');
         this.rootEl.classList.add('maho-tree');
 
-        for (const [cssVar, value] of Object.entries(this.config.cssVars)) {
-            this.rootEl.style.setProperty(`--${cssVar}`, value);
+        for (const [cssVar, cssVal] of Object.entries(this.config.cssVars)) {
+            this.rootEl.style.setProperty(`--${cssVar}`, cssVal);
+        }
+
+        // TODO, bind all callbacks in sortableOpts too?
+        if (typeof this.selectableOpts.onSelect === 'function') {
+            this.selectableOpts.onSelect = this.selectableOpts.onSelect.bind(this);
         }
 
         if (this.selectableOpts.hideInputs === true) {
@@ -59,6 +64,10 @@ class MahoTree {
 
     bindEventListeners() {
         this.rootEl.addEventListener('change', this.updateChildCheckboxes.bind(this));
+    }
+
+    dispatchEvent() {
+        this.rootEl.dispatchEvent(...arguments);
     }
 
     bindDraggableJs(el) {
