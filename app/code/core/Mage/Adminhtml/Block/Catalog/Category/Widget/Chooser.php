@@ -144,13 +144,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Widget_Chooser extends Mage_Adminhtm
         }
     }
 
-    /**
-     * Get JSON of a tree node or an associative array
-     *
-     * @param Varien_Data_Tree_Node|array $node
-     * @param int $level
-     * @return array
-     */
     #[\Override]
     protected function _getNodeJson($node, $level = 0)
     {
@@ -158,7 +151,10 @@ class Mage_Adminhtml_Block_Catalog_Category_Widget_Chooser extends Mage_Adminhtm
         if (in_array($node->getId(), $this->getSelectedCategories())) {
             $item['checked'] = true;
         }
-        $item['is_anchor'] = (int)$node->getIsAnchor();
+        if ($this->getIsAnchorOnly() && !$node->getIsAnchor()) {
+            $item['selectable'] = false;
+        }
+        $item['is_anchor'] = (bool)$node->getIsAnchor();
         $item['url_key'] = $node->getData('url_key');
         return $item;
     }
