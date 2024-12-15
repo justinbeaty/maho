@@ -434,6 +434,11 @@ class MahoTreeNode {
         if (!this.tree.config.dataUrl) {
             return;
         }
+
+        const timeoutID = setTimeout(() => {
+            this.ui.iconNode.classList.add('loading');
+        }, LOADING_TIMEOUT ?? 200);
+
         try {
             const options = {
                 method: 'POST',
@@ -443,15 +448,14 @@ class MahoTreeNode {
                 }),
             }
 
-            //await new Promise(r => setTimeout(r, 1000));
             const response = await fetch(this.tree.config.dataUrl, options);
             if (!response.ok) {
                 throw new Error(`Server returned status ${response.status}`);
             }
 
-            // todo, clear children
-
             const children = await response.json();
+
+            this.ui.ctNode.replaceChildren();
             for (const child of children) {
                 this.appendChild(new MahoTreeNode(this.tree, child))
             }
@@ -460,5 +464,8 @@ class MahoTreeNode {
         } catch (error) {
             console.error('Error loading children:', error)
         }
+
+        clearTimeout(timeoutID)
+        this.ui.iconNode.classList.remove('loading');
     }
 }

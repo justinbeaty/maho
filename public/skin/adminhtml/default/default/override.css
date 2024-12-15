@@ -1143,6 +1143,10 @@ ul.tabs a.changed span.changed {
     background-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M8.7.5H3.4c-.6 0-1 .5-1 1.2v12.6c0 .7.4 1.2 1 1.2h9.2c.6 0 1-.5 1-1.2V5.6Z" fill="%23edf3f4" stroke="%239aafb7"/><path d="M8.7.5v3.8c0 .7.5 1.2 1.2 1.2h3.7z" fill="%23d7e7ec" stroke="%239aafb7"/></svg>');
 }
 
+.maho-tree .icon.loading {
+    background-image: url(images/loading.svg) !important;
+}
+
 
 
 /*# sourceMappingURL=override.css.map */
