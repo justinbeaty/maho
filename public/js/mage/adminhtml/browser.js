@@ -240,16 +240,16 @@ Mediabrowser.prototype = {
                     this.onAjaxSuccess(transport);
                     if (transport.responseText.isJSON()) {
                         var response = transport.responseText.evalJSON();
-                        var newNode = new MahoTreeNode(this.tree, {
+                        var child = new MahoTreeNode(this.tree, {
                             text: response.short_name,
                             id: response.id,
-                            expanded: false,
+                            expanded: true,
                             children: [],
                         });
-                        this.currentNode.appendChild(newNode);
+                        this.currentNode.appendChild(child);
                         this.currentNode.sortChildren();
-                        this.currentNode.expand().then(() => {
-                            this.selectFolderById(newNode.id);
+                        this.tree.expandPath(child.getPath()).then((node) => {
+                            this.selectFolder(node);
                         });
                     }
                 } catch (e) {

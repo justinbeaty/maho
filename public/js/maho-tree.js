@@ -193,14 +193,16 @@ class MahoTree {
 
     async expandPath(path) {
         const parts = path.split('/').filter(Boolean);
-        let node = this.rootNode;
+        let current = this.rootNode;
         for (const part of parts) {
-            if (!(node = this.getNodeById(part))) {
+            const node = this.getNodeById(part);
+            if (node) {
+                current = await node.expand();
+            } else {
                 break;
             }
-            await node.expand();
         }
-        return node;
+        return current;
     }
 
     expandAll() {
@@ -418,18 +420,31 @@ class MahoTreeNode {
         }
     }
 
+    remove() {
+        this.ui.wrap.remove();
+    }
+
     appendChild(node) {
         if (this.type !== 'folder') {
-            throw new Error('Cannot append child to leaf node');
+            throw new Error('Cannot add child to leaf node');
         }
         this.ui.ctNode.append(node.ui.wrap);
     }
 
     prependChild(node) {
         if (this.type !== 'folder') {
-            throw new Error('Cannot append child to leaf node');
+            throw new Error('Cannot add child to leaf node');
         }
         this.ui.ctNode.prepend(node.ui.wrap);
+    }
+
+    removeChild(node) {
+        if (this.type !== 'folder') {
+            throw new Error('Cannot remove child from leaf node');
+        }
+        if (this.ui.ctNode.contains(node.ui.wrap)) {
+            node.ui.wrap.remove();
+        }
     }
 
     sortChildren() {
