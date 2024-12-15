@@ -180,7 +180,6 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Categories extends Mage_Admi
      *
      * @param null $expanded deprecated
      * @return string
-     * @deprecated
      */
     #[\Override]
     public function getLoadTreeUrl($expanded = null)

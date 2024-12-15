@@ -1,3 +1,12 @@
+/**
+ * Maho
+ *
+ * @category    Mage
+ * @package     Mage_Adminhtml
+ * @copyright   Copyright (c) 2024 Maho (https://mahocommerce.com)
+ * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
 
 class MahoTree {
     constructor(container, config = {}) {
@@ -12,9 +21,9 @@ class MahoTree {
         this.config = Object.assign({
             selectable: false, // radio, single, simple, nested (true)
             sortable: false, // true or object
+            lazyload: false, // url or object
             rootVisible: true,
             varienSetHasChanges: true,
-            dataUrl: null,
             cssVars: {},
         }, config);
 
@@ -22,7 +31,8 @@ class MahoTree {
             mode: 'nested',
             hideInputs: false,
             radioName: this.uniqId,
-        }
+            onSelect: null,
+        };
 
         this.sortableOpts = {
 	    group: `sortable.${this.uniqId}`,
@@ -32,24 +42,39 @@ class MahoTree {
             containDepth: false,
         };
 
+        this.lazyloadOpts = {
+            dataUrl: null,
+            nodeParameter: 'node',
+            preloadChildren: false,
+            onBeforeLoad: null,
+            onLoadException: null,
+        };
+
+        // Check for options using the string short-hand and set the appropriate option
         if (typeof this.config.selectable === 'string' || this.config.selectable instanceof String) {
             this.selectableOpts.mode = this.config.selectable;
             this.config.selectable = true;
-        } else if (typeof this.config.selectable === 'object' && this.config.selectable !== null) {
-            this.selectableOpts = Object.assign(this.selectableOpts, this.config.selectable);
-            this.config.selectable = true;
-            if (typeof this.selectableOpts.onSelect === 'function') {
-                this.selectableOpts.onSelect = this.selectableOpts.onSelect.bind(this);
-            }
         }
-
         if (typeof this.config.sortable === 'string' || this.config.sortable instanceof String) {
             this.sortableOpts.group = this.config.sortable;
             this.config.sortable = true;
-        } else if (typeof this.config.sortable === 'object' && this.config.sortable !== null) {
-            this.sortableOpts = Object.assign(this.sortableOpts, this.config.sortable);
-            this.config.sortable = true;
-            // TODO, bind all callbacks in sortableOpts too?
+        }
+        if (typeof this.config.lazyload === 'string' || this.config.lazyload instanceof String) {
+            this.lazyloadOpts.dataUrl = this.config.lazyload;
+            this.config.lazyload = true;
+        }
+
+        // Check for options using full object definitions, and bind any callbacks to this
+        for (const key of ['selectable', 'sortable', 'lazyload']) {
+            if (typeof this.config[key] === 'object' && this.config[key] !== null) {
+                const obj = Object.assign(this[key + 'Opts'], this.config[key]);
+                for (const callback of Object.keys(obj)) {
+                    if (typeof obj[callback] === 'function') {
+                        obj[callback] = obj[callback].bind(this);
+                    }
+                }
+                this.config[key] = true;
+            }
         }
 
         this.createElement();
@@ -214,13 +239,7 @@ class MahoTree {
     }
 
     dispatchEvent() {
-        console.log('DEPRECATED dispatchEvent');
         this.rootEl.dispatchEvent(...arguments);
-    }
-
-    buildRootNode(node) {
-        console.log('DEPRECATED buildRootNode');
-        return this.setRootNode(node);
     }
 }
 
@@ -258,7 +277,7 @@ class MahoTreeNode {
             for (const child of children) {
                 this.appendChild(new MahoTreeNode(this.tree, child))
             }
-            this.hasLoadedChildren = !this.tree.config.dataUrl || children.length > 0;
+            this.hasLoadedChildren = this.tree.config.lazyload !== true || children.length > 0;
             this.ui.wrap.append(this.ui.details);
         } else {
             this.ui.wrap.append(this.ui.label);
@@ -468,7 +487,7 @@ class MahoTreeNode {
     }
 
     async loadChildren() {
-        if (!this.tree.config.dataUrl) {
+        if (!this.tree.lazyloadOpts.dataUrl) {
             return;
         }
 
@@ -477,17 +496,22 @@ class MahoTreeNode {
         }, LOADING_TIMEOUT ?? 200);
 
         try {
-            const options = {
-                method: 'POST',
-                body: new URLSearchParams({
-                    form_key: FORM_KEY,
-                    node: this.id,
-                }),
+            const params = new URLSearchParams({
+                form_key: FORM_KEY,
+                [this.tree.lazyloadOpts.nodeParameter]: this.id,
+            });
+
+            if (typeof this.tree.lazyloadOpts.onBeforeLoad === 'function') {
+                await this.tree.lazyloadOpts.onBeforeLoad(this, params);
             }
 
             await new Promise(r => setTimeout(r, 1000));
 
-            const response = await fetch(this.tree.config.dataUrl, options);
+            const response = await fetch(this.tree.lazyloadOpts.dataUrl, {
+                method: 'POST',
+                body: params,
+            });
+
             if (!response.ok) {
                 throw new Error(`Server returned status ${response.status}`);
             }
@@ -502,6 +526,9 @@ class MahoTreeNode {
 
         } catch (error) {
             console.error('Error loading children:', error)
+            if (typeof this.tree.lazyloadOpts.onLoadException === 'function') {
+                this.tree.lazyloadOpts.onLoadException(this, error);
+            }
         }
 
         clearTimeout(timeoutID)

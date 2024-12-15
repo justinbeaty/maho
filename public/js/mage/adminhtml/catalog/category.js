@@ -25,7 +25,6 @@ class CategoryEditForm {
         this.initVarienForm();
 
         this.tree = new MahoTree(config.treeDiv, {
-            iconLeaf: 'folder',
             sortable: true,
             selectable: {
                 mode: 'single',

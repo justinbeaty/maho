@@ -35,7 +35,6 @@ class Mage_Adminhtml_Catalog_Category_WidgetController extends Mage_Adminhtml_Co
 
     /**
      * Categories tree node (Ajax version)
-     * @deprecated ??
      */
     public function categoriesJsonAction()
     {

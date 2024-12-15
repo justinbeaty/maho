@@ -21,6 +21,10 @@
 
     const tree = new MahoTree('<?= $divId ?>', {
         rootVisible: false,
+        lazyload: {
+            nodeParameter: 'category',
+            dataUrl: '<?= $this->getLoadTreeUrl() ?>',
+        },
         selectable: {
             mode: useMassaction ? 'simple' : 'radio',
             hideInputs: !useMassaction,

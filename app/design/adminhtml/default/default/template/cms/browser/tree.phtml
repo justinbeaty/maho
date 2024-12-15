@@ -30,7 +30,9 @@
 <script type="module">
     const tree = new MahoTree('tree', {
         rootVisible: true,
-        dataUrl: '<?= $this->getTreeLoaderUrl() ?>',
+        lazyload: {
+            dataUrl: '<?= $this->getTreeLoaderUrl() ?>',
+        },
         selectable: {
             mode: 'radio',
             hideInputs: true,

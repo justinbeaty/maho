@@ -162,7 +162,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
 
     public function getTreeJson($parentNodeCategory = null)
     {
-        $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory, null));
+        $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory));
         return Mage::helper('core')->jsonEncode($rootArray['children'] ?? []);
     }
 
@@ -234,8 +234,10 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
 
         if ($node->hasChildren()) {
             $item['children'] = [];
-            foreach ($node->getChildren() as $child) {
-                $item['children'][] = $this->_getNodeJson($child, $level + 1);
+            if (!($this->getUseAjax() && $node->getLevel() > 1 && !$isParent)) {
+                foreach ($node->getChildren() as $child) {
+                    $item['children'][] = $this->_getNodeJson($child, $level + 1);
+                }
             }
         }
 
