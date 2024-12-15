@@ -41,7 +41,6 @@ class MahoTreeNode {
         }
 
         this.tree.storeNode(this.ui.wrap, this);
-        this.updateParentCheckboxes();
     }
 
     createElement() {
@@ -111,7 +110,6 @@ class MahoTreeNode {
         this.ui.checkbox?.addEventListener('change', () => {
             if (this.tree.selectableOpts.mode === 'nested') {
                 this.updateChildrenCheckboxes(this.ui.checkbox.checked);
-                this.updateParentCheckboxes();
             }
             window.varienElementMethods?.setHasChanges(this.ui.checkbox);
         });
@@ -169,26 +167,6 @@ class MahoTreeNode {
             el.checked = checked;
             el.indeterminate = false;
         });
-    }
-
-    updateParentCheckboxes() {
-        if (this.tree.selectableOpts.mode !== 'nested') {
-            return;
-        }
-        let current = this;
-        while (current = current.parentNode) {
-            const children = Array.from(current.ui.ctNode.querySelectorAll(':scope input[type=checkbox]'));
-            if (children.every((el) => el.checked)) {
-                current.ui.checkbox.checked = true;
-                current.ui.checkbox.indeterminate = false;
-            } else if (children.all((el) => !el.checked)) {
-                current.ui.checkbox.checked = false;
-                current.ui.checkbox.indeterminate = false;
-            } else {
-                current.ui.checkbox.checked = false;
-                current.ui.checkbox.indeterminate = true;
-            }
-        }
     }
 
     async loadChildren() {
@@ -279,63 +257,6 @@ class MahoTree {
         this.bindDraggableJs(this.rootEl);
     }
 
-    createElement() {
-        this.rootEl = document.createElement('ul');
-        this.rootEl.classList.add('maho-tree');
-
-        for (const [cssVar, cssVal] of Object.entries(this.config.cssVars)) {
-            this.rootEl.style.setProperty(`--${cssVar}`, cssVal);
-        }
-        if (this.selectableOpts.hideInputs === true) {
-            this.rootEl.classList.add('hide-checkbox');
-        }
-    }
-
-    bindEventListeners() {
-        this.rootEl.addEventListener('change', (event) => {
-            const targetEl = event.target;
-            if (targetEl.tagName !== 'INPUT' || ['checkbox', 'radio'].includes(targetEl.type) === false) {
-                return;
-            }
-            if (this.selectableOpts.mode === 'single') {
-                this.rootEl.querySelectorAll('input[type=checkbox]:checked').forEach((el) => {
-                    el.checked = el === targetEl;
-                });
-            }
-            if (typeof this.selectableOpts.onSelect === 'function') {
-                this.selectableOpts.onSelect(this.getChecked());
-            }
-        });
-
-        this.mutationObserver = new MutationObserver((mutationList, observer) => {
-            for (const mutation of mutationList) {
-                for (const el of mutation.addedNodes) {
-                    if (el.tagName === 'LI') {
-                        el.querySelectorAll(':scope ul').forEach(this.bindDraggableJs.bind(this));
-                    }
-                }
-            }
-        });
-
-        this.mutationObserver.observe(this.rootEl, { childList: true, subtree: true });
-    }
-
-    bindDraggableJs(el) {
-        if (this.config.sortable && !el.dataset.group) {
-            let group = this.sortableOpts.group;
-            if (this.sortableOpts.containDepth === true) {
-                let current = el, depth = 0;
-                while (current !== this.rootEl) {
-                    current = current.parentNode.closest('ul');
-                    depth++;
-                }
-                group += '.' + depth;
-            }
-            el.dataset.group = group;
-            new Sortable(el, { ...this.sortableOpts, group });
-	}
-    }
-
     setRootNode(node) {
         if (node instanceof MahoTreeNode) {
             this.rootNode = node;
@@ -362,6 +283,91 @@ class MahoTree {
                 this.rootEl.append(child.ui.wrap);
             }
         }
+    }
+
+    createElement() {
+        this.rootEl = document.createElement('ul');
+        this.rootEl.classList.add('maho-tree');
+
+        for (const [cssVar, cssVal] of Object.entries(this.config.cssVars)) {
+            this.rootEl.style.setProperty(`--${cssVar}`, cssVal);
+        }
+        if (this.selectableOpts.hideInputs === true) {
+            this.rootEl.classList.add('hide-checkbox');
+        }
+    }
+
+    bindEventListeners() {
+        this.rootEl.addEventListener('change', (event) => {
+            const targetEl = event.target;
+            if (targetEl.tagName !== 'INPUT' || ['checkbox', 'radio'].includes(targetEl.type) === false) {
+                return;
+            }
+            if (this.selectableOpts.mode === 'nested') {
+                this.updateNestedCheckboxes();
+            } else if (this.selectableOpts.mode === 'single') {
+                this.rootEl.querySelectorAll('input[type=checkbox]:checked').forEach((el) => {
+                    el.checked = el === targetEl;
+                });
+            }
+            if (typeof this.selectableOpts.onSelect === 'function') {
+                this.selectableOpts.onSelect(this.getChecked());
+            }
+        });
+
+        this.mutationObserver = new MutationObserver((mutationList, observer) => {
+            for (const mutation of mutationList) {
+                for (const el of mutation.addedNodes) {
+                    if (el.tagName === 'LI') {
+                        el.querySelectorAll(':scope ul').forEach(this.bindDraggableJs.bind(this));
+                    }
+                }
+            }
+            if (this.selectableOpts.mode === 'nested') {
+                this.updateNestedCheckboxes();
+            }
+        });
+
+        this.mutationObserver.observe(this.rootEl, { childList: true, subtree: true });
+    }
+
+    bindDraggableJs(el) {
+        if (!this.config.sortable || el.dataset.group) {
+            return
+        }
+        let group = this.sortableOpts.group;
+        if (this.sortableOpts.containDepth === true) {
+            let current = el, depth = 0;
+            while (current !== this.rootEl) {
+                current = current.parentNode.closest('ul');
+                depth++;
+            }
+            group += '.' + depth;
+        }
+        el.dataset.group = group;
+        new Sortable(el, { ...this.sortableOpts, group });
+    }
+
+    updateNestedCheckboxes() {
+        if (this.selectableOpts.mode !== 'nested') {
+            return;
+        }
+        Array.from(this.rootEl.querySelectorAll('li')).reverse().forEach((el) => {
+            const parent = el.querySelector('input[type=checkbox]');
+            const children = Array.from(el.querySelectorAll(':scope ul input[type=checkbox]'));
+            if (children.length) {
+                if (children.every((el) => el.checked)) {
+                    parent.checked = true;
+                    parent.indeterminate = false;
+                } else if (children.all((el) => !el.checked)) {
+                    parent.checked = false;
+                    parent.indeterminate = false;
+                } else {
+                    parent.checked = false;
+                    parent.indeterminate = true;
+                }
+            }
+        });
     }
 
     storeNode(key, node) {
@@ -391,7 +397,6 @@ class MahoTree {
             return this.nodeDataMap.get(el.closest('li'));
         });
     }
-
 
     dispatchEvent() {
         console.log('DEPRECATED dispatchEvent');
