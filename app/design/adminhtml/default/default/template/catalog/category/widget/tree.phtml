@@ -27,15 +27,14 @@
             onSelect: <?= $this->getNodeClickListener() ?? 'null' ?>,
         },
     });
-    tree.buildRootNode(<?= $this->getTreeJson() ?>);
+    tree.setRootNode(<?= $this->getTreeJson() ?>);
 
 <?php if ($this->getWithEmptyNode()): ?>
-    const emptyNode = {
+    const emptyNode = new MahoTreeNode(tree, {
         id: 'none',
         text: '<?= Mage::helper('core')->jsQuoteEscape($this->__('View All Products')) ?>',
-        path: '1/none',
         cls: 'leaf',
-    }
-    tree.buildNode(emptyNode, null, true);
+    });
+    tree.rootNode.prependChild(emptyNode);
 <?php endif ?>
 </script>

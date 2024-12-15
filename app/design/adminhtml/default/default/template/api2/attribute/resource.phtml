@@ -60,7 +60,7 @@
             onSelect: updateValue,
         },
     });
-    tree.buildRootNode(<?= $this->getResTreeJson() ?>);
+    tree.setRootNode(<?= $this->getResTreeJson() ?>);
     tree.expandAll();
 
     updateValue();
