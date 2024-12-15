@@ -26,6 +26,7 @@ class MahoTreeNode {
         }
 
         this.createElement();
+        this.bindEventListeners();
 
         if (this.type === 'folder') {
             for (const child of children) {
@@ -78,13 +79,6 @@ class MahoTreeNode {
                 this.ui.checkbox.type = 'radio';
                 this.ui.checkbox.name = this.tree.selectableOpts.radioName;
             }
-            this.ui.checkbox.addEventListener('change', () => {
-                if (this.tree.selectableOpts.mode === 'nested') {
-                    this.updateChildrenCheckboxes(this.ui.checkbox.checked);
-                    this.updateParentCheckboxes();
-                }
-                window.varienElementMethods?.setHasChanges(this.ui.checkbox);
-            });
         } else {
             this.ui.label = document.createElement('div');
             this.ui.label.innerHTML = '<span class="icon"></span><span></span>';
@@ -108,14 +102,28 @@ class MahoTreeNode {
         if (this.attributes.expanded) {
             this.ui.details.setAttribute('open', '');
         }
-        this.ui.details.addEventListener('toggle', () => {
+        this.ui.details.innerHTML = '<summary></summary><ul></ul>';
+        this.ui.summary = this.ui.details.children[0];
+        this.ui.ctNode = this.ui.details.children[1];
+    }
+
+    bindEventListeners() {
+        this.ui.checkbox?.addEventListener('change', () => {
+            if (this.tree.selectableOpts.mode === 'nested') {
+                this.updateChildrenCheckboxes(this.ui.checkbox.checked);
+                this.updateParentCheckboxes();
+            }
+            window.varienElementMethods?.setHasChanges(this.ui.checkbox);
+        });
+        this.ui.details?.addEventListener('toggle', () => {
             if (this.ui.details.open === true && this.hasLoadedChildren === false) {
                 this.loadChildren();
             }
         });
-        this.ui.details.innerHTML = '<summary></summary><ul></ul>';
-        this.ui.summary = this.ui.details.children[0];
-        this.ui.ctNode = this.ui.details.children[1];
+    }
+
+    getUI() {
+        return this.ui;
     }
 
     get parentNode() {
@@ -129,6 +137,20 @@ class MahoTreeNode {
         return Array.from(this.ui.ctNode.children).map((el) => {
             return this.tree.nodeDataMap.get(el);
         });
+    }
+
+    appendChild(node) {
+        if (this.type !== 'folder') {
+            throw new Error('Cannot append child to leaf node');
+        }
+        this.ui.ctNode.append(node.ui.wrap);
+    }
+
+    prependChild(node) {
+        if (this.type !== 'folder') {
+            throw new Error('Cannot append child to leaf node');
+        }
+        this.ui.ctNode.prepend(node.ui.wrap);
     }
 
     selectChildren() {
@@ -169,20 +191,6 @@ class MahoTreeNode {
         }
     }
 
-    appendChild(node) {
-        if (this.type !== 'folder') {
-            throw new Error('Cannot append child to leaf node');
-        }
-        this.ui.ctNode.append(node.ui.wrap);
-    }
-
-    prependChild(node) {
-        if (this.type !== 'folder') {
-            throw new Error('Cannot append child to leaf node');
-        }
-        this.ui.ctNode.prepend(node.ui.wrap);
-    }
-
     async loadChildren() {
         try {
             const options = {
@@ -194,7 +202,7 @@ class MahoTreeNode {
             }
 
             //await new Promise(r => setTimeout(r, 1000));
-            const response = await fetch(this.tree.config.treeLoaderUrl, options);
+            const response = await fetch(this.tree.config.dataUrl, options);
             if (!response.ok) {
                 throw new Error(`Server returned status ${response.status}`);
             }
@@ -226,24 +234,28 @@ class MahoTree {
             selectable: false, // radio, single, simple, nested (true)
             sortable: false, // true or object
             rootVisible: true,
+            dataUrl: null,
             cssVars: {},
         }, config);
 
         this.selectableOpts = {
-            mode: this.config.selectable === true ? 'nested' : this.config.selectable,
+            mode: 'nested',
             hideInputs: false,
             radioName: this.uniqId,
         }
 
         this.sortableOpts = {
-	    group: this.config.sortable === true ? `sortable.${this.uniqId}` : this.config.sortable,
+	    group: `sortable.${this.uniqId}`,
 	    animation: 150,
 	    fallbackOnBody: true,
 	    swapThreshold: 0.65,
             containDepth: false,
         };
 
-        if (typeof this.config.selectable === 'object' && this.config.selectable !== null) {
+        if (typeof this.config.selectable === 'string' || this.config.selectable instanceof String) {
+            this.selectableOpts.mode = this.config.selectable;
+            this.config.selectable = true;
+        } else if (typeof this.config.selectable === 'object' && this.config.selectable !== null) {
             this.selectableOpts = Object.assign(this.selectableOpts, this.config.selectable);
             this.config.selectable = true;
             if (typeof this.selectableOpts.onSelect === 'function') {
@@ -251,7 +263,10 @@ class MahoTree {
             }
         }
 
-        if (typeof this.config.sortable === 'object' && this.config.sortable !== null) {
+        if (typeof this.config.sortable === 'string' || this.config.sortable instanceof String) {
+            this.sortableOpts.group = this.config.sortable;
+            this.config.sortable = true;
+        } else if (typeof this.config.sortable === 'object' && this.config.sortable !== null) {
             this.sortableOpts = Object.assign(this.sortableOpts, this.config.sortable);
             this.config.sortable = true;
             // TODO, bind all callbacks in sortableOpts too?
@@ -261,6 +276,7 @@ class MahoTree {
         containerEl.appendChild(this.rootEl);
 
         this.bindEventListeners();
+        this.bindDraggableJs(this.rootEl);
     }
 
     createElement() {
@@ -273,11 +289,6 @@ class MahoTree {
         if (this.selectableOpts.hideInputs === true) {
             this.rootEl.classList.add('hide-checkbox');
         }
-    }
-
-    // todo remove...
-    dispatchEvent() {
-        this.rootEl.dispatchEvent(...arguments);
     }
 
     bindEventListeners() {
@@ -296,43 +307,52 @@ class MahoTree {
             }
         });
 
+        this.mutationObserver = new MutationObserver((mutationList, observer) => {
+            for (const mutation of mutationList) {
+                for (const el of mutation.addedNodes) {
+                    if (el.tagName === 'LI') {
+                        el.querySelectorAll(':scope ul').forEach(this.bindDraggableJs.bind(this));
+                    }
+                }
+            }
+        });
 
+        this.mutationObserver.observe(this.rootEl, { childList: true, subtree: true });
     }
 
-    bindDraggableJs(node) {
-        if (this.config.sortable) {
+    bindDraggableJs(el) {
+        if (this.config.sortable && !el.dataset.group) {
             let group = this.sortableOpts.group;
             if (this.sortableOpts.containDepth === true) {
-                let current = node, depth = 0;
-                while (current !== this.rootNode) {
-                    current = current.parentNode;
+                let current = el, depth = 0;
+                while (current !== this.rootEl) {
+                    current = current.parentNode.closest('ul');
                     depth++;
                 }
                 group += '.' + depth;
             }
-            node.ui.ctNode.dataset.group = group;
-            new Sortable(node.ui.ctNode, { ...this.sortableOpts, group });
+            el.dataset.group = group;
+            new Sortable(el, { ...this.sortableOpts, group });
 	}
     }
 
-    buildRootNode(node) {
-        console.log(node);
-        if (typeof node !== 'object') {
-            throw new TypeError('Root node must be an object or array');
-        }
-
-        if (Array.isArray(node)) {
+    setRootNode(node) {
+        if (node instanceof MahoTreeNode) {
+            this.rootNode = node;
+        } else if (Array.isArray(node)) {
             this.config.rootVisible = false;
             this.rootNode = new MahoTreeNode(this, {
                 id: '__root__',
                 text: 'Root',
                 children: node,
             });
-        } else {
+        } else if (typeof node === 'object' && node !== null) {
             this.rootNode = new MahoTreeNode(this, {
                 children: [],
                 ...node,
             });
+        } else {
+            throw new TypeError('Root node must be an object, array, or MahoTreeNode');
         }
 
         if (this.config.rootVisible) {
@@ -342,13 +362,6 @@ class MahoTree {
                 this.rootEl.append(child.ui.wrap);
             }
         }
-
-        /*
-        this.bindDraggableJs(this.rootEl);
-        if (this.selectableOpts.mode === 'nested') {
-            this.updateParentCheckboxes();
-        }
-        */
     }
 
     storeNode(key, node) {
@@ -377,5 +390,16 @@ class MahoTree {
         return Array.from(this.rootEl.querySelectorAll('input:checked')).map((el) => {
             return this.nodeDataMap.get(el.closest('li'));
         });
+    }
+
+
+    dispatchEvent() {
+        console.log('DEPRECATED dispatchEvent');
+        this.rootEl.dispatchEvent(...arguments);
+    }
+
+    buildRootNode(node) {
+        console.log('DEPRECATED buildRootNode');
+        return this.setRootNode(node);
     }
 }
