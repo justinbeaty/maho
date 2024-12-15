@@ -14,10 +14,10 @@ class MahoTreeNode {
         this.tree = tree;
         this.attributes = attributes;
 
-        this.type = Array.isArray(children) ? 'folder' : 'leaf';
         this.id = this.attributes.id ?? generateRandomString(6);
         this.text = this.attributes.text ?? this.attributes.name;
         this.icons = (this.attributes.icon ?? this.attributes.cls ?? '').trim().split(/\s+/).filter(Boolean);
+        this.type = Array.isArray(children) ? 'folder' : 'leaf';
 
         //
         this.text ??= this.type.charAt(0).toUpperCase() + this.type.slice(1);
@@ -40,6 +40,7 @@ class MahoTreeNode {
         }
 
         this.tree.storeNode(this.ui.wrap, this);
+        this.updateParentCheckboxes();
     }
 
     createElement() {
@@ -117,6 +118,13 @@ class MahoTreeNode {
         this.ui.ctNode = this.ui.details.children[1];
     }
 
+    get parentNode() {
+        const el = this.ui.wrap.parentElement?.closest('li');
+        if (el) {
+            return this.tree.nodeDataMap.get(el);
+        }
+    }
+
     get childNodes() {
         return Array.from(this.ui.ctNode.children).map((el) => {
             return this.tree.nodeDataMap.get(el);
@@ -149,14 +157,14 @@ class MahoTreeNode {
         while (current = current.parentNode) {
             const children = Array.from(current.ui.ctNode.querySelectorAll(':scope input[type=checkbox]'));
             if (children.every((el) => el.checked)) {
-                parent.checked = true;
-                parent.indeterminate = false;
+                current.ui.checkbox.checked = true;
+                current.ui.checkbox.indeterminate = false;
             } else if (children.all((el) => !el.checked)) {
-                parent.checked = false;
-                parent.indeterminate = false;
+                current.ui.checkbox.checked = false;
+                current.ui.checkbox.indeterminate = false;
             } else {
-                parent.checked = false;
-                parent.indeterminate = true;
+                current.ui.checkbox.checked = false;
+                current.ui.checkbox.indeterminate = true;
             }
         }
     }
@@ -165,7 +173,6 @@ class MahoTreeNode {
         if (this.type !== 'folder') {
             throw new Error('Cannot append child to leaf node');
         }
-        node.parentNode = this;
         this.ui.ctNode.append(node.ui.wrap);
     }
 
@@ -173,7 +180,6 @@ class MahoTreeNode {
         if (this.type !== 'folder') {
             throw new Error('Cannot append child to leaf node');
         }
-        node.parentNode = this;
         this.ui.ctNode.prepend(node.ui.wrap);
     }
 
@@ -289,6 +295,8 @@ class MahoTree {
                 this.selectableOpts.onSelect(this.getChecked());
             }
         });
+
+
     }
 
     bindDraggableJs(node) {
@@ -296,8 +304,8 @@ class MahoTree {
             let group = this.sortableOpts.group;
             if (this.sortableOpts.containDepth === true) {
                 let current = node, depth = 0;
-                while (current.ui.ctNode !== this.rootEl) {
-                    current = current.parentNode.ctNode;
+                while (current !== this.rootNode) {
+                    current = current.parentNode;
                     depth++;
                 }
                 group += '.' + depth;
@@ -305,20 +313,6 @@ class MahoTree {
             node.ui.ctNode.dataset.group = group;
             new Sortable(node.ui.ctNode, { ...this.sortableOpts, group });
 	}
-    }
-
-    storeNode(key, node) {
-        this.nodeDataMap.set(key, node);
-    }
-
-    getRootNode() {
-        return this.rootNode;
-    }
-
-    getNodeById(id) {
-        if (id) {
-            return this.nodeDataMap.get(this.rootEl.querySelector('#' + id));
-        }
     }
 
     buildRootNode(node) {
@@ -355,6 +349,20 @@ class MahoTree {
             this.updateParentCheckboxes();
         }
         */
+    }
+
+    storeNode(key, node) {
+        this.nodeDataMap.set(key, node);
+    }
+
+    getRootNode() {
+        return this.rootNode;
+    }
+
+    getNodeById(id) {
+        if (id) {
+            return this.nodeDataMap.get(this.rootEl.querySelector('#' + id));
+        }
     }
 
     expandAll() {

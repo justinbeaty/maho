@@ -1064,15 +1064,15 @@ ul.tabs a.changed span.changed {
     border-color: transparent;
 }
 
-.maho-tree div.label, .maho-tree div.label label {
+.maho-tree .label {
     display: flex;
     flex-grow: 1;
     gap: var(--label-gap);
     user-select: none;
     align-items: safe center;
-    width: unset;
+    width: unset !important;
 }
-.maho-tree .disabled + *, .no-active-category + * {
+.maho-tree .label.disabled, .maho-tree .label:has(.icon.no-active-category) {
     color: var(--disabled-color) !important;
 }
 
@@ -1080,7 +1080,7 @@ ul.tabs a.changed span.changed {
     padding-right: 3px;
     padding-bottom: 3px;
 }
-.maho-tree.hide-checkbox .label:has(input:is([type=checkbox], [type=radio])) label {
+.maho-tree.hide-checkbox .label:has(input:is([type=checkbox], [type=radio])) {
     cursor: pointer;
 }
 .maho-tree.hide-checkbox .label input:is([type=checkbox], [type=radio]) {
