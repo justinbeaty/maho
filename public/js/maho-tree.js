@@ -244,9 +244,7 @@ class MahoTreeNode {
             for (const child of children) {
                 this.appendChild(new MahoTreeNode(this.tree, child))
             }
-            if (children.length) {
-                this.hasLoadedChildren = true;
-            }
+            this.hasLoadedChildren = !this.tree.config.dataUrl || children.length > 0;
             this.ui.wrap.append(this.ui.details);
         } else {
             this.ui.wrap.append(this.ui.label);
@@ -338,7 +336,7 @@ class MahoTreeNode {
                 } else {
                     this.expand();
                 }
-                if (this.ui.checkbox) {
+                if (this.ui.checkbox && this.ui.checkbox.type !== 'radio') {
                     this.ui.checkbox.checked = !this.ui.checkbox.checked;
                     this.ui.checkbox.dispatchEvent(new Event('change', { bubbles: true }));
                 }
@@ -353,6 +351,16 @@ class MahoTreeNode {
 
     getUI() {
         return this.ui;
+    }
+
+    getPath() {
+        const parts = [];
+        let current = this;
+        while (current) {
+            parts.push(current.id);
+            current = current.parentNode;
+        }
+        return parts.reverse().join('/');
     }
 
     get parentNode() {
@@ -423,6 +431,9 @@ class MahoTreeNode {
     }
 
     async loadChildren() {
+        if (!this.tree.config.dataUrl) {
+            return;
+        }
         try {
             const options = {
                 method: 'POST',
@@ -437,6 +448,8 @@ class MahoTreeNode {
             if (!response.ok) {
                 throw new Error(`Server returned status ${response.status}`);
             }
+
+            // todo, clear children
 
             const children = await response.json();
             for (const child of children) {
