@@ -60,17 +60,19 @@ class MahoTree {
     }
 
     setRootNode(node) {
+        console.log(node)
         if (node instanceof MahoTreeNode) {
             this.rootNode = node;
         } else if (Array.isArray(node)) {
-            this.config.rootVisible = false;
             this.rootNode = new MahoTreeNode(this, {
                 id: '__root__',
                 text: 'Root',
+                expanded: true,
                 children: node,
             });
         } else if (typeof node === 'object' && node !== null) {
             this.rootNode = new MahoTreeNode(this, {
+                expanded: true,
                 children: [],
                 ...node,
             });
@@ -78,13 +80,7 @@ class MahoTree {
             throw new TypeError('Root node must be an object, array, or MahoTreeNode');
         }
 
-        if (this.config.rootVisible) {
-            this.rootEl.append(this.rootNode.ui.wrap);
-        } else {
-            for (const child of this.rootNode.childNodes) {
-                this.rootEl.append(child.ui.wrap);
-            }
-        }
+        this.rootEl.replaceChildren(this.rootNode.ui.wrap);
     }
 
     createElement() {
@@ -96,6 +92,9 @@ class MahoTree {
         }
         if (this.selectableOpts.hideInputs === true) {
             this.rootEl.classList.add('hide-checkbox');
+        }
+        if (this.config.rootVisible === false) {
+            this.rootEl.classList.add('hide-root-node');
         }
     }
 

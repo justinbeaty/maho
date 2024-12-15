@@ -1076,6 +1076,18 @@ ul.tabs a.changed span.changed {
     color: var(--disabled-color) !important;
 }
 
+.maho-tree.hide-root-node > li {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+}
+.maho-tree.hide-root-node > li:before {
+    display: none;
+}
+.maho-tree.hide-root-node > li > details > summary {
+    display: none;
+}
+
 .maho-tree.hide-checkbox {
     padding-right: 3px;
     padding-bottom: 3px;
