@@ -56,4 +56,8 @@
     document.getElementById('tree_action_expand').addEventListener('click', () => {
         tree.expandAll();
     });
+
+    tree.expandPath('<?= $this->getTreeCurrentPath() ?>').then((node) => {
+        MediabrowserInstance.selectFolder(node);
+    });
 </script>

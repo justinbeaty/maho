@@ -243,12 +243,14 @@ Mediabrowser.prototype = {
                         var newNode = new MahoTreeNode(this.tree, {
                             text: response.short_name,
                             id: response.id,
-                            expanded: true,
+                            expanded: false,
                             children: [],
                         });
                         this.currentNode.appendChild(newNode);
-                        this.currentNode.expand();
-                        this.selectFolder(newNode);
+                        this.currentNode.sortChildren();
+                        this.currentNode.expand().then(() => {
+                            this.selectFolderById(newNode.id);
+                        });
                     }
                 } catch (e) {
                     alert(e.message);

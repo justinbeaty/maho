@@ -191,6 +191,18 @@ class MahoTree {
         });
     }
 
+    async expandPath(path) {
+        const parts = path.split('/').filter(Boolean);
+        let node = this.rootNode;
+        for (const part of parts) {
+            if (!(node = this.getNodeById(part))) {
+                break;
+            }
+            await node.expand();
+        }
+        return node;
+    }
+
     expandAll() {
         this.rootEl.querySelectorAll('details').forEach((el) => el.open = true);
     }
@@ -376,24 +388,14 @@ class MahoTreeNode {
         });
     }
 
-    appendChild(node) {
-        if (this.type !== 'folder') {
-            throw new Error('Cannot append child to leaf node');
-        }
-        this.ui.ctNode.append(node.ui.wrap);
-    }
-
-    prependChild(node) {
-        if (this.type !== 'folder') {
-            throw new Error('Cannot append child to leaf node');
-        }
-        this.ui.ctNode.prepend(node.ui.wrap);
-    }
-
-    expand() {
+    async expand() {
         if (this.ui.details) {
+            if (this.hasLoadedChildren === false) {
+                await this.loadChildren();
+            }
             this.ui.details.open = true;
         }
+        return this;
     }
 
     collapse() {
@@ -414,6 +416,26 @@ class MahoTreeNode {
             this.ui.checkbox.checked = false;
             this.ui.checkbox.indeterminate = false;
         }
+    }
+
+    appendChild(node) {
+        if (this.type !== 'folder') {
+            throw new Error('Cannot append child to leaf node');
+        }
+        this.ui.ctNode.append(node.ui.wrap);
+    }
+
+    prependChild(node) {
+        if (this.type !== 'folder') {
+            throw new Error('Cannot append child to leaf node');
+        }
+        this.ui.ctNode.prepend(node.ui.wrap);
+    }
+
+    sortChildren() {
+        Array.from(this.ui.ctNode.children)
+            .sort((a, b) => a.dataset.text > b.dataset.text ? 1 : -1)
+            .forEach(node => this.ui.ctNode.appendChild(node));
     }
 
     selectChildren() {
@@ -447,6 +469,8 @@ class MahoTreeNode {
                     node: this.id,
                 }),
             }
+
+            await new Promise(r => setTimeout(r, 1000));
 
             const response = await fetch(this.tree.config.dataUrl, options);
             if (!response.ok) {
