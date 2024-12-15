@@ -109,9 +109,15 @@ class MahoTreeNode {
     bindEventListeners() {
         this.ui.checkbox?.addEventListener('change', () => {
             if (this.tree.selectableOpts.mode === 'nested') {
-                this.updateChildrenCheckboxes(this.ui.checkbox.checked);
+                if (this.ui.checkbox.checked) {
+                    this.selectChildren();
+                } else {
+                    this.deselectChildren();
+                }
             }
-            window.varienElementMethods?.setHasChanges(this.ui.checkbox);
+            if (this.tree.config.varienSetHasChanges) {
+                window.varienElementMethods?.setHasChanges(this.ui.checkbox);
+            }
         });
         this.ui.details?.addEventListener('toggle', () => {
             if (this.ui.details.open === true && this.hasLoadedChildren === false) {
@@ -151,20 +157,30 @@ class MahoTreeNode {
         this.ui.ctNode.prepend(node.ui.wrap);
     }
 
+    select() {
+        if (this.ui.checkbox) {
+            this.ui.checkbox.checked = true;
+            this.ui.checkbox.indeterminate = false;
+        }
+    }
+
+    deselect() {
+        if (this.ui.checkbox) {
+            this.ui.checkbox.checked = false;
+            this.ui.checkbox.indeterminate = false;
+        }
+    }
+
     selectChildren() {
-        this.updateChildrenCheckboxes(true);
+        this.ui.ctNode?.querySelectorAll('input[type=checkbox]').forEach((el) => {
+            el.checked = true;
+            el.indeterminate = false;
+        });
     }
 
     deselectChildren() {
-        this.updateChildrenCheckboxes(false);
-    }
-
-    updateChildrenCheckboxes(checked = true) {
-        if (this.type !== 'folder') {
-            return;
-        }
-        this.ui.ctNode.querySelectorAll('input[type=checkbox]').forEach((el) => {
-            el.checked = checked;
+        this.ui.ctNode?.querySelectorAll('input[type=checkbox]').forEach((el) => {
+            el.checked = false;
             el.indeterminate = false;
         });
     }
@@ -211,8 +227,9 @@ class MahoTree {
         this.config = Object.assign({
             selectable: false, // radio, single, simple, nested (true)
             sortable: false, // true or object
-            rootVisible: true,
             dataUrl: null,
+            rootVisible: true,
+            varienSetHasChanges: true,
             cssVars: {},
         }, config);
 
@@ -384,18 +401,18 @@ class MahoTree {
         }
     }
 
+    getChecked() {
+        return Array.from(this.rootEl.querySelectorAll('input:checked')).map((el) => {
+            return this.nodeDataMap.get(el.closest('li'));
+        });
+    }
+
     expandAll() {
         this.rootEl.querySelectorAll('details').forEach((el) => el.open = true);
     }
 
     collapseAll() {
         this.rootEl.querySelectorAll('details').forEach((el) => el.open = false);
-    }
-
-    getChecked() {
-        return Array.from(this.rootEl.querySelectorAll('input:checked')).map((el) => {
-            return this.nodeDataMap.get(el.closest('li'));
-        });
     }
 
     dispatchEvent() {
