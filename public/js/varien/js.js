@@ -38,6 +38,18 @@ function parseSidUrl(baseUrl, urlExt) {
 }
 
 /**
+ * Generate a random string format [a-z0-9]
+ *
+ * @see {@link https://stackoverflow.com/a/47496558}
+ */
+function generateRandomString(length) {
+    if (length > 0) {
+        return [...Array(length)].map(() => Math.random().toString(36)[2]).join('');
+    }
+    return '';
+}
+
+/**
  * Alternative to PrototypeJS's string.escapeHTML() method
  */
 function escapeHTML(str, escapeQuotes = false) {

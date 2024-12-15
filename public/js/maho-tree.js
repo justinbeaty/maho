@@ -1,3 +1,203 @@
+class MahoTreeNode {
+
+    constructor(tree, data) {
+        if (!tree instanceof MahoTree) {
+            throw new TypeError('Tree parameter must be instance of MahoTree');
+        }
+        if (typeof data !== 'object' || Array.isArray(data) || data === null) {
+            throw new TypeError('Data parameter must be an object');
+        }
+
+        const { children, ...attributes } = data;
+
+        this.ui = {};
+        this.tree = tree;
+        this.attributes = attributes;
+
+        this.type = Array.isArray(children) ? 'folder' : 'leaf';
+        this.id = this.attributes.id ?? generateRandomString(6);
+        this.text = this.attributes.text ?? this.attributes.name;
+        this.icons = (this.attributes.icon ?? this.attributes.cls ?? '').trim().split(/\s+/).filter(Boolean);
+
+        //
+        this.text ??= this.type.charAt(0).toUpperCase() + this.type.slice(1);
+        if (this.icons.length === 0) {
+            this.icons.push(this.type);
+        }
+
+        this.createElement();
+
+        if (this.type === 'folder') {
+            //this.childNodes = [];
+            for (const child of children) {
+                this.appendChild(new MahoTreeNode(this.tree, child))
+            }
+            if (children.length) {
+                this.hasLoadedChildren = true;
+            }
+        } else {
+            this.ui.wrap.append(divEl);
+        }
+
+        this.tree.storeNode(this.ui.wrap, this);
+    }
+
+    createElement() {
+        this.ui.wrap = document.createElement('li');
+        this.ui.wrap.id = this.id;
+        this.ui.wrap.dataset.text = this.text;
+
+        this.createLabelElement();
+
+        if (this.type === 'folder') {
+            this.createDetailsElement()
+            this.ui.wrap.append(this.ui.details);
+            this.ui.summary.append(this.ui.label);
+        } else {
+            this.ui.wrap.append(this.ui.label);
+        }
+    }
+
+    createLabelElement() {
+        if (this.attributes.selectable ?? this.tree.config.selectable) {
+            this.ui.label = document.createElement('label');
+            this.ui.label.innerHTML = '<span class="icon"></span><input type="checkbox"><span></span>';
+
+            this.ui.checkbox = this.ui.label.querySelector('input');
+            if (this.attributes.name) {
+                this.ui.checkbox.setAttribute('name', this.attributes.name);
+            }
+            if (this.attributes.checked) {
+                this.ui.checkbox.setAttribute('checked', '');
+            }
+            if (this.attributes.disabled) {
+                this.ui.checkbox.setAttribute('disabled', '');
+            }
+            if (this.tree.selectableOpts.mode === 'radio') {
+                this.ui.checkbox.type = 'radio';
+                this.ui.checkbox.name = this.tree.selectableOpts.radioName;
+            }
+            this.ui.checkbox.addEventListener('change', () => {
+                if (this.tree.selectableOpts.mode === 'nested') {
+                    this.updateChildrenCheckboxes(this.ui.checkbox.checked);
+                    this.updateParentCheckboxes();
+                }
+                window.varienElementMethods?.setHasChanges(this.ui.checkbox);
+            });
+        } else {
+            this.ui.label = document.createElement('div');
+            this.ui.label.innerHTML = '<span class="icon"></span><span></span>';
+        }
+
+        this.ui.label.classList.add('label');
+
+        if (this.attributes.disabled) {
+            this.ui.label.classList.add('disabled');
+        }
+
+        this.ui.textNode = this.ui.label.querySelector('span:not(.icon)');
+        this.ui.textNode.textContent = unescapeHTML(this.text);
+
+        this.ui.iconNode = this.ui.label.querySelector('span.icon');
+        this.ui.iconNode.classList.add(...this.icons);
+    }
+
+    createDetailsElement() {
+        this.ui.details = document.createElement('details');
+        if (this.attributes.expanded) {
+            this.ui.details.setAttribute('open', '');
+        }
+        this.ui.details.addEventListener('toggle', () => {
+            if (this.ui.details.open === true && this.hasLoadedChildren === false) {
+                this.loadChildren();
+            }
+        });
+        this.ui.details.innerHTML = '<summary></summary><ul></ul>';
+        this.ui.summary = this.ui.details.children[0];
+        this.ui.ctNode = this.ui.details.children[1];
+    }
+
+    selectChildren() {
+        this.updateChildrenCheckboxes(true);
+    }
+
+    deselectChildren() {
+        this.updateChildrenCheckboxes(false);
+    }
+
+    updateChildrenCheckboxes(checked = true) {
+        if (this.type !== 'folder') {
+            return;
+        }
+        this.ui.ctNode.querySelectorAll('input[type=checkbox]').forEach((el) => {
+            el.checked = checked;
+            el.indeterminate = false;
+        });
+    }
+
+    updateParentCheckboxes() {
+        if (this.tree.selectableOpts.mode !== 'nested') {
+            return;
+        }
+        let current = this;
+        while (current = current.parentNode) {
+            const children = Array.from(current.ui.ctNode.querySelectorAll(':scope input[type=checkbox]'));
+            if (children.every((el) => el.checked)) {
+                parent.checked = true;
+                parent.indeterminate = false;
+            } else if (children.all((el) => !el.checked)) {
+                parent.checked = false;
+                parent.indeterminate = false;
+            } else {
+                parent.checked = false;
+                parent.indeterminate = true;
+            }
+        }
+    }
+
+    appendChild(node) {
+        if (this.type !== 'folder') {
+            throw new Error('Cannot append child to leaf node');
+        }
+        this.ui.ctNode.append(node.ui.wrap);
+    }
+
+    prependChild(node) {
+        if (this.type !== 'folder') {
+            throw new Error('Cannot append child to leaf node');
+        }
+        this.ui.ctNode.prepend(node.ui.wrap);
+    }
+
+    async loadChildren() {
+        try {
+            const options = {
+                method: 'POST',
+                body: new URLSearchParams({
+                    form_key: FORM_KEY,
+                    node: this.id,
+                }),
+            }
+
+            //await new Promise(r => setTimeout(r, 1000));
+            const response = await fetch(this.tree.config.treeLoaderUrl, options);
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const children = await response.json();
+            for (const child of children) {
+                this.appendChild(new MahoTreeNode(this.tree, child))
+            }
+            this.hasLoadedChildren = true;
+
+        } catch (error) {
+            console.error('Error loading children:', error)
+        }
+    }
+}
+
+
 class MahoTree {
     constructor(container, config = {}) {
         const containerEl = document.getElementById(container);
@@ -6,68 +206,81 @@ class MahoTree {
         }
 
         this.nodeDataMap = new WeakMap();
+        this.uniqId = generateRandomString(6);
 
         this.config = Object.assign({
             selectable: false, // radio, single, simple, nested (true)
             sortable: false, // true or object
-
             rootVisible: true,
-            iconFolder: 'folder',
-            iconLeaf: 'leaf',
             cssVars: {},
         }, config);
 
         this.selectableOpts = {
             mode: this.config.selectable === true ? 'nested' : this.config.selectable,
             hideInputs: false,
-            radioName: [...Array(6)].map(() => Math.random().toString(36)[2]).join(''),
+            radioName: this.uniqId,
         }
 
         this.sortableOpts = {
-	    group: this.config.sortable === true ? 'sortable' : this.config.sortable,
+	    group: this.config.sortable === true ? `sortable.${this.uniqId}` : this.config.sortable,
 	    animation: 150,
 	    fallbackOnBody: true,
 	    swapThreshold: 0.65,
-
             containDepth: false,
         };
 
         if (typeof this.config.selectable === 'object' && this.config.selectable !== null) {
             this.selectableOpts = Object.assign(this.selectableOpts, this.config.selectable);
             this.config.selectable = true;
+            if (typeof this.selectableOpts.onSelect === 'function') {
+                this.selectableOpts.onSelect = this.selectableOpts.onSelect.bind(this);
+            }
         }
 
         if (typeof this.config.sortable === 'object' && this.config.sortable !== null) {
             this.sortableOpts = Object.assign(this.sortableOpts, this.config.sortable);
             this.config.sortable = true;
+            // TODO, bind all callbacks in sortableOpts too?
         }
 
+        this.createElement();
+        containerEl.appendChild(this.rootEl);
+
+        this.bindEventListeners();
+    }
+
+    createElement() {
         this.rootEl = document.createElement('ul');
         this.rootEl.classList.add('maho-tree');
 
         for (const [cssVar, cssVal] of Object.entries(this.config.cssVars)) {
             this.rootEl.style.setProperty(`--${cssVar}`, cssVal);
         }
-
-        // TODO, bind all callbacks in sortableOpts too?
-        if (typeof this.selectableOpts.onSelect === 'function') {
-            this.selectableOpts.onSelect = this.selectableOpts.onSelect.bind(this);
-        }
-
         if (this.selectableOpts.hideInputs === true) {
             this.rootEl.classList.add('hide-checkbox');
         }
-        containerEl.appendChild(this.rootEl);
+    }
 
-        this.bindEventListeners();
+    // todo remove...
+    dispatchEvent() {
+        this.rootEl.dispatchEvent(...arguments);
     }
 
     bindEventListeners() {
-        this.rootEl.addEventListener('change', this.updateChildCheckboxes.bind(this));
-    }
-
-    dispatchEvent() {
-        this.rootEl.dispatchEvent(...arguments);
+        this.rootEl.addEventListener('change', (event) => {
+            const targetEl = event.target;
+            if (targetEl.tagName !== 'INPUT' || ['checkbox', 'radio'].includes(targetEl.type) === false) {
+                return;
+            }
+            if (this.selectableOpts.mode === 'single') {
+                this.rootEl.querySelectorAll('input[type=checkbox]:checked').forEach((el) => {
+                    el.checked = el === targetEl;
+                });
+            }
+            if (typeof this.selectableOpts.onSelect === 'function') {
+                this.selectableOpts.onSelect(this.getChecked());
+            }
+        });
     }
 
     bindDraggableJs(el) {
@@ -220,48 +433,26 @@ class MahoTree {
         return this.storeNode(liEl, node);
     }
 
-    async onDetailsToggle(event) {
-        const detailsEl = event.target;
-        if (detailsEl.open === false) {
-            return;
-        }
-
-        const node = this.nodeDataMap.get(detailsEl.closest('li'));
-        if (node.hasLoadedChildren === true) {
-            return;
-        }
-
-        try {
-            console.log('loading');
-            console.log(detailsEl)
-
-            const options = {
-                method: 'POST',
-                body: new URLSearchParams({
-                    form_key: FORM_KEY,
-                    node: node.id,
-                }),
+    updateParentCheckboxes() {
+        Array.from(this.rootEl.querySelectorAll('li')).reverse().forEach((el) => {
+            const parent = el.querySelector('input[type=checkbox]');
+            const children = Array.from(el.querySelectorAll(':scope ul input[type=checkbox]'));
+            if (children.length) {
+                if (children.every((el) => el.checked)) {
+                    parent.checked = true;
+                    parent.indeterminate = false;
+                } else if (children.all((el) => !el.checked)) {
+                    parent.checked = false;
+                    parent.indeterminate = false;
+                } else {
+                    parent.checked = false;
+                    parent.indeterminate = true;
+                }
             }
-
-            //await new Promise(r => setTimeout(r, 1000));
-
-            const response = await fetch(this.config.treeLoaderUrl, options);
-            if (!response.ok) {
-                throw new Error(`Server returned status ${response.status}`);
-            }
-
-            const children = await response.json();
-
-            for (const child of children) {
-                this.buildNode(child, node);
-            }
-
-            node.hasLoadedChildren = true;
-        } catch (error) {
-            console.error('Error loading children:', error)
-        }
-
+        });
     }
+
+
 
     expandAll() {
         this.rootEl.querySelectorAll('details').forEach((el) => el.open = true);
@@ -290,46 +481,4 @@ class MahoTree {
         window.varienElementMethods?.setHasChanges(this.rootEl);
     }
 
-    updateChildCheckboxes(event) {
-        const targetEl = event.target;
-        if (targetEl.tagName !== 'INPUT' || ['checkbox', 'radio'].includes(targetEl.type) === false) {
-            return;
-        }
-        if (this.selectableOpts.mode === 'nested') {
-            targetEl.closest('li').querySelectorAll('input[type=checkbox]').forEach((el) => {
-                el.checked = targetEl.checked;
-                el.indeterminate = false;
-            });
-            this.updateParentCheckboxes();
-        } else if (this.selectableOpts.mode === 'single') {
-            this.rootEl.querySelectorAll('input[type=checkbox]:checked').forEach((el) => {
-                if (el !== targetEl) {
-                    el.checked = false;
-                }
-            });
-        }
-        if (typeof this.selectableOpts.onSelect === 'function') {
-            this.selectableOpts.onSelect(this.getChecked());
-        }
-        this.setHasChanges();
-    }
-
-    updateParentCheckboxes() {
-        Array.from(this.rootEl.querySelectorAll('li')).reverse().forEach((el) => {
-            const parent = el.querySelector('input[type=checkbox]');
-            const children = Array.from(el.querySelectorAll(':scope ul input[type=checkbox]'));
-            if (children.length) {
-                if (children.every((el) => el.checked)) {
-                    parent.checked = true;
-                    parent.indeterminate = false;
-                } else if (children.all((el) => !el.checked)) {
-                    parent.checked = false;
-                    parent.indeterminate = false;
-                } else {
-                    parent.checked = false;
-                    parent.indeterminate = true;
-                }
-            }
-        });
-    }
 }
