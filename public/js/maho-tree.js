@@ -12,9 +12,9 @@ class MahoTree {
         this.config = Object.assign({
             selectable: false, // radio, single, simple, nested (true)
             sortable: false, // true or object
-            dataUrl: null,
             rootVisible: true,
             varienSetHasChanges: true,
+            dataUrl: null,
             cssVars: {},
         }, config);
 
@@ -331,6 +331,19 @@ class MahoTreeNode {
                 window.varienElementMethods?.setHasChanges(this.ui.checkbox);
             }
         });
+        this.ui.label?.addEventListener('dblclick', () => {
+            if (this.ui.details) {
+                if (this.ui.details.open) {
+                    this.collapse()
+                } else {
+                    this.expand();
+                }
+                if (this.ui.checkbox) {
+                    this.ui.checkbox.checked = !this.ui.checkbox.checked;
+                    this.ui.checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+        });
         this.ui.details?.addEventListener('toggle', () => {
             if (this.ui.details.open === true && this.hasLoadedChildren === false) {
                 this.loadChildren();
@@ -367,6 +380,18 @@ class MahoTreeNode {
             throw new Error('Cannot append child to leaf node');
         }
         this.ui.ctNode.prepend(node.ui.wrap);
+    }
+
+    expand() {
+        if (this.ui.details) {
+            this.ui.details.open = true;
+        }
+    }
+
+    collapse() {
+        if (this.ui.details) {
+            this.ui.details.open = false;
+        }
     }
 
     select() {
