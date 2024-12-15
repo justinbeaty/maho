@@ -29,7 +29,8 @@
 
 <script type="module">
     const tree = new MahoTree('tree', {
-        treeLoaderUrl: '<?= $this->getTreeLoaderUrl() ?>',
+        rootVisible: false,
+        dataUrl: '<?= $this->getTreeLoaderUrl() ?>',
         selectable: {
             mode: 'radio',
             hideInputs: true,

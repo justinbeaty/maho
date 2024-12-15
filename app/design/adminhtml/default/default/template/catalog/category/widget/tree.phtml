@@ -20,6 +20,7 @@
     const useMassaction = <?= var_export((bool) $this->getUseMassaction()) ?>;
 
     const tree = new MahoTree('<?= $divId ?>', {
+        rootVisible: false,
         selectable: {
             mode: useMassaction ? 'simple' : 'radio',
             hideInputs: !useMassaction,
