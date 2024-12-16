@@ -37,8 +37,8 @@ class MahoTree {
         this.sortableOpts = {
 	    group: `sortable.${this.uniqId}`,
 	    animation: 150,
+	    invertSwap: true,
 	    fallbackOnBody: true,
-	    swapThreshold: 0.65,
             containDepth: false,
             rootSortable: true,
         };
@@ -46,7 +46,7 @@ class MahoTree {
         this.lazyloadOpts = {
             dataUrl: null,
             nodeParameter: 'node',
-            preloadChildren: false,
+            //preloadChildren: false,
             onBeforeLoad: null,
             onLoadException: null,
         };
@@ -65,7 +65,7 @@ class MahoTree {
             this.config.lazyload = true;
         }
 
-        // Check for options using full object definitions, and bind any callbacks to this
+        // Check for options using full object definitions, and bind any callbacks to this tree instance
         for (const key of ['selectable', 'sortable', 'lazyload']) {
             if (typeof this.config[key] === 'object' && this.config[key] !== null) {
                 const obj = Object.assign(this[key + 'Opts'], this.config[key]);
