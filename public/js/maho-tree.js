@@ -81,7 +81,10 @@ class MahoTree {
         containerEl.appendChild(this.rootEl);
 
         this.bindEventListeners();
-        this.bindDraggableJs(this.rootEl);
+
+        if (this.config.rootVisible === true) {
+            this.bindSortableJs(this.rootEl);
+        }
     }
 
     setRootNode(node) {
@@ -118,7 +121,7 @@ class MahoTree {
         if (this.selectableOpts.hideInputs === true) {
             this.rootEl.classList.add('hide-checkbox');
         }
-        if (this.config.rootVisible === false) {
+        if (this.config.rootVisible !== true) {
             this.rootEl.classList.add('hide-root-node');
         }
     }
@@ -145,7 +148,7 @@ class MahoTree {
             for (const mutation of mutationList) {
                 for (const el of mutation.addedNodes) {
                     if (el.tagName === 'LI') {
-                        el.querySelectorAll(':scope ul').forEach(this.bindDraggableJs.bind(this));
+                        el.querySelectorAll(':scope ul').forEach(this.bindSortableJs.bind(this));
                     }
                 }
             }
@@ -157,9 +160,9 @@ class MahoTree {
         this.mutationObserver.observe(this.rootEl, { childList: true, subtree: true });
     }
 
-    bindDraggableJs(el) {
-        if (!this.config.sortable || el.dataset.group) {
-            return
+    bindSortableJs(el) {
+        if (!this.config.sortable || Sortable.get(el)) {
+            return;
         }
         let group = this.sortableOpts.group;
         if (this.sortableOpts.containDepth === true) {
@@ -170,8 +173,10 @@ class MahoTree {
             }
             group += '.' + depth;
         }
-        el.dataset.group = group;
-        new Sortable(el, { ...this.sortableOpts, group });
+        const sortableInstance = new Sortable(el, { ...this.sortableOpts, group });
+        if (el.closest('details')?.open !== true) {
+            sortableInstance.option('disabled', true);
+        }
     }
 
     updateNestedCheckboxes() {
@@ -378,6 +383,12 @@ class MahoTreeNode {
         this.ui.details?.addEventListener('toggle', () => {
             if (this.ui.details.open === true && this.hasLoadedChildren === false) {
                 this.loadChildren();
+            }
+            if (this.tree.config.sortable) {
+                const sortableInstance = Sortable.get(this.ui.ctNode);
+                if (sortableInstance) {
+                    sortableInstance.option('disabled', !this.ui.details.open);
+                }
             }
         });
     }
