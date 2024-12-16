@@ -25,15 +25,25 @@ class CategoryEditForm {
         this.initVarienForm();
 
         this.tree = new MahoTree(config.treeDiv, {
-            sortable: true,
+            rootVisible: false,
             selectable: {
                 mode: 'single',
                 hideInputs: true,
                 onSelect: this.changeCategory.bind(this),
             },
+            sortable: {
+            },
+            lazyload: {
+                nodeParameter: 'id',
+                dataUrl: this.config.loadTreeUrl,
+                onLoadException: (node, error) => {
+                    this.setMessage(`Error loading children: ${error}`, 'error');
+                }
+            }
         })
 
-        this.loadTree();
+
+
         console.log(config)
     }
 
@@ -43,27 +53,6 @@ class CategoryEditForm {
             throw new Error(`Container with ID ${config.containerDiv} does not contain a form element.`);
         }
         this.varienForm = new varienForm(this.formEl.id);
-    }
-
-    async loadTree(categoryId = 1) {
-        try {
-            const response = await fetch(this.config.loadTreeUrl, {
-                method: 'POST',
-                body: new URLSearchParams({
-                    form_key: FORM_KEY,
-                    id: categoryId,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server returned status ${response.status}`);
-            }
-
-            this.tree.buildRootNode(await response.json());
-
-        } catch (error) {
-            this.setMessage(error, 'error');
-        }
     }
 
     getSelectedCategory() {
@@ -117,7 +106,7 @@ class CategoryEditForm {
 
     addNew(url, isRoot) {
 
-        const parent = isRoot ? {id:1} : this.getSelectedCategory();
+        const parent = isRoot ? { id: 1 } : this.getSelectedCategory();
         if (parent === undefined) {
             alert('Please select a parent category before adding a new one.'); // translate
             return;

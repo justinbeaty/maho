@@ -20,7 +20,7 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
     <?= $this->getChildHtml('form') ?>
 </div>
 
-<script>
+<script type="module">
     document.addEventListener('DOMContentLoaded', () => {
         const categoryForm = new CategoryEditForm({
             editUrl: '<?= $treeBlock->getEditUrl() ?>',
@@ -31,8 +31,9 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
             messagesDiv: 'messages',
 
             tabsJsObjectName: '<?= $tabsBlock->getJsObjectName() ?>',
-
         });
+
+        categoryForm.tree.setRootNode(<?= $treeBlock->getTreeJson() ?>);
 
         window.tree = {
             collapseTree: categoryForm.tree.collapseAll.bind(categoryForm.tree),
