@@ -32,6 +32,7 @@ class CategoryEditForm {
                 onSelect: this.changeCategory.bind(this),
             },
             sortable: {
+                rootSortable: false,
             },
             lazyload: {
                 nodeParameter: 'id',

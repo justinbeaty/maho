@@ -40,6 +40,7 @@ class MahoTree {
 	    fallbackOnBody: true,
 	    swapThreshold: 0.65,
             containDepth: false,
+            rootSortable: true,
         };
 
         this.lazyloadOpts = {
@@ -81,10 +82,6 @@ class MahoTree {
         containerEl.appendChild(this.rootEl);
 
         this.bindEventListeners();
-
-        if (this.config.rootVisible === true) {
-            this.bindSortableJs(this.rootEl);
-        }
     }
 
     setRootNode(node) {
@@ -162,6 +159,9 @@ class MahoTree {
 
     bindSortableJs(el) {
         if (!this.config.sortable || Sortable.get(el)) {
+            return;
+        }
+        if (this.sortableOpts.rootSortable === false && this.rootNode.ui.ctNode === el) {
             return;
         }
         let group = this.sortableOpts.group;
