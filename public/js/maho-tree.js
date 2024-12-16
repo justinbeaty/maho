@@ -240,7 +240,12 @@ class MahoTree {
     }
 
     collapseAll() {
-        this.rootEl.querySelectorAll('details').forEach((el) => el.open = false);
+        this.rootEl.querySelectorAll('details').forEach((el) => {
+            if (this.config.rootVisible !== true && this.rootNode.ui.details === el) {
+                return;
+            }
+            el.open = false;
+        });
     }
 
     dispatchEvent() {
