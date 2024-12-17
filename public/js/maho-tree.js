@@ -23,6 +23,7 @@ class MahoTree {
             sortable: false, // true or object
             lazyload: false, // url or object
             rootVisible: true,
+            noLeafNodes: false,
             varienSetHasChanges: true,
             cssVars: {},
         }, config);
@@ -140,6 +141,10 @@ class MahoTree {
                 this.selectableOpts.onSelect(this.getChecked());
             }
         });
+
+        this.rootEl.addEventListener('choose', (sortable) => {
+            console.log(sortable);
+        })
 
         this.mutationObserver = new MutationObserver((mutationList, observer) => {
             for (const mutation of mutationList) {
@@ -263,16 +268,22 @@ class MahoTreeNode {
             throw new TypeError('Data parameter must be an object');
         }
 
-        const { children, ...attributes } = data;
+        let { children, ...attributes } = data;
 
         this.ui = {};
         this.tree = tree;
         this.attributes = attributes;
 
+        if (this.tree.config.noLeafNodes || Array.isArray(children)) {
+            this.type = 'folder';
+            children ??= [];
+        } else {
+            this.type = 'leaf';
+        }
+
         this.id = this.attributes.id ?? generateRandomString(6);
         this.text = this.attributes.text ?? this.attributes.name;
         this.icons = (this.attributes.icon ?? this.attributes.cls ?? '').trim().split(/\s+/).filter(Boolean);
-        this.type = Array.isArray(children) ? 'folder' : 'leaf';
 
         //
         this.text ??= this.type.charAt(0).toUpperCase() + this.type.slice(1);

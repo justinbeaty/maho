@@ -26,6 +26,7 @@ class CategoryEditForm {
 
         this.tree = new MahoTree(config.treeDiv, {
             rootVisible: false,
+            noLeafNodes: true,
             selectable: {
                 mode: 'single',
                 hideInputs: true,
