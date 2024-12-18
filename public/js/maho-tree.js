@@ -109,18 +109,20 @@ class MahoTree {
         this.rootEl.replaceChildren(this.rootNode.ui.wrap);
     }
 
+    setRootVisible(flag) {
+        this.rootEl.classList.toggle('hide-root-node', !flag);
+    }
+
     createElement() {
         this.rootEl = document.createElement('ul');
         this.rootEl.classList.add('maho-tree');
+        this.setRootVisible(this.config.rootVisible);
 
         for (const [cssVar, cssVal] of Object.entries(this.config.cssVars)) {
             this.rootEl.style.setProperty(`--${cssVar}`, cssVal);
         }
         if (this.selectableOpts.hideInputs === true) {
             this.rootEl.classList.add('hide-checkbox');
-        }
-        if (this.config.rootVisible !== true) {
-            this.rootEl.classList.add('hide-root-node');
         }
     }
 

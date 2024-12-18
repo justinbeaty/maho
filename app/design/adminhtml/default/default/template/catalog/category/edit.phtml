@@ -36,7 +36,22 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
             tabsJsObjectName: '<?= $tabsBlock->getJsObjectName() ?>',
         });
 
-        categoryForm.tree.setRootNode(<?= $treeBlock->getTreeJson() ?>);
+    <?php if ($rootNode = $treeBlock->getRoot()): ?>
+        categoryForm.tree.setRootVisible(<?= var_export($rootNode->getIsVisible()) ?>);
+        categoryForm.tree.setRootNode({
+            text        : '<?= Mage::helper('core')->jsQuoteEscape(htmlentities($rootNode->getName())) ?>',
+            draggable   : false,
+            allowDrop   : <?= var_export($rootNode->getIsVisible()) ?>,
+            id          : <?= (int) $rootNode->getId() ?>,
+            store_id    : <?= (int) $treeBlock->getStore()->getId() ?>,
+            category_id : <?= (int) $treeBlock->getCategoryId() ?>,
+            children    : <?= $treeBlock->getTreeJson() ?>,
+        });
+
+        if (<?= var_export($treeBlock->getIsWasExpanded()) ?>) {
+            categoryForm.tree.expandAll();
+        }
+    <?php endif ?>
 
         //
         if (typeof window.varienStoreSwitcher !== 'undefined') {

@@ -24,8 +24,8 @@ class CategoryEditForm {
 
         this.initVarienForm();
 
-        this.tree = new MahoTree(config.treeDiv, {
-            rootVisible: false,
+        this.tree = new MahoTree(this.config.treeDiv, {
+            rootVisible: true,
             noLeafNodes: true,
             selectable: {
                 mode: 'single',
@@ -44,10 +44,6 @@ class CategoryEditForm {
                 }
             }
         })
-
-
-
-        console.log(config)
     }
 
     initVarienForm() {
@@ -121,7 +117,7 @@ class CategoryEditForm {
         this.updateContent(url);
     }
 
-    switchStore(event, switcher)
+    async switchStore(event, switcher)
     {
         if (switcher.useConfirm) {
             const confirmed = confirm('Please confirm site switching. All data that hasn\'t been saved will be lost.');
@@ -133,7 +129,44 @@ class CategoryEditForm {
 
         this.storeId = 1 * event.target.value;
         document.getElementById('addRootCategoryBtn')?.classList.toggle('no-display', this.storeId !== 0);
-        this.loadStoreTree();
+
+        showLoader();
+
+        try {
+            let url = this.config.switchTreeUrl;
+            if (this.storeId) {
+                url += `store/${this.storeId}/`;
+            }
+            const category = this.getSelectedCategory();
+            if (category) {
+                url += `id/${category.id}/`
+            }
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    form_key: FORM_KEY,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const result = await response.json();
+            const { root_visible, ...rootNode } = result.parameters;
+
+            this.tree.setRootVisible(root_visible);
+            //rootNode.expanded = true;
+            rootNode.children = result.data;
+            this.tree.setRootNode(rootNode);
+
+        } catch (error) {
+            this.setMessage(error, 'error');
+        }
+
+        hideLoader();
+        toolbarToggle.start();
     }
 
     async updateContent(url, params = {}, refreshTree = false) {
@@ -187,51 +220,6 @@ class CategoryEditForm {
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();
             this.initVarienForm();
             return true;
-
-        } catch (error) {
-            this.setMessage(error, 'error');
-        }
-
-        hideLoader();
-        toolbarToggle.start();
-    }
-
-    async loadStoreTree() {
-        showLoader();
-
-        try {
-            let url = this.config.switchTreeUrl;
-            if (this.storeId) {
-                url += `store/${this.storeId}/`;
-            }
-            const category = this.getSelectedCategory();
-            if (category) {
-                url += `id/${category.id}/`
-            }
-
-            const response = await fetch(url, {
-                method: 'POST',
-                body: new URLSearchParams({
-                    form_key: FORM_KEY,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server returned status ${response.status}`);
-            }
-
-            const result = await response.json();
-            const rootNode = {
-                ...result.parameters,
-                expanded: true,
-                children: result.data,
-            };
-
-            if (result.parameters.root_visible) {
-                this.tree.setRootNode([rootNode]);
-            } else {
-                this.tree.setRootNode(rootNode);
-            }
 
         } catch (error) {
             this.setMessage(error, 'error');
