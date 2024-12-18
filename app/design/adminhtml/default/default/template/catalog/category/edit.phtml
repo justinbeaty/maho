@@ -23,8 +23,6 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
 <script type="module">
     document.addEventListener('DOMContentLoaded', () => {
         const categoryForm = new CategoryEditForm({
-            storeId: <?= (int) $treeBlock->getStore()->getId() ?>,
-
             editUrl: '<?= $treeBlock->getEditUrl() ?>',
             moveUrl: '<?= $treeBlock->getMoveUrl() ?>',
             switchTreeUrl: '<?= $treeBlock->getSwitchTreeUrl() ?>',

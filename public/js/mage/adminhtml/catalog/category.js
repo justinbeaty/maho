@@ -21,8 +21,6 @@ class CategoryEditForm {
             throw new Error(`Container with ID ${config.containerDiv} not found in DOM`);
         }
 
-        this.setStoreId(this.config.storeId);
-
         this.initVarienForm();
 
         this.tree = new MahoTree(this.config.treeDiv, {
@@ -47,6 +45,15 @@ class CategoryEditForm {
         })
     }
 
+    initVarienForm() {
+        this.formEl = this.containerEl.querySelector('form');
+        if (!this.formEl) {
+            throw new Error(`Container with ID ${config.containerDiv} does not contain a form element.`);
+        }
+        this.varienForm = new varienForm(this.formEl.id);
+    }
+
+
     setStoreId(storeId) {
         this.storeId = parseInt(storeId) || 0;
         const addRootCategoryBtn = document.getElementById(this.config.addRootCategoryBtn);
@@ -56,7 +63,10 @@ class CategoryEditForm {
     }
 
     renderTree(config) {
-        const { root_visible, expanded, ...rest } = config.parameters;
+        console.log(config)
+        const { root_visible, category_id, store_id, expanded, ...rest } = config.parameters;
+
+        this.setStoreId(store_id);
 
         this.tree.setRootVisible(root_visible);
         this.tree.setRootNode({
@@ -68,6 +78,14 @@ class CategoryEditForm {
         if (expanded) {
             this.tree.expandAll();
         }
+
+        /*
+        var selectedNode = this.getNodeById(parameters['category_id']);
+        if (selectedNode) {
+            this.currentNodeId = parameters['category_id'];
+        }
+        this.selectCurrentNode();
+        */
     }
 
     collapseTree() {
@@ -93,14 +111,6 @@ class CategoryEditForm {
                 form_key: FORM_KEY,
             }),
         });
-    }
-
-    initVarienForm() {
-        this.formEl = this.containerEl.querySelector('form');
-        if (!this.formEl) {
-            throw new Error(`Container with ID ${config.containerDiv} does not contain a form element.`);
-        }
-        this.varienForm = new varienForm(this.formEl.id);
     }
 
     getSelectedCategory() {
@@ -236,14 +246,15 @@ class CategoryEditForm {
             }
         }
 
-        this.setStoreId(event.target.value);
-
         showLoader();
 
         try {
+
+            const storeId = parseInt(event.target.value) || 0;
+
             let url = this.config.switchTreeUrl;
-            if (this.storeId) {
-                url += `store/${this.storeId}/`;
+            if (storeId) {
+                url += `store/${storeId}/`;
             }
             const category = this.getSelectedCategory();
             if (category) {
