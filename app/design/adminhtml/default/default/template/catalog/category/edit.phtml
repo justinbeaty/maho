@@ -37,20 +37,19 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
         });
 
     <?php if ($rootNode = $treeBlock->getRoot()): ?>
-        categoryForm.tree.setRootVisible(<?= var_export($rootNode->getIsVisible()) ?>);
-        categoryForm.tree.setRootNode({
-            text        : '<?= Mage::helper('core')->jsQuoteEscape(htmlentities($rootNode->getName())) ?>',
-            draggable   : false,
-            allowDrop   : <?= var_export($rootNode->getIsVisible()) ?>,
-            id          : <?= (int) $rootNode->getId() ?>,
-            store_id    : <?= (int) $treeBlock->getStore()->getId() ?>,
-            category_id : <?= (int) $treeBlock->getCategoryId() ?>,
-            children    : <?= $treeBlock->getTreeJson() ?>,
+        categoryForm.renderTree({
+            parameters : {
+                text        : '<?= Mage::helper('core')->jsQuoteEscape(htmlentities($rootNode->getName())) ?>',
+                draggable   : false,
+                allowDrop   : <?= (int) $rootNode->getIsVisible() ?>,
+                id          : <?= (int) $rootNode->getId() ?>,
+                store_id    : <?= (int) $treeBlock->getStore()->getId() ?>,
+                category_id : <?= (int) $treeBlock->getCategoryId() ?>,
+                expanded    : <?= (int) $treeBlock->getIsWasExpanded() ?>,
+                root_visible: <?= (int) $rootNode->getIsVisible() ?>,
+            },
+            data : <?= $treeBlock->getTreeJson() ?>,
         });
-
-        if (<?= var_export($treeBlock->getIsWasExpanded()) ?>) {
-            categoryForm.tree.expandAll();
-        }
     <?php endif ?>
 
         //
@@ -58,8 +57,8 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
             window.varienStoreSwitcher.storeSelectorClickCallback = categoryForm.switchStore.bind(categoryForm);
         }
         window.tree = {
-            collapseTree: categoryForm.tree.collapseAll.bind(categoryForm.tree),
-            expandTree: categoryForm.tree.expandAll.bind(categoryForm.tree),
+            collapseTree: categoryForm.collapseTree.bind(categoryForm),
+            expandTree: categoryForm.expandTree.bind(categoryForm),
         }
         window.addNew = categoryForm.addNew.bind(categoryForm);
         window.categoryReset = categoryForm.categoryReset.bind(categoryForm);

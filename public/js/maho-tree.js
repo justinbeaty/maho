@@ -110,6 +110,7 @@ class MahoTree {
     }
 
     setRootVisible(flag) {
+        this.config.rootVisible = flag;
         this.rootEl.classList.toggle('hide-root-node', !flag);
     }
 

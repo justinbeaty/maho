@@ -46,6 +46,46 @@ class CategoryEditForm {
         })
     }
 
+    renderTree(config) {
+        console.log(config)
+        const { root_visible, expanded, ...rootNode } = config.parameters;
+
+        this.tree.setRootVisible(root_visible);
+        rootNode.children = config.data;
+        this.tree.setRootNode(rootNode);
+
+        if (expanded) {
+            this.tree.expandAll();
+        } else {
+            this.tree.rootNode.expand();
+        }
+    }
+
+    collapseTree() {
+        this.tree.collapseAll();
+        this.setWasExpanded(false);
+    }
+
+    expandTree() {
+        this.tree.expandAll();
+        this.setWasExpanded(true);
+    }
+
+    setWasExpanded(flag) {
+        let url = this.config.loadTreeUrl.replace(/\/expand_all\/\d+/, '');
+        if (flag) {
+            url += 'expand_all/1/';
+        }
+        this.tree.lazyloadOpts.dataUrl = url;
+
+        fetch(url, {
+            method: 'POST',
+            body: new URLSearchParams({
+                form_key: FORM_KEY,
+            }),
+        });
+    }
+
     initVarienForm() {
         this.formEl = this.containerEl.querySelector('form');
         if (!this.formEl) {
@@ -154,12 +194,7 @@ class CategoryEditForm {
             }
 
             const result = await response.json();
-            const { root_visible, ...rootNode } = result.parameters;
-
-            this.tree.setRootVisible(root_visible);
-            //rootNode.expanded = true;
-            rootNode.children = result.data;
-            this.tree.setRootNode(rootNode);
+            this.renderTree(result);
 
         } catch (error) {
             this.setMessage(error, 'error');
