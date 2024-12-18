@@ -36,10 +36,10 @@ class MahoTree {
         };
 
         this.sortableOpts = {
-	    group: `sortable.${this.uniqId}`,
-	    animation: 150,
-	    invertSwap: true,
-	    fallbackOnBody: true,
+            group: `sortable.${this.uniqId}`,
+            animation: 150,
+            invertSwap: true,
+            fallbackOnBody: true,
             containDepth: false,
             rootSortable: true,
         };
@@ -83,6 +83,9 @@ class MahoTree {
         containerEl.appendChild(this.rootEl);
 
         this.bindEventListeners();
+        if (this.config.sortable) {
+            this.bindSortableEventListeners();
+        }
     }
 
     setRootNode(node) {
@@ -126,6 +129,10 @@ class MahoTree {
 
     bindEventListeners() {
         this.rootEl.addEventListener('change', (event) => {
+            //console.log('change', event)
+
+
+            // Check if event.originalEvent === DragEvent
             const targetEl = event.target;
             if (targetEl.tagName !== 'INPUT' || ['checkbox', 'radio'].includes(targetEl.type) === false) {
                 return;
@@ -142,15 +149,11 @@ class MahoTree {
             }
         });
 
-        this.rootEl.addEventListener('choose', (sortable) => {
-            console.log(sortable);
-        })
-
         this.mutationObserver = new MutationObserver((mutationList, observer) => {
             for (const mutation of mutationList) {
                 for (const el of mutation.addedNodes) {
                     if (el.tagName === 'LI') {
-                        el.querySelectorAll(':scope ul').forEach(this.bindSortableJs.bind(this));
+                        el.querySelectorAll(':scope ul').forEach(this.bindSortable.bind(this));
                     }
                 }
             }
@@ -162,7 +165,7 @@ class MahoTree {
         this.mutationObserver.observe(this.rootEl, { childList: true, subtree: true });
     }
 
-    bindSortableJs(el) {
+    bindSortable(el) {
         if (!this.config.sortable || Sortable.get(el)) {
             return;
         }
@@ -184,6 +187,77 @@ class MahoTree {
         }
     }
 
+    bindSortableEventListeners() {
+
+        let dragNode = null; // The node we are dragging
+        let dropNode = null; // The node we are dropping onto
+
+        const onDragStart = (event) => {
+            // Reset state
+            dragNode = this.nodeDataMap.get(event.target);
+            dropNode = null;
+        };
+
+        const onDragEnter = (event) => {
+            // The node we are currently hovering over, potential to become new dropNode
+            const hoverNode = this.nodeDataMap.get(event.target.closest('li'));
+            if (hoverNode === dropNode) {
+                return;
+            }
+
+            // Drop node has changed, so reset styling
+            dropNode?.ui.wrap.classList.remove('drop');
+            dropNode = null;
+
+            // Only folders can become a dropNode
+            if (hoverNode.type !== 'folder') {
+                return;
+            }
+
+            // Prevent dragNode from becoming a child of itself
+            if (hoverNode.contains(dragNode) || dragNode.contains(hoverNode)) {
+                return;
+            }
+
+            // Set new dropNode, onDragend we will move dragNode into this folder
+            dropNode = hoverNode;
+            dropNode.ui.wrap.classList.add('drop');
+        };
+
+        const onDragEnd = (event) => {
+            // If we dropped dragNode onto a folder, manually move the element and animate
+            if (dropNode) {
+                const fromSortable = Sortable.get(dragNode.parentNode.ui.ctNode);
+                const toSortable = Sortable.get(dropNode.ui.ctNode);
+
+                dragNode.isNew = true;
+                dropNode.ui.details.open = true;
+                dropNode.ui.wrap.classList.remove('drop');
+
+                fromSortable.captureAnimationState()
+                dropNode.prependChild(dragNode);
+                toSortable.animateAll();
+                fromSortable.animateAll();
+            }
+        };
+
+        // Set up event listeners
+        this.rootEl.addEventListener('dragstart', (event) => {
+            this.rootEl.classList.add('dragging');
+            this.rootEl.querySelectorAll('.label').forEach((el) => {
+                el.addEventListener('dragenter', onDragEnter);
+            })
+            onDragStart(event);
+        })
+        this.rootEl.addEventListener('dragend', (event) => {
+            this.rootEl.classList.remove('dragging');
+            this.rootEl.querySelectorAll('.label').forEach((el) => {
+                el.removeEventListener('dragenter', onDragEnter);
+            })
+            onDragEnd(event);
+        })
+    }
+
     updateNestedCheckboxes() {
         if (this.selectableOpts.mode !== 'nested') {
             return;
@@ -191,7 +265,7 @@ class MahoTree {
         Array.from(this.rootEl.querySelectorAll('li')).reverse().forEach((el) => {
             const parent = el.querySelector('input[type=checkbox]');
             const children = Array.from(el.querySelectorAll(':scope ul input[type=checkbox]'));
-            if (children.length) {
+            if (parent && children.length) {
                 if (children.every((el) => el.checked)) {
                     parent.checked = true;
                     parent.indeterminate = false;
@@ -423,6 +497,10 @@ class MahoTreeNode {
         return parts.reverse().join('/');
     }
 
+    contains(node) {
+        return this.ui.wrap.contains(node.ui.wrap);
+    }
+
     get parentNode() {
         const el = this.ui.wrap.parentElement?.closest('li');
         if (el) {
@@ -532,7 +610,7 @@ class MahoTreeNode {
                 await this.tree.lazyloadOpts.onBeforeLoad(this, params);
             }
 
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 500));
 
             const response = await fetch(this.tree.lazyloadOpts.dataUrl, {
                 method: 'POST',
@@ -545,7 +623,13 @@ class MahoTreeNode {
 
             const children = await response.json();
 
-            this.ui.ctNode.replaceChildren();
+            this.childNodes.forEach((child) => {
+                if (!child.isNew) {
+                    child.remove();
+                }
+                child.isNew = false;
+            });
+
             for (const child of children) {
                 this.appendChild(new MahoTreeNode(this.tree, child))
             }
