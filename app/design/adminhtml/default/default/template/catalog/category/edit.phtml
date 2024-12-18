@@ -25,10 +25,12 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
         const categoryForm = new CategoryEditForm({
             editUrl: '<?= $treeBlock->getEditUrl() ?>',
             moveUrl: '<?= $treeBlock->getMoveUrl() ?>',
+            switchTreeUrl: '<?= $treeBlock->getSwitchTreeUrl() ?>',
             loadTreeUrl: '<?= $treeBlock->getLoadTreeUrl() ?>',
 
             containerDiv: 'category-edit-container',
             treeDiv: 'tree-div',
+            addRootCategoryBtn: 'add_root_category_button',
             messagesDiv: 'messages',
 
             tabsJsObjectName: '<?= $tabsBlock->getJsObjectName() ?>',
@@ -36,6 +38,10 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
 
         categoryForm.tree.setRootNode(<?= $treeBlock->getTreeJson() ?>);
 
+        //
+        if (typeof window.varienStoreSwitcher !== 'undefined') {
+            window.varienStoreSwitcher.storeSelectorClickCallback = categoryForm.switchStore.bind(categoryForm);
+        }
         window.tree = {
             collapseTree: categoryForm.tree.collapseAll.bind(categoryForm.tree),
             expandTree: categoryForm.tree.expandAll.bind(categoryForm.tree),
@@ -44,7 +50,6 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
         window.categoryReset = categoryForm.categoryReset.bind(categoryForm);
         window.categoryDelete = categoryForm.categoryDelete.bind(categoryForm);
         window.categorySubmit = categoryForm.categorySubmit.bind(categoryForm);
-
     });
 </script>
 

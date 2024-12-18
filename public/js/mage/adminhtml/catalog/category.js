@@ -121,6 +121,21 @@ class CategoryEditForm {
         this.updateContent(url);
     }
 
+    switchStore(event, switcher)
+    {
+        if (switcher.useConfirm) {
+            const confirmed = confirm('Please confirm site switching. All data that hasn\'t been saved will be lost.');
+            if (!confirmed) {
+                event.target.value = this.storeId === 0 ? '' : this.storeId;
+                return;
+            }
+        }
+
+        this.storeId = 1 * event.target.value;
+        document.getElementById('addRootCategoryBtn')?.classList.toggle('no-display', this.storeId !== 0);
+        this.loadStoreTree();
+    }
+
     async updateContent(url, params = {}, refreshTree = false) {
 
         // TODO, if no use AJAX, just setLocation here
@@ -173,6 +188,7 @@ class CategoryEditForm {
 
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();
             this.initVarienForm();
+            return true;
 
         } catch (error) {
             this.setMessage(error, 'error');
@@ -180,6 +196,37 @@ class CategoryEditForm {
 
         hideLoader();
         toolbarToggle.start();
+    }
+
+    async loadStoreTree() {
+        try {
+            let url = this.config.switchTreeUrl;
+            if (this.storeId) {
+                url += `store/${this.storeId}/`;
+            }
+            const category = this.getSelectedCategory();
+            if (category) {
+                url += `id/${category.id}/`
+            }
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    form_key: FORM_KEY,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+            this.tree.setRootNode(result.data);
+
+        } catch (error) {
+            this.setMessage(error, 'error');
+        }
     }
 
     async moveCategory(event) {
@@ -220,7 +267,7 @@ class CategoryEditForm {
     }
     // success, error, notice
     setMessage(message, type = 'success') {
-        this.setMessagesHTML(`<ul class="messages"><li class="${type}-msg"><ul><li><span>${message}</span></li></ul></li></ul>`);
+        this.setMessageHTML(`<ul class="messages"><li class="${type}-msg"><ul><li><span>${message}</span></li></ul></li></ul>`);
     }
 
     setMessageHTML(html) {
