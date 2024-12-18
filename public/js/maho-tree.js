@@ -83,9 +83,6 @@ class MahoTree {
         containerEl.appendChild(this.rootEl);
 
         this.bindEventListeners();
-        if (this.config.sortable) {
-            this.bindSortableEventListeners();
-        }
     }
 
     setRootNode(node) {
@@ -181,81 +178,13 @@ class MahoTree {
             }
             group += '.' + depth;
         }
-        const sortableInstance = new Sortable(el, { ...this.sortableOpts, group });
+
+        MahoTreeSortablePlugin.mount();
+
+        const sortableInstance = new Sortable(el, { ...this.sortableOpts, group, mahoTree: this });
         if (el.closest('details')?.open !== true) {
             sortableInstance.option('disabled', true);
         }
-    }
-
-    bindSortableEventListeners() {
-
-        let dragNode = null; // The node we are dragging
-        let dropNode = null; // The node we are dropping onto
-
-        const onDragStart = (event) => {
-            // Reset state
-            dragNode = this.nodeDataMap.get(event.target);
-            dropNode = null;
-        };
-
-        const onDragEnter = (event) => {
-            // The node we are currently hovering over, potential to become new dropNode
-            const hoverNode = this.nodeDataMap.get(event.target.closest('li'));
-            if (hoverNode === dropNode) {
-                return;
-            }
-
-            // Drop node has changed, so reset styling
-            dropNode?.ui.wrap.classList.remove('drop');
-            dropNode = null;
-
-            // Only folders can become a dropNode
-            if (hoverNode.type !== 'folder') {
-                return;
-            }
-
-            // Prevent dragNode from becoming a child of itself
-            if (hoverNode.contains(dragNode) || dragNode.contains(hoverNode)) {
-                return;
-            }
-
-            // Set new dropNode, onDragend we will move dragNode into this folder
-            dropNode = hoverNode;
-            dropNode.ui.wrap.classList.add('drop');
-        };
-
-        const onDragEnd = (event) => {
-            // If we dropped dragNode onto a folder, manually move the element and animate
-            if (dropNode) {
-                const fromSortable = Sortable.get(dragNode.parentNode.ui.ctNode);
-                const toSortable = Sortable.get(dropNode.ui.ctNode);
-
-                dragNode.isNew = true;
-                dropNode.ui.details.open = true;
-                dropNode.ui.wrap.classList.remove('drop');
-
-                fromSortable.captureAnimationState()
-                dropNode.prependChild(dragNode);
-                toSortable.animateAll();
-                fromSortable.animateAll();
-            }
-        };
-
-        // Set up event listeners
-        this.rootEl.addEventListener('dragstart', (event) => {
-            this.rootEl.classList.add('dragging');
-            this.rootEl.querySelectorAll('.label').forEach((el) => {
-                el.addEventListener('dragenter', onDragEnter);
-            })
-            onDragStart(event);
-        })
-        this.rootEl.addEventListener('dragend', (event) => {
-            this.rootEl.classList.remove('dragging');
-            this.rootEl.querySelectorAll('.label').forEach((el) => {
-                el.removeEventListener('dragenter', onDragEnter);
-            })
-            onDragEnd(event);
-        })
     }
 
     updateNestedCheckboxes() {
@@ -288,15 +217,19 @@ class MahoTree {
         return this.rootNode;
     }
 
+    getNodeByEl(el) {
+        return this.nodeDataMap.get(el);
+    }
+
     getNodeById(id) {
         if (id) {
-            return this.nodeDataMap.get(this.rootEl.querySelector('#' + id));
+            return this.getNodeByEl(this.rootEl.querySelector('#' + id));
         }
     }
 
     getChecked() {
         return Array.from(this.rootEl.querySelectorAll('input:checked')).map((el) => {
-            return this.nodeDataMap.get(el.closest('li'));
+            return this.getNodeByEl(el.closest('li'));
         });
     }
 
@@ -498,19 +431,29 @@ class MahoTreeNode {
     }
 
     contains(node) {
-        return this.ui.wrap.contains(node.ui.wrap);
+        return this.ui.wrap.contains(
+            node.ui.wrap
+        );
     }
 
     get parentNode() {
         const el = this.ui.wrap.parentElement?.closest('li');
         if (el) {
-            return this.tree.nodeDataMap.get(el);
+            return this.tree.getNodeByEl(el);
         }
+    }
+
+    get previousNode() {
+        return this.ui.wrap.previousSibling;
+    }
+
+    get nextNode() {
+        return this.ui.wrap.nextSibling;
     }
 
     get childNodes() {
         return Array.from(this.ui.ctNode.children).map((el) => {
-            return this.tree.nodeDataMap.get(el);
+            return this.tree.getNodeByEl(el);
         });
     }
 
@@ -623,14 +566,20 @@ class MahoTreeNode {
 
             const children = await response.json();
 
-            this.childNodes.forEach((child) => {
-                if (!child.isNew) {
+            const newIds = [];
+            for (const child of this.childNodes) {
+                if (child.isNew) {
+                    newIds.push(child.id);
+                    child.isNew = false;
+                } else {
                     child.remove();
                 }
-                child.isNew = false;
-            });
+            }
 
             for (const child of children) {
+                if (child.id && newIds.includes(child.id)) {
+                    continue;
+                }
                 this.appendChild(new MahoTreeNode(this.tree, child))
             }
             this.hasLoadedChildren = true;
@@ -644,5 +593,82 @@ class MahoTreeNode {
 
         clearTimeout(timeoutID)
         this.ui.iconNode.classList.remove('loading');
+    }
+}
+
+class MahoTreeSortablePlugin
+{
+    static pluginName = 'mahoTree';
+    static mounted = false;
+    static state = {};
+
+    constructor(sortable, el, options) {
+        this.tree = options.mahoTree;
+        this.defaults = {
+	    dropClass: 'drop'
+	};
+    }
+
+    static mount() {
+        if (MahoTreeSortablePlugin.mounted === false) {
+            MahoTreeSortablePlugin.mounted = true;
+            Sortable.mount(MahoTreeSortablePlugin);
+        }
+    }
+
+    delayStart({ dragEl }) {
+        MahoTreeSortablePlugin.state = {
+            dragNode: this.tree.getNodeByEl(dragEl),
+            dropNode: null
+        };
+    }
+
+    dragOver({ target }) {
+        const state = MahoTreeSortablePlugin.state;
+
+        // The node we are currently hovering over, potential to become new dropNode
+        const hoverNode = this.tree.getNodeByEl(target.closest('li'));
+        if (hoverNode === state.dropNode) {
+            return;
+        }
+
+        // Drop node has changed, so reset styling
+        state.dropNode?.ui.wrap.classList.remove(this.options.dropClass);
+        state.dropNode = null;
+
+        // Only folders can become a dropNode
+        if (hoverNode.type !== 'folder') {
+            return;
+        }
+
+        // Prevent dragNode from becoming a child of itself
+        if (hoverNode.contains(state.dragNode) ||
+            state.dragNode.contains(hoverNode)) {
+            return;
+        }
+
+        // Set new dropNode, onDragend we will move dragNode into this folder
+        state.dropNode = hoverNode;
+        state.dropNode.ui.wrap.classList.add(this.options.dropClass);
+    }
+
+    drop({ activeSortable }) {
+        const state = MahoTreeSortablePlugin.state;
+        if (state.dropNode) {
+            // Prepare the dragged node to be inserted
+            state.dragNode.isNew = true;
+            state.dropNode.ui.details.open = true;
+            state.dropNode.ui.wrap.classList.remove(this.options.dropClass);
+
+            // Insert into new sortable and animate
+            activeSortable.captureAnimationState()
+            state.dropNode.prependChild(state.dragNode);
+            activeSortable.animateAll();
+            this.sortable.animateAll();
+        }
+    }
+
+    nulling() {
+        MahoTreeSortablePlugin.state = {};
     }
 }
