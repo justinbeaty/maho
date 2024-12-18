@@ -137,9 +137,7 @@ class CategoryEditForm {
     }
 
     async updateContent(url, params = {}, refreshTree = false) {
-
         // TODO, if no use AJAX, just setLocation here
-
         showLoader();
 
         try {
@@ -199,6 +197,8 @@ class CategoryEditForm {
     }
 
     async loadStoreTree() {
+        showLoader();
+
         try {
             let url = this.config.switchTreeUrl;
             if (this.storeId) {
@@ -221,12 +221,24 @@ class CategoryEditForm {
             }
 
             const result = await response.json();
-            console.log(result);
-            this.tree.setRootNode(result.data);
+            const rootNode = {
+                ...result.parameters,
+                expanded: true,
+                children: result.data,
+            };
+
+            if (result.parameters.root_visible) {
+                this.tree.setRootNode([rootNode]);
+            } else {
+                this.tree.setRootNode(rootNode);
+            }
 
         } catch (error) {
             this.setMessage(error, 'error');
         }
+
+        hideLoader();
+        toolbarToggle.start();
     }
 
     async moveCategory(event) {
