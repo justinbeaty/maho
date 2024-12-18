@@ -79,13 +79,7 @@ class CategoryEditForm {
             this.tree.expandAll();
         }
 
-        /*
-        var selectedNode = this.getNodeById(parameters['category_id']);
-        if (selectedNode) {
-            this.currentNodeId = parameters['category_id'];
-        }
-        this.selectCurrentNode();
-        */
+        this.tree.getNodeById(category_id)?.select();
     }
 
     collapseTree() {
@@ -162,7 +156,7 @@ class CategoryEditForm {
         }
     }
 
-    addNew(url, isRoot) {
+    categoryAdd(url, isRoot) {
 
         const parent = isRoot ? { id: 1 } : this.getSelectedCategory();
         if (parent === undefined) {

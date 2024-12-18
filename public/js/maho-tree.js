@@ -212,8 +212,8 @@ class MahoTree {
         });
     }
 
-    storeNode(key, node) {
-        this.nodeDataMap.set(key, node);
+    storeNode(el, node) {
+        this.nodeDataMap.set(el, node);
     }
 
     getRootNode() {
@@ -225,9 +225,11 @@ class MahoTree {
     }
 
     getNodeById(id) {
-        if (id) {
-            return this.getNodeByEl(this.rootEl.querySelector('#' + id));
-        }
+        return this.getNodeByEl(this.rootEl.querySelector(`li[data-id='${id}']`));
+    }
+
+    getNodeByText(text) {
+        return this.getNodeByEl(this.rootEl.querySelector(`li[data-text='${text}']`));
     }
 
     getChecked() {
@@ -319,7 +321,7 @@ class MahoTreeNode {
 
     createElement() {
         this.ui.wrap = document.createElement('li');
-        this.ui.wrap.id = this.id;
+        this.ui.wrap.dataset.id = this.id;
         this.ui.wrap.dataset.text = this.text;
 
         this.createLabelElement();
