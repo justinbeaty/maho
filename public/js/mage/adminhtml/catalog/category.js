@@ -14,13 +14,14 @@ class CategoryEditForm {
 
     constructor(config = {}) {
         this.config = config;
+        console.log(this.config)
 
         this.containerEl = document.getElementById(config.containerDiv);
         if (!this.containerEl) {
             throw new Error(`Container with ID ${config.containerDiv} not found in DOM`);
         }
 
-        this.storeId = 0;
+        this.setStoreId(this.config.storeId);
 
         this.initVarienForm();
 
@@ -46,29 +47,37 @@ class CategoryEditForm {
         })
     }
 
+    setStoreId(storeId) {
+        this.storeId = parseInt(storeId) || 0;
+        const addRootCategoryBtn = document.getElementById(this.config.addRootCategoryBtn);
+        if (addRootCategoryBtn) {
+            addRootCategoryBtn.classList.toggle('no-display', this.storeId !== 0);
+        }
+    }
+
     renderTree(config) {
-        console.log(config)
-        const { root_visible, expanded, ...rootNode } = config.parameters;
+        const { root_visible, expanded, ...rest } = config.parameters;
 
         this.tree.setRootVisible(root_visible);
-        rootNode.children = config.data;
-        this.tree.setRootNode(rootNode);
+        this.tree.setRootNode({
+            ...rest,
+            children: config.data,
+            expanded: true,
+        });
 
         if (expanded) {
             this.tree.expandAll();
-        } else {
-            this.tree.rootNode.expand();
         }
     }
 
     collapseTree() {
-        this.tree.collapseAll();
         this.setWasExpanded(false);
+        this.tree.collapseAll();
     }
 
     expandTree() {
-        this.tree.expandAll();
         this.setWasExpanded(true);
+        this.tree.expandAll();
     }
 
     setWasExpanded(flag) {
@@ -157,53 +166,6 @@ class CategoryEditForm {
         this.updateContent(url);
     }
 
-    async switchStore(event, switcher)
-    {
-        if (switcher.useConfirm) {
-            const confirmed = confirm('Please confirm site switching. All data that hasn\'t been saved will be lost.');
-            if (!confirmed) {
-                event.target.value = this.storeId === 0 ? '' : this.storeId;
-                return;
-            }
-        }
-
-        this.storeId = 1 * event.target.value;
-        document.getElementById('addRootCategoryBtn')?.classList.toggle('no-display', this.storeId !== 0);
-
-        showLoader();
-
-        try {
-            let url = this.config.switchTreeUrl;
-            if (this.storeId) {
-                url += `store/${this.storeId}/`;
-            }
-            const category = this.getSelectedCategory();
-            if (category) {
-                url += `id/${category.id}/`
-            }
-
-            const response = await fetch(url, {
-                method: 'POST',
-                body: new URLSearchParams({
-                    form_key: FORM_KEY,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server returned status ${response.status}`);
-            }
-
-            const result = await response.json();
-            this.renderTree(result);
-
-        } catch (error) {
-            this.setMessage(error, 'error');
-        }
-
-        hideLoader();
-        toolbarToggle.start();
-    }
-
     async updateContent(url, params = {}, refreshTree = false) {
         // TODO, if no use AJAX, just setLocation here
         showLoader();
@@ -255,6 +217,52 @@ class CategoryEditForm {
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();
             this.initVarienForm();
             return true;
+
+        } catch (error) {
+            this.setMessage(error, 'error');
+        }
+
+        hideLoader();
+        toolbarToggle.start();
+    }
+
+    async switchStore(event, switcher)
+    {
+        if (switcher.useConfirm) {
+            const confirmed = confirm('Please confirm site switching. All data that hasn\'t been saved will be lost.');
+            if (!confirmed) {
+                event.target.value = this.storeId === 0 ? '' : this.storeId;
+                return;
+            }
+        }
+
+        this.setStoreId(event.target.value);
+
+        showLoader();
+
+        try {
+            let url = this.config.switchTreeUrl;
+            if (this.storeId) {
+                url += `store/${this.storeId}/`;
+            }
+            const category = this.getSelectedCategory();
+            if (category) {
+                url += `id/${category.id}/`
+            }
+
+            const response = await fetch(url, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    form_key: FORM_KEY,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const result = await response.json();
+            this.renderTree(result);
 
         } catch (error) {
             this.setMessage(error, 'error');
