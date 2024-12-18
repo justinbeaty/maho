@@ -34,6 +34,7 @@ class CategoryEditForm {
             },
             sortable: {
                 rootSortable: false,
+                onEnd: this.moveCategory.bind(this),
             },
             lazyload: {
                 nodeParameter: 'id',
@@ -179,6 +180,37 @@ class CategoryEditForm {
 
         hideLoader();
         toolbarToggle.start();
+    }
+
+    async moveCategory(event) {
+        showLoader();
+
+        try {
+            const node = this.tree.getNodeByEl(event.item);
+            const response = await fetch(this.config.moveUrl, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    form_key: FORM_KEY,
+                    id: node.id,
+                    pid: node.parentNode.id,
+                    aid: node.previousNode?.id ?? 0,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const text = await response.text();
+
+            if (text !== 'SUCCESS') {
+                throw new Error(text);
+            }
+        } catch (error) {
+            this.setMessage(error, 'error');
+        }
+
+        hideLoader();
     }
 
     ///////////////////

@@ -24,6 +24,7 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
     document.addEventListener('DOMContentLoaded', () => {
         const categoryForm = new CategoryEditForm({
             editUrl: '<?= $treeBlock->getEditUrl() ?>',
+            moveUrl: '<?= $treeBlock->getMoveUrl() ?>',
             loadTreeUrl: '<?= $treeBlock->getLoadTreeUrl() ?>',
 
             containerDiv: 'category-edit-container',
