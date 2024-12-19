@@ -152,39 +152,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return Mage::helper('core')->jsonEncode($rootArray['children'] ?? []);
     }
 
-    /**
-     * Get JSON of array of categories, that are breadcrumbs for specified category path
-     *
-     * @param string $path
-     * @param string $javascriptVarName
-     * @return string
-     */
-    public function getBreadcrumbsJavascript($path, $javascriptVarName)
-    {
-        if (empty($path)) {
-            return '';
-        }
-
-        $categories = Mage::getResourceSingleton('catalog/category_tree')
-            ->setStoreId($this->getStore()->getId())
-            ->loadBreadcrumbsArray($path);
-
-        if (empty($categories)) {
-            return '';
-        }
-        foreach ($categories as $key => $category) {
-            $categories[$key] = $this->_getNodeJson($category);
-        }
-        return
-            '<script type="text/javascript">'
-            . $javascriptVarName . ' = ' . Mage::helper('core')->jsonEncode($categories) . ';'
-            . ($this->canAddSubCategory()
-                ? '$("add_subcategory_button").show();'
-                : '$("add_subcategory_button").hide();')
-            . '</script>';
-    }
-
-    public function getNodeJson($node, $level = 0)
+    public function getNodeJson(Varien_Data_Tree_Node|array $node, int $level = 0): array
     {
         return $this->_getNodeJson($node, $level);
     }

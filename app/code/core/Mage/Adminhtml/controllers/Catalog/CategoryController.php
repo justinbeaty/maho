@@ -128,6 +128,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
             return;
         }
 
+        $this->loadLayout();
         $this->_title($categoryId ? $category->getName() : $this->__('New Category'));
 
         /**
@@ -142,33 +143,8 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
          * Build response for ajax request
          */
         if ($this->getRequest()->getQuery('isAjax')) {
-            // prepare breadcrumbs of selected category, if any
-            $breadcrumbsPath = $category->getPath();
-            if (empty($breadcrumbsPath)) {
-                // but if no category, and it is deleted - prepare breadcrumbs from path, saved in session
-                $breadcrumbsPath = Mage::getSingleton('admin/session')->getDeletedPath(true);
-                if (!empty($breadcrumbsPath)) {
-                    $breadcrumbsPath = explode('/', $breadcrumbsPath);
-                    // no need to get parent breadcrumbs if deleting category level 1
-                    if (count($breadcrumbsPath) <= 1) {
-                        $breadcrumbsPath = '';
-                    } else {
-                        array_pop($breadcrumbsPath);
-                        $breadcrumbsPath = implode('/', $breadcrumbsPath);
-                    }
-                }
-            }
-
-            Mage::getSingleton('admin/session')
-                ->setLastViewedStore($this->getRequest()->getParam('store'));
-            Mage::getSingleton('admin/session')
-                ->setLastEditedCategory($category->getId());
-            $this->loadLayout();
-
             $eventResponse = new Varien_Object([
-                'content' => $this->getLayout()->getBlock('category.edit')->getFormHtml()
-                    . $this->getLayout()->getBlock('category.tree')
-                    ->getBreadcrumbsJavascript($breadcrumbsPath, 'editingCategoryBreadcrumbs'),
+                'content' => $this->getLayout()->getBlock('category.edit')->getFormHtml(),
                 'messages' => $this->getLayout()->getMessagesBlock()->getGroupedHtml(),
             ]);
 
@@ -177,14 +153,10 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 'controller' => $this
             ]);
 
-            $this->getResponse()->setBody(
-                Mage::helper('core')->jsonEncode($eventResponse->getData())
-            );
-
+            $this->_prepareDataJSON($eventResponse->getData());
             return;
         }
 
-        $this->loadLayout();
         $this->_setActiveMenu('catalog/categories');
 
         $this->_addBreadcrumb(
@@ -240,7 +212,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 return;
             }
 
-            $this->getResponse()->setBody(
+            $this->_prepareDataJSON(
                 $this->getLayout()->createBlock('adminhtml/catalog_category_tree')
                     ->setRecursionLevel($recursionLevel)
                     ->getTreeJson($category)
@@ -258,7 +230,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         }
 
         $storeId = $this->getRequest()->getParam('store');
-        $refreshTree = 'false';
+
         if ($data = $this->getRequest()->getPost()) {
             if (isset($data['general']['path'])) {
                 unset($data['general']['path']);
@@ -339,20 +311,19 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                  * Unset $_POST['use_config'] before save
                  */
                 $category->unsetData('use_post_data_config');
-
                 $category->save();
-                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('The category has been saved.'));
-                $refreshTree = 'true';
+
+                $this->_prepareDataJSON([
+                    'messages' => Mage::helper('catalog')->__('The category has been saved.'),
+                ]);
             } catch (Exception $e) {
-                $this->_getSession()->addError($e->getMessage())
-                    ->setCategoryData($data);
-                $refreshTree = 'false';
+                $this->setCategoryData($data);
+                $this->_prepareDataJSON([
+                    'error' => true,
+                    'messages' => $e->getMessage(),
+                ]);
             }
         }
-        $url = $this->getUrl('*/*/edit', ['_current' => true, 'id' => $category->getId()]);
-        $this->getResponse()->setBody(
-            '<script type="text/javascript">parent.updateContent("' . $url . '", {}, ' . $refreshTree . ');</script>'
-        );
     }
 
     /**
@@ -362,25 +333,33 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
     {
         $category = $this->_initCategory();
         if (!$category) {
-            $this->getResponse()->setBody(Mage::helper('catalog')->__('Category move error'));
+            $this->_prepareDataJSON([
+                'error' => true,
+                'messages' => Mage::helper('catalog')->__('Category move error'),
+            ]);
             return;
         }
-        /**
-         * New parent category identifier
-         */
+
+        // New parent category identifier
         $parentNodeId   = $this->getRequest()->getPost('pid', false);
-        /**
-         * Category id after which we have put our category
-         */
+
+        // Category id after which we have put our category
         $prevNodeId     = $this->getRequest()->getPost('aid', false);
+
         $category->setData('save_rewrites_history', Mage::helper('catalog')->shouldSaveUrlRewritesHistory());
         try {
             $category->move($parentNodeId, $prevNodeId);
-            $this->getResponse()->setBody('SUCCESS');
+            $this->getResponse()->setBody('{}');
         } catch (Mage_Core_Exception $e) {
-            $this->getResponse()->setBody($e->getMessage());
+            $this->_prepareDataJSON([
+                'error' => true,
+                'messages' => $e->getMessage(),
+            ]);
         } catch (Exception $e) {
-            $this->getResponse()->setBody(Mage::helper('catalog')->__('Category move error %s', $e));
+            $this->_prepareDataJSON([
+                'error' => true,
+                'messages' => Mage::helper('catalog')->__('Category move error %s', $e),
+            ]);
             Mage::logException($e);
         }
     }
@@ -451,8 +430,8 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         $block = $this->getLayout()->createBlock('adminhtml/catalog_category_tree');
         $block->setRecursionLevel($recursionLevel);
 
-        $root  = $block->getRoot();
-        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode([
+        $root = $block->getRoot();
+        $this->_prepareDataJSON([
             'data' => $block->getTree(),
             'parameters' => [
                 'text'        => $block->buildNodeName($root),
@@ -464,7 +443,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 'root_visible' => (int) $root->getIsVisible(),
                 'can_add_root' => (int) $block->canAddRootCategory(),
                 'expanded'    => $recursionLevel === 0,
-            ]]));
+            ]]);
     }
 
     /**
@@ -474,12 +453,10 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
     {
         if ($id = (int) $this->getRequest()->getParam('id')) {
             $category = Mage::getModel('catalog/category')->load($id);
-            $this->getResponse()->setBody(
-                Mage::helper('core')->jsonEncode([
-                   'id' => $id,
-                   'path' => $category->getPath(),
-                ])
-            );
+            $this->_prepareDataJSON([
+                'id' => $id,
+                'path' => $category->getPath(),
+            ]);
         }
     }
 
@@ -493,5 +470,17 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
     {
         $this->_setForcedFormKeyActions('delete');
         return parent::preDispatch();
+    }
+
+    /**
+     * Prepare JSON formatted data for response to client
+     *
+     * @param mixed $response
+     * @return Zend_Controller_Response_Abstract
+     */
+    protected function _prepareDataJSON($response)
+    {
+        $this->getResponse()->setHeader('Content-type', 'application/json', true);
+        return $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($response));
     }
 }
