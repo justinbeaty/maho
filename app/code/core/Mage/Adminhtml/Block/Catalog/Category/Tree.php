@@ -43,8 +43,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
                 ->setData([
                     'label'     => Mage::helper('catalog')->__('Add Subcategory'),
                     'onclick'   => "addNew('$addUrl', false)",
-                    'class'     => 'add' . ($this->canAddSubCategory() ? '' : ' no-display'),
+                    'class'     => 'add',
                     'id'        => 'add_subcategory_button',
+                    'disabled'  =>  !$this->canAddSubCategory(),
                 ])
         );
 

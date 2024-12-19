@@ -31,7 +31,7 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
             containerDiv: 'category-edit-container',
             treeDiv: 'tree-div',
             addRootCategoryBtn: 'add_root_category_button',
-            messagesDiv: 'messages',
+            addSubCategoryBtn: 'add_subcategory_button',
 
             tabsJsObjectName: '<?= $tabsBlock->getJsObjectName() ?>',
         });
@@ -46,6 +46,7 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
                 store_id    : <?= (int) $treeBlock->getStore()->getId() ?>,
                 category_id : <?= (int) $treeBlock->getCategoryId() ?>,
                 root_visible: <?= (int) $rootNode->getIsVisible() ?>,
+                can_add_root: true,
                 expanded    : false,
             },
             data: <?= $treeBlock->getTreeJson() ?>,

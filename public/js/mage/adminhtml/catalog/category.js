@@ -20,13 +20,16 @@ class CategoryEditForm {
             throw new Error(`Container with ID ${config.containerDiv} not found in DOM`);
         }
 
+        this.addRootCategoryBtn = document.getElementById(this.config.addRootCategoryBtn);
+        this.addSubCategoryBtn  = document.getElementById(this.config.addSubCategoryBtn);
+
         this.initVarienForm();
 
         this.tree = new MahoTree(this.config.treeDiv, {
             rootVisible: true,
             noLeafNodes: true,
             selectable: {
-                mode: 'single',
+                mode: 'radio',
                 hideInputs: true,
                 onSelect: this.changeCategory.bind(this),
             },
@@ -57,20 +60,12 @@ class CategoryEditForm {
         this.varienForm = new varienForm(this.formEl.id);
     }
 
-
-    setStoreId(storeId) {
-        this.storeId = parseInt(storeId) || 0;
-        const addRootCategoryBtn = document.getElementById(this.config.addRootCategoryBtn);
-        if (addRootCategoryBtn) {
-            addRootCategoryBtn.classList.toggle('no-display', this.storeId !== 0);
-        }
-    }
-
     renderTree(config) {
         console.log(config)
-        const { root_visible, category_id, store_id, expanded, ...rest } = config.parameters;
+        const { root_visible, can_add_root, category_id, store_id, expanded, ...rest } = config.parameters;
 
-        this.setStoreId(store_id);
+        this.storeId = parseInt(store_id) || 0;
+        this.addRootCategoryBtn?.classList.toggle('no-display', !can_add_root);
 
         this.tree.setRootVisible(root_visible);
         this.tree.setRootNode({
@@ -142,7 +137,6 @@ class CategoryEditForm {
         const confirmed = confirm('Are you sure you want to delete this category?'); // translate
         if (confirmed) {
             await this.updateContent(url);
-
         }
     }
 
@@ -160,8 +154,7 @@ class CategoryEditForm {
         this.updateContent(url);
     }
 
-    async updateContent(url, params = {}, refreshTree = false) {
-        // TODO, if no use AJAX, just setLocation here
+    async updateContent(url, params = {}) {
         showLoader();
 
         try {
@@ -199,9 +192,20 @@ class CategoryEditForm {
                 this.setMessageHTML(result.messages);
             }
 
+            if (window.categoryInfo) {
+                for (const breadcrumb of window.categoryInfo.breadcrumbs) {
+                    const node = this.tree.getNodeById(breadcrumb.id);
+                    if (node) {
+                        node.setText(breadcrumb.text);
+                    }
+                }
+                if (this.addSubCategoryBtn) {
+                    this.addSubCategoryBtn.disabled = !window.categoryInfo.can_add_sub;
+                }
+            }
+
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();
             this.initVarienForm();
-            //return true;
 
         } catch (error) {
             console.log(error)
@@ -278,10 +282,10 @@ class CategoryEditForm {
                 throw new Error(`Server returned status ${response.status}`);
             }
 
-            const text = await response.text();
+            const result = await response.json();
 
-            if (text !== 'SUCCESS') {
-                throw new Error(text);
+            if (result.error) {
+                throw new Error(result.error);
             }
         } catch (error) {
             this.setMessage(error, 'error');

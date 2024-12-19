@@ -198,13 +198,6 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
     {
         $recursionLevel = $this->getRequest()->getParam('expand_all') ? 0 : null;
 
-        // if ($this->getRequest()->getParam('expand_all')) {
-        //     $recursionLevel = 0;
-        // } elseif ($this->getRequest()->getParam('recursion_level')) {
-        //     $recursionLevel = (int)$this->getRequest()->getParam('recursion_level');
-        // } else {
-        //     $recursionLevel = null;
-        // }
         if ($categoryId = (int) $this->getRequest()->getPost('id')) {
             $this->getRequest()->setParam('id', $categoryId);
 
@@ -212,7 +205,8 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 return;
             }
 
-            $this->_prepareDataJSON(
+            $this->getResponse()->setHeader('Content-type', 'application/json', true);
+            $this->getResponse()->setBody(
                 $this->getLayout()->createBlock('adminhtml/catalog_category_tree')
                     ->setRecursionLevel($recursionLevel)
                     ->getTreeJson($category)

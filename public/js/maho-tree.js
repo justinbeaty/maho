@@ -436,6 +436,10 @@ class MahoTreeNode {
         return parts.reverse().join('/');
     }
 
+    setText(text) {
+        this.text = this.attributes.text = this.ui.wrap.dataset.text = text;
+    }
+
     contains(node) {
         return this.ui.wrap.contains(
             node.ui.wrap
