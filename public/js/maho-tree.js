@@ -465,7 +465,7 @@ class MahoTreeNode {
 
     async expand() {
         if (this.ui.details) {
-            if (this.hasLoadedChildren === false) {
+            if (!this.hasLoadedChildren) {
                 await this.loadChildren();
             }
             this.ui.details.open = true;
@@ -559,7 +559,7 @@ class MahoTreeNode {
                 await this.tree.lazyloadOpts.onBeforeLoad(this, params);
             }
 
-            await new Promise(r => setTimeout(r, 1000));
+            //await new Promise(r => setTimeout(r, 1000));
 
             const response = await fetch(this.tree.lazyloadOpts.dataUrl, {
                 method: 'POST',
