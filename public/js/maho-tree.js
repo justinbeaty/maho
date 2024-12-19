@@ -520,6 +520,10 @@ class MahoTreeNode {
         }
     }
 
+    removeAllChildren() {
+        this.ui.ctNode.replaceChildren();
+    }
+
     sortChildren() {
         Array.from(this.ui.ctNode.children)
             .sort((a, b) => a.dataset.text > b.dataset.text ? 1 : -1)
@@ -572,20 +576,15 @@ class MahoTreeNode {
 
             const children = await response.json();
 
-            const newIds = [];
             for (const child of this.childNodes) {
-                if (child.isNew) {
-                    newIds.push(child.id);
+                if (child.isNew && !children.some((node) => node.id === child.id)) {
                     child.isNew = false;
-                } else {
-                    child.remove();
+                    children.push(child);
                 }
             }
 
+            this.removeAllChildren();
             for (const child of children) {
-                if (child.id && newIds.includes(child.id)) {
-                    continue;
-                }
                 this.appendChild(new MahoTreeNode(this.tree, child))
             }
             this.hasLoadedChildren = true;
