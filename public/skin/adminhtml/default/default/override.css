@@ -1056,6 +1056,12 @@ ul.tabs a.changed span.changed {
     height: calc(var(--spacing) + 0.5rem);
     border-bottom: var(--line-style);
 }
+.maho-tree li:first-child {
+    padding-top: calc(2 * var(--spacing));
+}
+.maho-tree li:first-child:before {
+    height: calc(2 * var(--spacing) + 0.5rem);
+}
 .maho-tree li:last-child {
     padding-bottom: 0;
     border-left-color: transparent;
@@ -1064,6 +1070,7 @@ ul.tabs a.changed span.changed {
     margin-left: -1px;
     border-left: var(--line-style);
 }
+
 .maho-tree li.sortable-drag, .maho-tree li.sortable-drag:before {
     border-color: transparent;
 }
@@ -1129,6 +1136,9 @@ ul.tabs a.changed span.changed {
     background: url('data:image/svg+xml,<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><rect style="fill:%23cceaf0;stroke:%2352bdd2;stroke-width:1" width="9" height="9" x=".5" y=".5" rx="2" ry="2"/><path style="fill:%2352bdd2" d="M4.5 2v2.5H2v1h2.5V8h1V5.5H8v-1H5.5V2h-1z"/></svg>') no-repeat;
     background-size: contain;
     user-select: none;
+}
+.maho-tree li:first-child > details > summary::before {
+    top: calc(2 * var(--spacing) + 0.5rem - var(--marker-size) / 2);
 }
 .maho-tree details[open] > summary::before {
     background-image: url('data:image/svg+xml,<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><rect style="fill:%23cceaf0;stroke:%2352bdd2;stroke-width:1" width="9" height="9" x=".5" y=".5" rx="2" ry="2"/><path style="fill:%2352bdd2" d="M2 4.5h6v1H2z"/></svg>');

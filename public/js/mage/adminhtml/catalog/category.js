@@ -216,8 +216,7 @@ class CategoryEditForm {
         toolbarToggle.start();
     }
 
-    async switchStore(event, switcher)
-    {
+    async switchStore(event, switcher) {
         if (switcher.useConfirm) {
             const confirmed = confirm('Please confirm site switching. All data that hasn\'t been saved will be lost.');
             if (!confirmed) {
@@ -264,6 +263,10 @@ class CategoryEditForm {
     }
 
     async moveCategory(event) {
+        if (event.from === event.to && event.oldIndex === event.newIndex) {
+            return;
+        }
+
         showLoader();
 
         try {

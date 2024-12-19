@@ -183,11 +183,7 @@ class MahoTree {
         }
 
         MahoTreeSortablePlugin.mount();
-
-        const sortableInstance = new Sortable(el, { ...this.sortableOpts, group, mahoTree: this });
-        if (el.closest('details')?.open !== true) {
-            sortableInstance.option('disabled', true);
-        }
+        new Sortable(el, { ...this.sortableOpts, group, mahoTree: this });
     }
 
     updateNestedCheckboxes() {
@@ -413,12 +409,6 @@ class MahoTreeNode {
             if (this.ui.details.open && !this.hasLoadedChildren) {
                 this.loadChildren();
             }
-            if (this.tree.config.sortable) {
-                const sortableInstance = Sortable.get(this.ui.ctNode);
-                if (sortableInstance) {
-                    sortableInstance.option('disabled', !this.ui.details.open);
-                }
-            }
         });
     }
 
@@ -441,9 +431,7 @@ class MahoTreeNode {
     }
 
     contains(node) {
-        return this.ui.wrap.contains(
-            node.ui.wrap
-        );
+        return this.ui.wrap.contains(node.ui.wrap);
     }
 
     get parentNode() {
@@ -567,7 +555,7 @@ class MahoTreeNode {
                 await this.tree.lazyloadOpts.onBeforeLoad(this, params);
             }
 
-            //await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 1000));
 
             const response = await fetch(this.tree.lazyloadOpts.dataUrl, {
                 method: 'POST',
@@ -583,11 +571,11 @@ class MahoTreeNode {
             for (const child of this.childNodes) {
                 if (child.isNew && !children.some((node) => node.id === child.id)) {
                     child.isNew = false;
-                    children.push(child);
+                } else {
+                    child.remove();
                 }
             }
 
-            this.removeAllChildren();
             for (const child of children) {
                 this.appendChild(new MahoTreeNode(this.tree, child))
             }
@@ -632,6 +620,14 @@ class MahoTreeSortablePlugin
         };
     }
 
+    dragOverValid({ target, cancel }) {
+        if (target.tagName === 'UL') {
+            if (target.childNodes.length === 0 || target.closest('details:not([open])')) {
+                return cancel();
+            }
+        }
+    }
+
     dragOver({ target }) {
         const state = MahoTreeSortablePlugin.state;
 
@@ -651,8 +647,7 @@ class MahoTreeSortablePlugin
         }
 
         // Prevent dragNode from becoming a child of itself
-        if (hoverNode.contains(state.dragNode) ||
-            state.dragNode.contains(hoverNode)) {
+        if (hoverNode.contains(state.dragNode) || state.dragNode.contains(hoverNode)) {
             return;
         }
 
@@ -670,10 +665,11 @@ class MahoTreeSortablePlugin
             state.dropNode.ui.wrap.classList.remove(this.options.dropClass);
 
             // Insert into new sortable and animate
+            this.sortable.captureAnimationState();
             activeSortable.captureAnimationState()
             state.dropNode.prependChild(state.dragNode);
-            activeSortable.animateAll();
             this.sortable.animateAll();
+            activeSortable.animateAll();
         }
     }
 
