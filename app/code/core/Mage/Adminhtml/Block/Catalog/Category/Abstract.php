@@ -15,11 +15,12 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  *
- * @method ?int getRecursionLevel()
  * @method setRecursionLevel(?int $value)
  */
 class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Block_Template
 {
+    const DEFAULT_RECURSION_LEVEL = 3;
+
     /**
      * Retrieve current category instance
      *
@@ -66,20 +67,21 @@ class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Bloc
         return Mage::app()->getStore($storeId);
     }
 
+    public function getRecursionLevel(): int
+    {
+        return (int) ($this->getDataByKey('recursion_level') ?? self::DEFAULT_RECURSION_LEVEL);
+    }
+
     public function getRoot($parentNodeCategory = null, $recursionLevel = null)
     {
         if (is_null($recursionLevel)) {
-            $recursionLevel = $this->getRecursionLevel() ?? 3;
+            $recursionLevel = $this->getRecursionLevel();
         }
         if (!is_null($parentNodeCategory) && $parentNodeCategory->getId()) {
-            Mage::log("recursionLevel {$parentNodeCategory->getId()} $recursionLevel");
-
             return $this->getNode($parentNodeCategory, $recursionLevel);
         }
         $root = Mage::registry('root');
         if (is_null($root)) {
-            Mage::log("recursionLevel root $recursionLevel");
-
             $storeId = (int) $this->getRequest()->getParam('store');
 
             if ($storeId) {

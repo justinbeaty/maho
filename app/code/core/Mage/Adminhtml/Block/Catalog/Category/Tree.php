@@ -228,7 +228,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
 
         $isParent = $this->_isParentSelectedCategory($node);
 
-        if ($node->hasChildren()) {
+        if ($node->hasChildren() || $level <= $this->getRecursionLevel()) {
             $item['children'] = [];
             foreach ($node->getChildren() as $child) {
                 $item['children'][] = $this->_getNodeJson($child, $level + 1);

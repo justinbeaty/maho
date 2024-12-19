@@ -280,7 +280,7 @@ class MahoTreeNode {
             throw new TypeError('Data parameter must be an object');
         }
 
-        let { children, ...attributes } = data;
+        const { children, ...attributes } = data;
 
         this.ui = {};
         this.tree = tree;
@@ -288,7 +288,6 @@ class MahoTreeNode {
 
         if (this.tree.config.noLeafNodes || Array.isArray(children)) {
             this.type = 'folder';
-            children ??= [];
         } else {
             this.type = 'leaf';
         }
@@ -307,10 +306,12 @@ class MahoTreeNode {
         this.bindEventListeners();
 
         if (this.type === 'folder') {
-            for (const child of children) {
-                this.appendChild(new MahoTreeNode(this.tree, child))
+            if (Array.isArray(children)) {
+                for (const child of children) {
+                    this.appendChild(new MahoTreeNode(this.tree, child))
+                }
+                this.hasLoadedChildren = true;
             }
-            this.hasLoadedChildren = this.tree.config.lazyload !== true || children.length > 0;
             this.ui.wrap.append(this.ui.details);
         } else {
             this.ui.wrap.append(this.ui.label);
@@ -409,7 +410,7 @@ class MahoTreeNode {
             }
         });
         this.ui.details?.addEventListener('toggle', () => {
-            if (this.ui.details.open === true && this.hasLoadedChildren === false) {
+            if (this.ui.details.open && !this.hasLoadedChildren) {
                 this.loadChildren();
             }
             if (this.tree.config.sortable) {
