@@ -138,10 +138,11 @@ class CategoryEditForm {
         this.updateContent(url, {active_tab_id: false})
     }
 
-    categoryDelete(url) {
+    async categoryDelete(url) {
         const confirmed = confirm('Are you sure you want to delete this category?'); // translate
         if (confirmed) {
-            this.updateContent(url);
+            await this.updateContent(url);
+
         }
     }
 
@@ -184,27 +185,18 @@ class CategoryEditForm {
                 throw new Error(`Server returned status ${response.status}`);
             }
 
-            let data = await response.text();
-            try {
-                data = JSON.parse(data);
-            } catch {
-            }
+            const result = await response.text();
 
             this.clearMessage();
 
-            if (typeof data === 'object' && data !== null) {
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                if (data.content) {
-                    updateElementHTML(this.containerEl, data.content);
-                    //this.containerEl.innerHTML = data.content;
-                }
-                if (data.messages) {
-                    this.setMessageHTML(data.messages);
-                }
-            } else {
-                updateElementHTML(this.containerEl, data);
+            if (result.error) {
+                throw new Error(result.error);
+            }
+            if (result.content) {
+                updateElementHTML(this.containerEl, result.content);
+            }
+            if (result.messages) {
+                this.setMessageHTML(result.messages);
             }
 
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();

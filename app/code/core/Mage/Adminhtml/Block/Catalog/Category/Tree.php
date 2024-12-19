@@ -33,8 +33,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
     {
         $addUrl = $this->getUrl('*/*/add', [
             '_current' => true,
+            '_query' => false,
             'id' => null,
-            '_query' => false
         ]);
 
         $this->setChild(
@@ -43,24 +43,21 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
                 ->setData([
                     'label'     => Mage::helper('catalog')->__('Add Subcategory'),
                     'onclick'   => "addNew('$addUrl', false)",
-                    'class'     => 'add',
+                    'class'     => 'add' . ($this->canAddSubCategory() ? '' : ' no-display'),
                     'id'        => 'add_subcategory_button',
-                    'style'     => $this->canAddSubCategory() ? '' : 'display: none;'
                 ])
         );
 
-        if ($this->canAddRootCategory()) {
-            $this->setChild(
-                'add_root_button',
-                $this->getLayout()->createBlock('adminhtml/widget_button')
-                    ->setData([
-                        'label'     => Mage::helper('catalog')->__('Add Root Category'),
-                        'onclick'   => "addNew('$addUrl', true)",
-                        'class'     => 'add' . ($this->getStore()->getId() ? ' no-display' : ''),
-                        'id'        => 'add_root_category_button'
-                    ])
-            );
-        }
+        $this->setChild(
+            'add_root_button',
+            $this->getLayout()->createBlock('adminhtml/widget_button')
+                ->setData([
+                    'label'     => Mage::helper('catalog')->__('Add Root Category'),
+                    'onclick'   => "addNew('$addUrl', true)",
+                    'class'     => 'add' . ($this->canAddRootCategory() ? '' : ' no-display'),
+                    'id'        => 'add_root_category_button',
+                ])
+        );
 
         $this->setChild(
             'store_switcher',
@@ -103,16 +100,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
     public function getAddSubButtonHtml()
     {
         return $this->getChildHtml('add_sub_button');
-    }
-
-    public function getExpandButtonHtml()
-    {
-        return $this->getChildHtml('expand_button');
-    }
-
-    public function getCollapseButtonHtml()
-    {
-        return $this->getChildHtml('collapse_button');
     }
 
     public function getStoreSwitcherHtml()
@@ -313,15 +300,16 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
      */
     public function canAddRootCategory()
     {
+        if ($this->getStore()->getId() !== 0) {
+            return false;
+        }
+
         $options = new Varien_Object(['is_allow' => true]);
-        Mage::dispatchEvent(
-            'adminhtml_catalog_category_tree_can_add_root_category',
-            [
-                'category' => $this->getCategory(),
-                'options'   => $options,
-                'store'    => $this->getStore()->getId()
-            ]
-        );
+        Mage::dispatchEvent('adminhtml_catalog_category_tree_can_add_root_category', [
+            'category' => $this->getCategory(),
+            'options'   => $options,
+            'store'    => $this->getStore()->getId()
+        ]);
 
         return $options->getIsAllow();
     }
@@ -334,14 +322,11 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
     public function canAddSubCategory()
     {
         $options = new Varien_Object(['is_allow' => true]);
-        Mage::dispatchEvent(
-            'adminhtml_catalog_category_tree_can_add_sub_category',
-            [
-                'category' => $this->getCategory(),
-                'options'   => $options,
-                'store'    => $this->getStore()->getId()
-            ]
-        );
+        Mage::dispatchEvent('adminhtml_catalog_category_tree_can_add_sub_category', [
+            'category' => $this->getCategory(),
+            'options'   => $options,
+            'store'    => $this->getStore()->getId()
+        ]);
 
         return $options->getIsAllow();
     }
