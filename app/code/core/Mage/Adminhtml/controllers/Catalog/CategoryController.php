@@ -462,6 +462,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 'store_id'    => (int) $block->getStore()->getId(),
                 'category_id' => (int) $category->getId(),
                 'root_visible' => (int) $root->getIsVisible(),
+                'can_add_root' => (int) $block->canAddRootCategory(),
                 'expanded'    => $recursionLevel === 0,
             ]]));
     }

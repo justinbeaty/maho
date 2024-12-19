@@ -185,7 +185,7 @@ class CategoryEditForm {
                 throw new Error(`Server returned status ${response.status}`);
             }
 
-            const result = await response.text();
+            const result = await response.json();
 
             this.clearMessage();
 

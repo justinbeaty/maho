@@ -166,7 +166,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         }
 
         $categories = Mage::getResourceSingleton('catalog/category_tree')
-            ->setStoreId($this->getStore()->getId())->loadBreadcrumbsArray($path);
+            ->setStoreId($this->getStore()->getId())
+            ->loadBreadcrumbsArray($path);
+
         if (empty($categories)) {
             return '';
         }
@@ -180,6 +182,11 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
                 ? '$("add_subcategory_button").show();'
                 : '$("add_subcategory_button").hide();')
             . '</script>';
+    }
+
+    public function getNodeJson($node, $level = 0)
+    {
+        return $this->_getNodeJson($node, $level);
     }
 
     /**
