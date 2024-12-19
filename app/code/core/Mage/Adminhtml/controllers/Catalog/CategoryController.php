@@ -224,19 +224,25 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
      */
     public function categoriesJsonAction()
     {
-        if ($this->getRequest()->getParam('expand_all')) {
-            Mage::getSingleton('admin/session')->setIsTreeWasExpanded(true);
-        } else {
-            Mage::getSingleton('admin/session')->setIsTreeWasExpanded(false);
-        }
+        $recursionLevel = $this->getRequest()->getParam('expand_all') ? 0 : null;
+
+        // if ($this->getRequest()->getParam('expand_all')) {
+        //     $recursionLevel = 0;
+        // } elseif ($this->getRequest()->getParam('recursion_level')) {
+        //     $recursionLevel = (int)$this->getRequest()->getParam('recursion_level');
+        // } else {
+        //     $recursionLevel = null;
+        // }
         if ($categoryId = (int) $this->getRequest()->getPost('id')) {
             $this->getRequest()->setParam('id', $categoryId);
 
             if (!$category = $this->_initCategory()) {
                 return;
             }
+
             $this->getResponse()->setBody(
                 $this->getLayout()->createBlock('adminhtml/catalog_category_tree')
+                    ->setRecursionLevel($recursionLevel)
                     ->getTreeJson($category)
             );
         }
@@ -429,6 +435,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
     {
         $storeId = (int) $this->getRequest()->getParam('store');
         $categoryId = (int) $this->getRequest()->getParam('id');
+        $recursionLevel = $this->getRequest()->getParam('expand_all') ? 0 : null;
 
         if ($storeId) {
             if (!$categoryId) {
@@ -442,6 +449,8 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
 
         /** @var Mage_Adminhtml_Block_Catalog_Category_Tree $block */
         $block = $this->getLayout()->createBlock('adminhtml/catalog_category_tree');
+        $block->setRecursionLevel($recursionLevel);
+
         $root  = $block->getRoot();
         $this->getResponse()->setBody(Mage::helper('core')->jsonEncode([
             'data' => $block->getTree(),
@@ -450,10 +459,10 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 'draggable'   => false,
                 'allowDrop'   => ($root->getIsVisible()) ? true : false,
                 'id'          => (int) $root->getId(),
-                'expanded'    => (int) $block->getIsWasExpanded(),
                 'store_id'    => (int) $block->getStore()->getId(),
                 'category_id' => (int) $category->getId(),
-                'root_visible' => (int) $root->getIsVisible()
+                'root_visible' => (int) $root->getIsVisible(),
+                'expanded'    => $recursionLevel === 0,
             ]]));
     }
 

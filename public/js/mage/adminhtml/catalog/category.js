@@ -14,7 +14,6 @@ class CategoryEditForm {
 
     constructor(config = {}) {
         this.config = config;
-        console.log(this.config)
 
         this.containerEl = document.getElementById(config.containerDiv);
         if (!this.containerEl) {
@@ -38,6 +37,11 @@ class CategoryEditForm {
             lazyload: {
                 nodeParameter: 'id',
                 dataUrl: this.config.loadTreeUrl,
+                onBeforeLoad: (node, params) => {
+                    if (this.wasExpanded) {
+                        params.append('expand_all', '1');
+                    }
+                },
                 onLoadException: (node, error) => {
                     this.setMessage(`Error loading children: ${error}`, 'error');
                 }
@@ -76,35 +80,20 @@ class CategoryEditForm {
         });
 
         if (expanded) {
-            this.tree.expandAll();
+            this.expandTree();
         }
 
         this.tree.getNodeById(category_id)?.select();
     }
 
     collapseTree() {
-        this.setWasExpanded(false);
+        this.wasExpanded = false;
         this.tree.collapseAll();
     }
 
     expandTree() {
-        this.setWasExpanded(true);
+        this.wasExpanded = true;
         this.tree.expandAll();
-    }
-
-    setWasExpanded(flag) {
-        let url = this.config.loadTreeUrl.replace(/\/expand_all\/\d+/, '');
-        if (flag) {
-            url += 'expand_all/1/';
-        }
-        this.tree.lazyloadOpts.dataUrl = url;
-
-        fetch(url, {
-            method: 'POST',
-            body: new URLSearchParams({
-                form_key: FORM_KEY,
-            }),
-        });
     }
 
     getSelectedCategory() {

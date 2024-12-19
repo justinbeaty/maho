@@ -45,8 +45,8 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
                 id          : <?= (int) $rootNode->getId() ?>,
                 store_id    : <?= (int) $treeBlock->getStore()->getId() ?>,
                 category_id : <?= (int) $treeBlock->getCategoryId() ?>,
-                expanded    : <?= (int) $treeBlock->getIsWasExpanded() ?>,
                 root_visible: <?= (int) $rootNode->getIsVisible() ?>,
+                expanded    : false,
             },
             data: <?= $treeBlock->getTreeJson() ?>,
         });

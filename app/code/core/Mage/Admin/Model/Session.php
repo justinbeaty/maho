@@ -27,8 +27,6 @@
  * @method bool getIndirectLogin()
  * @method $this setIndirectLogin(bool $value)
  * @method $this setIsFirstVisit(bool $value)
- * @method bool getIsTreeWasExpanded()
- * @method $this setIsTreeWasExpanded(bool $value)
  * @method int getLastEditedCategory()
  * @method $this setLastEditedCategory(int $value)
  * @method string getLastViewedStore()

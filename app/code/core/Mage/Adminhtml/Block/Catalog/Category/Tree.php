@@ -120,12 +120,16 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return $this->getChildHtml('store_switcher');
     }
 
+    /**
+     * Returns URL for loading tree
+     *
+     * @param bool $expanded
+     * @return string
+     */
     public function getLoadTreeUrl($expanded = null)
     {
-        $params = ['_current' => true, 'id' => null,'store' => null];
-        if ((is_null($expanded) && Mage::getSingleton('admin/session')->getIsTreeWasExpanded())
-            || $expanded == true
-        ) {
+        $params = ['_current' => true, 'id' => null, 'store' => null];
+        if ($expanded == true) {
             $params['expand_all'] = true;
         }
         return $this->getUrl('*/*/categoriesJson', $params);
@@ -144,11 +148,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         );
     }
 
-    public function getIsWasExpanded()
-    {
-        return Mage::getSingleton('admin/session')->getIsTreeWasExpanded();
-    }
-
     public function getMoveUrl()
     {
         return $this->getUrl('*/catalog_category/move', ['store' => $this->getRequest()->getParam('store')]);
@@ -162,9 +161,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
 
     public function getTreeJson($parentNodeCategory = null)
     {
-        $recursionLevel = $this->getIsWasExpanded() ? false : null;
-        Mage::log($recursionLevel);
-        $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory, $recursionLevel));
+        $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory));
         return Mage::helper('core')->jsonEncode($rootArray['children'] ?? []);
     }
 
@@ -222,24 +219,19 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         $item['path'] = $node->getData('path');
 
         $item['cls'] = 'folder ' . ($node->getIsActive() ? 'active-category' : 'no-active-category');
-        //$item['allowDrop'] = ($level<3) ? true : false;
+
         $allowMove = $this->_isCategoryMoveable($node);
         $item['allowDrop'] = $allowMove;
+
         // disallow drag if it's first level and category is root of a store
         $item['allowDrag'] = $allowMove && !($node->getLevel() == 1 && $rootForStores);
-
-        if ((int)$node->getChildrenCount() > 0) {
-            $item['children'] = [];
-        }
 
         $isParent = $this->_isParentSelectedCategory($node);
 
         if ($node->hasChildren()) {
             $item['children'] = [];
-            if (!($this->getUseAjax() && $node->getLevel() > 1 && !$isParent)) {
-                foreach ($node->getChildren() as $child) {
-                    $item['children'][] = $this->_getNodeJson($child, $level + 1);
-                }
+            foreach ($node->getChildren() as $child) {
+                $item['children'][] = $this->_getNodeJson($child, $level + 1);
             }
         }
 
