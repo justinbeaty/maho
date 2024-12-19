@@ -300,7 +300,8 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 if ($validate !== true) {
                     foreach ($validate as $code => $error) {
                         if ($error === true) {
-                            Mage::throwException(Mage::helper('catalog')->__('Attribute "%s" is required.', $category->getResource()->getAttribute($code)->getFrontend()->getLabel()));
+                            $attributeLabel = $category->getResource()->getAttribute($code)->getFrontend()->getLabel();
+                            Mage::throwException(Mage::helper('catalog')->__('Attribute "%s" is required.', $attributeLabel));
                         } else {
                             Mage::throwException($error);
                         }
@@ -313,14 +314,14 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 $category->unsetData('use_post_data_config');
                 $category->save();
 
+                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('The category has been saved.'));
                 $this->_prepareDataJSON([
-                    'messages' => Mage::helper('catalog')->__('The category has been saved.'),
+                    'success' => true,
                 ]);
             } catch (Exception $e) {
                 $this->setCategoryData($data);
                 $this->_prepareDataJSON([
-                    'error' => true,
-                    'messages' => $e->getMessage(),
+                    'error' => $e->getMessage(),
                 ]);
             }
         }
@@ -334,8 +335,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         $category = $this->_initCategory();
         if (!$category) {
             $this->_prepareDataJSON([
-                'error' => true,
-                'messages' => Mage::helper('catalog')->__('Category move error'),
+                'error' => Mage::helper('catalog')->__('Category move error'),
             ]);
             return;
         }
@@ -349,16 +349,16 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         $category->setData('save_rewrites_history', Mage::helper('catalog')->shouldSaveUrlRewritesHistory());
         try {
             $category->move($parentNodeId, $prevNodeId);
-            $this->getResponse()->setBody('{}');
+            $this->_prepareDataJSON([
+                'success' => true,
+            ]);
         } catch (Mage_Core_Exception $e) {
             $this->_prepareDataJSON([
-                'error' => true,
-                'messages' => $e->getMessage(),
+                'error' => $e->getMessage(),
             ]);
         } catch (Exception $e) {
             $this->_prepareDataJSON([
-                'error' => true,
-                'messages' => Mage::helper('catalog')->__('Category move error %s', $e),
+                'error' => Mage::helper('catalog')->__('Category move error %s', $e),
             ]);
             Mage::logException($e);
         }
