@@ -220,9 +220,10 @@ class CategoryEditForm {
 
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();
             this.initVarienForm();
-            return true;
+            //return true;
 
         } catch (error) {
+            console.log(error)
             this.setMessage(error, 'error');
         }
 

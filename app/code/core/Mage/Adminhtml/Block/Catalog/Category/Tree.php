@@ -162,7 +162,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
 
     public function getTreeJson($parentNodeCategory = null)
     {
-        $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory));
+        $recursionLevel = $this->getIsWasExpanded() ? false : null;
+        Mage::log($recursionLevel);
+        $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory, $recursionLevel));
         return Mage::helper('core')->jsonEncode($rootArray['children'] ?? []);
     }
 

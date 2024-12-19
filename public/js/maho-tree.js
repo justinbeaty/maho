@@ -558,7 +558,7 @@ class MahoTreeNode {
                 await this.tree.lazyloadOpts.onBeforeLoad(this, params);
             }
 
-            await new Promise(r => setTimeout(r, 500));
+            //await new Promise(r => setTimeout(r, 500));
 
             const response = await fetch(this.tree.lazyloadOpts.dataUrl, {
                 method: 'POST',
