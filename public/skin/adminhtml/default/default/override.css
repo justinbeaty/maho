@@ -1033,14 +1033,11 @@ ul.tabs a.changed span.changed {
     --icon-size: 16px;
     --label-gap: 0.25rem;
     --disabled-color: #999;
+    --drop-color: #ccc;
 }
 
 .hor-scroll .maho-tree {
     white-space: nowrap;
-}
-
-.maho-tree li.drop > details > summary {
-    background: #ccc;
 }
 
 .maho-tree li {
@@ -1090,6 +1087,10 @@ ul.tabs a.changed span.changed {
     align-items: safe center;
     width: unset !important;
 }
+.maho-tree li.drop > details > summary .label {
+    background: var(--drop-color);
+}
+
 .maho-tree .label.disabled, .maho-tree .label:has(.icon.no-active-category) {
     color: var(--disabled-color) !important;
 }
