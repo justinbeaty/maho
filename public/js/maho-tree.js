@@ -105,7 +105,7 @@ class MahoTree {
         } else {
             throw new TypeError('Root node must be an object, array, or MahoTreeNode');
         }
-
+        this.rootNode.isRoot = true;
         this.rootEl.replaceChildren(this.rootNode.ui.wrap);
     }
 
@@ -249,20 +249,11 @@ class MahoTree {
     }
 
     async expandAll() {
-        let nodes;
-        do {
-            nodes = Array.from(this.rootEl.querySelectorAll('details:not([open])'));
-            await Promise.all(nodes.map((el) => this.getNodeByEl(el.parentNode).expand()));
-        } while (nodes.length);
+        await this.rootNode.expandAll();
     }
 
     collapseAll() {
-        this.rootEl.querySelectorAll('details').forEach((el) => {
-            if (this.config.rootVisible !== true && this.rootNode.ui.details === el) {
-                return;
-            }
-            el.open = false;
-        });
+        this.rootNode.collapseAll();
     }
 
     dispatchEvent() {
@@ -469,10 +460,22 @@ class MahoTreeNode {
         return this;
     }
 
+    async expandAll() {
+        await this.expand();
+        await Promise.all(this.childNodes.map((child) => child.expandAll()))
+    }
+
     collapse() {
         if (this.ui.details) {
             this.ui.details.open = false;
         }
+    }
+
+    collapseAll() {
+        if (!this.isRoot || this.tree.config.rootVisible) {
+            this.collapse();
+        }
+        this.childNodes.map((child) => child.collapseAll());
     }
 
     select() {
@@ -559,7 +562,7 @@ class MahoTreeNode {
                 await this.tree.lazyloadOpts.onBeforeLoad(this, params);
             }
 
-            await new Promise(r => setTimeout(r, 1000));
+            //await new Promise(r => setTimeout(r, 1000));
 
             const response = await fetch(this.tree.lazyloadOpts.dataUrl, {
                 method: 'POST',
