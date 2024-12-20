@@ -61,10 +61,10 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
             collapseTree: categoryForm.collapseTree.bind(categoryForm),
             expandTree: categoryForm.expandTree.bind(categoryForm),
         }
-        window.addNew = categoryForm.categoryAdd.bind(categoryForm);
-        window.categoryReset = categoryForm.categoryReset.bind(categoryForm);
-        window.categoryDelete = categoryForm.categoryDelete.bind(categoryForm);
-        window.categorySubmit = categoryForm.categorySubmit.bind(categoryForm);
+        window.addNew = categoryForm.addCategory.bind(categoryForm);
+        window.categoryReset = categoryForm.resetCategory.bind(categoryForm);
+        window.categoryDelete = categoryForm.deleteCategory.bind(categoryForm);
+        window.categorySubmit = categoryForm.submitCategory.bind(categoryForm);
     });
 </script>
 

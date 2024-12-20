@@ -102,11 +102,10 @@ class CategoryEditForm {
         }
     }
 
-    categorySubmit(url) {
+    submitCategory(url) {
         this.varienForm._submit = async () => {
             try {
                 const formData = new FormData(this.formEl);
-
                 const response = await fetch(this.formEl.action, {
                     method: 'POST',
                     body: formData,
@@ -116,9 +115,10 @@ class CategoryEditForm {
                     throw new Error(`Server returned status ${response.status}`);
                 }
 
-                const data = await response.json();
-
-
+                const result = await response.json();
+                if (result.error) {
+                    throw new Error(result.error);
+                }
 
                 this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${data.category_id}/`);
 
@@ -129,11 +129,11 @@ class CategoryEditForm {
         this.varienForm.submit();
     }
 
-    categoryReset(url) {
+    resetCategory(url) {
         this.updateContent(url, {active_tab_id: false})
     }
 
-    async categoryDelete(url) {
+    async deleteCategory(url) {
         const confirmed = confirm('Are you sure you want to delete this category?'); // translate
         if (!confirmed) {
             return;
@@ -152,7 +152,6 @@ class CategoryEditForm {
             }
 
             const result = await response.json();
-
             if (result.error) {
                 throw new Error(result.error);
             }
@@ -160,15 +159,12 @@ class CategoryEditForm {
             this.tree.getNodeById(result.category_id)?.remove();
             this.tree.getNodeById(result.parent_id)?.select();
 
-
-            //this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${result.parent_id}/`);
-
         } catch (error) {
             this.setMessage(error, 'error');
         }
     }
 
-    categoryAdd(url, isRoot) {
+    addCategory(url, isRoot) {
         const parent = isRoot ? { id: 1 } : this.getSelectedCategory();
         if (parent === undefined) {
             alert('Please select a parent category before adding a new one.'); // translate
@@ -316,7 +312,6 @@ class CategoryEditForm {
             }
 
             const result = await response.json();
-
             if (result.error) {
                 throw new Error(result.error);
             }

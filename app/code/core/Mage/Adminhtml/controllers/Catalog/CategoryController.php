@@ -210,12 +210,10 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
             $category = Mage::getModel('catalog/category')->load($categoryId);
 
             if (!$category->getId()) {
-                if (!$parentId) {
-                    $parentId = $storeId
-                        ? Mage::app()->getStore($storeId)->getRootCategoryId()
-                        : Mage_Catalog_Model_Category::TREE_ROOT_ID;
-                }
                 $parentCategory = Mage::getModel('catalog/category')->load($parentId);
+                if (!$parentCategory->getId()) {
+                    Mage::throwException('Parent category was not found.');
+                }
                 $category->setPath($parentCategory->getPath());
             }
 
@@ -244,7 +242,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
 
             // Create Permanent Redirect for old URL key
             if ($category->getId() && isset($data['general']['url_key_create_redirect'])) {
-                $category->setData('save_rewrites_history', (bool)$data['general']['url_key_create_redirect']);
+                $category->setData('save_rewrites_history', (bool) $data['general']['url_key_create_redirect']);
             }
 
             $category->setAttributeSetId($category->getDefaultAttributeSetId());
@@ -427,12 +425,9 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         $categoryId = (int) $this->getRequest()->getParam('id');
         $recursionLevel = $this->getRequest()->getParam('expand_all') ? 0 : null;
 
-        if ($storeId) {
-            if (!$categoryId) {
-                $store = Mage::app()->getStore($storeId);
-                $rootId = $store->getRootCategoryId();
-                $this->getRequest()->setParam('id', $rootId);
-            }
+        if ($storeId && !$categoryId) {
+            $rootId = Mage::app()->getStore($storeId)->getRootCategoryId();
+            $this->getRequest()->setParam('id', $rootId);
         }
 
         $category = $this->_initCategory(true);
