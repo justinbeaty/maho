@@ -1075,6 +1075,9 @@ ul.tabs a.changed span.changed {
 .maho-tree li.sortable-drag, .maho-tree li.sortable-drag:before {
     border-color: transparent;
 }
+.maho-tree li.sortable-drag .label {
+    outline: none !important;
+}
 .maho-tree li.sortable-ghost ul, .maho-tree li.sortable-drag ul {
     display: none;
 }

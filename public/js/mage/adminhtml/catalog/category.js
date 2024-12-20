@@ -141,7 +141,6 @@ class CategoryEditForm {
     }
 
     categoryAdd(url, isRoot) {
-
         const parent = isRoot ? { id: 1 } : this.getSelectedCategory();
         if (parent === undefined) {
             alert('Please select a parent category before adding a new one.'); // translate
