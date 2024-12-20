@@ -232,6 +232,10 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
             $categories[$key] = $treeBlock->getNodeJson($category);
         }
 
+        if ($last = array_key_last($categories)) {
+            $categories[$last]['checked'] = true;
+        }
+
         return Mage::helper('core')->jsonEncode([
             'breadcrumbs' => $categories,
             'can_add_sub' => (bool) $treeBlock->canAddSubCategory(),

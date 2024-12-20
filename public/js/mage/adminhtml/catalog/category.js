@@ -119,6 +119,8 @@ class CategoryEditForm {
 
                 const data = await response.json();
 
+
+
                 this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${data.category_id}/`);
 
             } catch (error) {
@@ -218,9 +220,6 @@ class CategoryEditForm {
                 this.setMessageHTML(result.messages);
             }
 
-            window[this.config.tabsJsObjectName]?.moveTabContentInDest();
-            this.initVarienForm();
-
             if (window.categoryInfo) {
                 let node = this.tree.rootNode;
                 for (const breadcrumb of window.categoryInfo.breadcrumbs) {
@@ -231,14 +230,13 @@ class CategoryEditForm {
                     node = this.tree.getNodeById(breadcrumb.id);
                     node.setText(breadcrumb.text);
                 }
-                if (node !== this.tree.rootNode) {
-                    node.select();
-                }
                 if (this.addSubCategoryBtn) {
                     this.addSubCategoryBtn.disabled = !window.categoryInfo.can_add_sub;
                 }
             }
 
+            window[this.config.tabsJsObjectName]?.moveTabContentInDest();
+            this.initVarienForm();
 
         } catch (error) {
             console.log(error)
