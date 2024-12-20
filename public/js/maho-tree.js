@@ -423,6 +423,7 @@ class MahoTreeNode {
 
     setText(text) {
         this.text = this.attributes.text = this.ui.wrap.dataset.text = text;
+        this.ui.textNode.textContent = unescapeHTML(this.text);
     }
 
     contains(node) {
@@ -437,11 +438,11 @@ class MahoTreeNode {
     }
 
     get previousNode() {
-        return this.ui.wrap.previousSibling;
+        return this.tree.getNodeByEl(this.ui.wrap.previousSibling);
     }
 
     get nextNode() {
-        return this.ui.wrap.nextSibling;
+        return this.tree.getNodeByEl(this.ui.wrap.nextSibling);
     }
 
     get childNodes() {

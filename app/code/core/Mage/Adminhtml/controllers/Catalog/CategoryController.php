@@ -311,6 +311,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('The category has been saved.'));
                 $this->_prepareDataJSON([
                     'success' => true,
+                    'category_id' => $category->getId(),
                 ]);
             } catch (Exception $e) {
                 $this->setCategoryData($data);
@@ -368,16 +369,26 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 $category = Mage::getModel('catalog/category')->load($id);
                 Mage::dispatchEvent('catalog_controller_category_delete', ['category' => $category]);
 
-                Mage::getSingleton('admin/session')->setDeletedPath($category->getPath());
-
                 $category->delete();
-                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('The category has been deleted.'));
+                Mage::getSingleton('adminhtml/session')->addSuccess(
+                    Mage::helper('catalog')->__('The category has been deleted.')
+                );
+
+                $this->_prepareDataJSON([
+                    'success' => true,
+                    'category_id' => $category->getId(),
+                    'parent_id' => $category->getParentId(),
+                ]);
+                return;
+
             } catch (Mage_Core_Exception $e) {
                 Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
                 $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
                 return;
             } catch (Exception $e) {
-                Mage::getSingleton('adminhtml/session')->addError(Mage::helper('catalog')->__('An error occurred while trying to delete the category.'));
+                Mage::getSingleton('adminhtml/session')->addError(
+                    Mage::helper('catalog')->__('An error occurred while trying to delete the category.')
+                );
                 $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
                 return;
             }

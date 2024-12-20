@@ -117,10 +117,9 @@ class CategoryEditForm {
                     throw new Error(`Server returned status ${response.status}`);
                 }
 
-                const data = await response.text();
-                console.log(data);
+                const data = await response.json();
 
-                this.changeCategory();
+                this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${data.category_id}/`);
 
             } catch (error) {
                 this.setMessage(error, 'error');
@@ -135,8 +134,32 @@ class CategoryEditForm {
 
     async categoryDelete(url) {
         const confirmed = confirm('Are you sure you want to delete this category?'); // translate
-        if (confirmed) {
-            await this.updateContent(url);
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    form_key: FORM_KEY,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (data.error) {
+                this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${data.category_id}/`);
+            } else {
+                this.tree.getNodeById(data.category_id)?.remove();
+                this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${data.parent_id}/`);
+            }
+        } catch (error) {
+            this.setMessage(error, 'error');
         }
     }
 
@@ -192,12 +215,16 @@ class CategoryEditForm {
             }
 
             if (window.categoryInfo) {
+                let node = this.tree.rootNode;
                 for (const breadcrumb of window.categoryInfo.breadcrumbs) {
-                    const node = this.tree.getNodeById(breadcrumb.id);
-                    if (node) {
-                        node.setText(breadcrumb.text);
+                    if (!this.tree.getNodeById(breadcrumb.id)) {
+                        this.tree.expandPath(node.getPath());
+                        node.prependChild(new MahoTreeNode(this.tree, breadcrumb));
                     }
+                    node = this.tree.getNodeById(breadcrumb.id);
+                    node.setText(breadcrumb.text);
                 }
+
                 if (this.addSubCategoryBtn) {
                     this.addSubCategoryBtn.disabled = !window.categoryInfo.can_add_sub;
                 }
