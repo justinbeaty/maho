@@ -150,14 +150,18 @@ class CategoryEditForm {
                 throw new Error(`Server returned status ${response.status}`);
             }
 
-            const data = await response.json();
+            const result = await response.json();
 
-            if (data.error) {
-                this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${data.category_id}/`);
-            } else {
-                this.tree.getNodeById(data.category_id)?.remove();
-                this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${data.parent_id}/`);
+            if (result.error) {
+                throw new Error(result.error);
             }
+
+            this.tree.getNodeById(result.category_id)?.remove();
+            this.tree.getNodeById(result.parent_id)?.select();
+
+
+            //this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${result.parent_id}/`);
+
         } catch (error) {
             this.setMessage(error, 'error');
         }
@@ -214,6 +218,9 @@ class CategoryEditForm {
                 this.setMessageHTML(result.messages);
             }
 
+            window[this.config.tabsJsObjectName]?.moveTabContentInDest();
+            this.initVarienForm();
+
             if (window.categoryInfo) {
                 let node = this.tree.rootNode;
                 for (const breadcrumb of window.categoryInfo.breadcrumbs) {
@@ -224,14 +231,14 @@ class CategoryEditForm {
                     node = this.tree.getNodeById(breadcrumb.id);
                     node.setText(breadcrumb.text);
                 }
-
+                if (node !== this.tree.rootNode) {
+                    node.select();
+                }
                 if (this.addSubCategoryBtn) {
                     this.addSubCategoryBtn.disabled = !window.categoryInfo.can_add_sub;
                 }
             }
 
-            window[this.config.tabsJsObjectName]?.moveTabContentInDest();
-            this.initVarienForm();
 
         } catch (error) {
             console.log(error)

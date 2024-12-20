@@ -129,7 +129,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         }
 
         $this->loadLayout();
-        $this->_title($categoryId ? $category->getName() : $this->__('New Category'));
+        $this->_title($category->getId() ? $category->getName() : $this->__('New Category'));
 
         /**
          * Check if we have data in session (if duering category save was exceprion)
@@ -174,7 +174,6 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
 
     /**
      * WYSIWYG editor action for ajax request
-     *
      */
     public function wysiwygAction()
     {
@@ -290,6 +289,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
             $category->setData('use_post_data_config', $this->getRequest()->getPost('use_config'));
 
             try {
+
                 $validate = $category->validate();
                 if ($validate !== true) {
                     foreach ($validate as $code => $error) {
@@ -313,8 +313,9 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                     'success' => true,
                     'category_id' => $category->getId(),
                 ]);
+
             } catch (Exception $e) {
-                $this->setCategoryData($data);
+                Mage::getSingleton('adminhtml/session')->setCategoryData($data);
                 $this->_prepareDataJSON([
                     'error' => $e->getMessage(),
                 ]);

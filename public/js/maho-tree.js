@@ -481,15 +481,21 @@ class MahoTreeNode {
 
     select() {
         if (this.ui.checkbox) {
-            this.ui.checkbox.checked = true;
             this.ui.checkbox.indeterminate = false;
+            if (this.ui.checkbox.checked === false) {
+                this.ui.checkbox.checked = true;
+                this.ui.checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+            }
         }
     }
 
     deselect() {
         if (this.ui.checkbox) {
-            this.ui.checkbox.checked = false;
             this.ui.checkbox.indeterminate = false;
+            if (this.ui.checkbox.checked === true) {
+                this.ui.checkbox.checked = false;
+                this.ui.checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+            }
         }
     }
 
@@ -551,7 +557,7 @@ class MahoTreeNode {
 
         const timeoutID = setTimeout(() => {
             this.ui.iconNode.classList.add('loading');
-        }, LOADING_TIMEOUT ?? 200);
+        }, LOADING_TIMEOUT);
 
         try {
             const params = new URLSearchParams({
