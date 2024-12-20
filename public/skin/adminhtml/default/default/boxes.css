@@ -973,8 +973,6 @@ ul.item-options li { padding-left:.7em; }
 
 .no-active-category a span                  { color:#aaa !important; }
 
-#tree-div { overflow:auto!important; padding-bottom:15px; width:200px; }
-
 /* Product - Websites */
 .website-name .checkbox                 { vertical-align:top; margin-top:2px; }
 .webiste-groups                         { padding:10px 20px; }

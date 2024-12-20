@@ -248,8 +248,12 @@ class MahoTree {
         return current;
     }
 
-    expandAll() {
-        this.rootEl.querySelectorAll('details').forEach((el) => el.open = true);
+    async expandAll() {
+        let nodes;
+        do {
+            nodes = Array.from(this.rootEl.querySelectorAll('details:not([open])'));
+            await Promise.all(nodes.map((el) => this.getNodeByEl(el.parentNode).expand()));
+        } while (nodes.length);
     }
 
     collapseAll() {
