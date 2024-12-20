@@ -97,10 +97,9 @@ class CategoryEditForm {
 
     changeCategory() {
         const category = this.getSelectedCategory();
-        if (category === undefined) {
-            return;
+        if (category.id !== window.categoryInfo?.category_id || this.storeId !== window.categoryInfo?.store_id) {
+            this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${category.id}/`);
         }
-        this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${category.id}/`);
     }
 
     categorySubmit(url) {
@@ -189,7 +188,7 @@ class CategoryEditForm {
             url = new URL(url);
             url.searchParams.set('isAjax', 'true');
 
-            params.active_tab_id ??= window[this.config.tabsJsObjectName]?.activeTab.id;
+            //params.active_tab_id ??= window[this.config.tabsJsObjectName]?.activeTab.id;
 
             const options = {
                 method: 'POST',

@@ -29,49 +29,45 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
      * Root category can be returned, if inappropriate store/category is specified
      *
      * @param bool $getRootInstead
-     * @return Mage_Catalog_Model_Category|false
+     * @return ($getRootInstead is true ? Mage_Catalog_Model_Category : Mage_Catalog_Model_Category|false)
      */
     protected function _initCategory($getRootInstead = false)
     {
-        $this->_title($this->__('Catalog'))
-             ->_title($this->__('Categories'))
-             ->_title($this->__('Manage Categories'));
-
-        $categoryId = (int) $this->getRequest()->getParam('id', false);
         $storeId    = (int) $this->getRequest()->getParam('store');
+        $categoryId = (int) $this->getRequest()->getParam('id', false);
+
         $category = Mage::getModel('catalog/category');
         $category->setStoreId($storeId);
 
         if ($categoryId) {
             $category->load($categoryId);
-            if ($storeId) {
-                $rootId = Mage::app()->getStore($storeId)->getRootCategoryId();
-                if (!in_array($rootId, $category->getPathIds())) {
-                    // load root category instead wrong one
-                    if ($getRootInstead) {
-                        $category->load($rootId);
-                    } else {
-                        $this->_redirect('*/*/', ['_current' => true, 'id' => null]);
-                        return false;
-                    }
-                }
-            }
         }
 
-        if ($activeTabId = (string) $this->getRequest()->getParam('active_tab_id')) {
-            Mage::getSingleton('admin/session')->setActiveTabId($activeTabId);
+        // If a store id was provided, ensure this category belongs to it
+        if ($categoryId && $storeId) {
+            $rootId = Mage::app()->getStore($storeId)->getRootCategoryId();
+            if (!in_array($rootId, $category->getPathIds())) {
+                return $getRootInstead ? $category->load($rootId) : false;
+            }
         }
 
         Mage::register('category', $category);
         Mage::register('current_category', $category);
-        Mage::getSingleton('cms/wysiwyg_config')->setStoreId($this->getRequest()->getParam('store'));
+        Mage::getSingleton('cms/wysiwyg_config')->setStoreId($storeId);
         return $category;
     }
+
     /**
      * Catalog categories index action
      */
     public function indexAction()
     {
+        $storeId = (int) $this->getRequest()->getParam('store');
+        $store = $storeId
+            ? Mage::app()->getStore($storeId)
+            : Mage::app()->getWebsite(true)->getDefaultGroup()->getDefaultStore();
+
+        $this->getRequest()->setParam('id', $store->getRootCategoryId());
         $this->_forward('edit');
     }
 
@@ -80,8 +76,28 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
      */
     public function addAction()
     {
-        Mage::getSingleton('admin/session')->unsActiveTabId();
-        $this->_forward('edit');
+        try {
+            $parentId = (int) $this->getRequest()->getParam('parent');
+            if (!$parentId) {
+                Mage::throwException('Unable to complete this request.');
+            }
+
+            $this->_forward('edit');
+
+        } catch (Exception $e) {
+            $error = $e->getMessage();
+            Mage::logException($e);
+        }
+
+        if (isset($error)) {
+            if ($this->getRequest()->isAjax()) {
+                $this->_prepareDataJSON(['error' => $error]);
+                return;
+            }
+
+            Mage::getSingleton('adminhtml/session')->addError($error);
+            $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
+        }
     }
 
     /**
@@ -89,60 +105,18 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
      */
     public function editAction()
     {
-        $params['_current'] = true;
-        $redirect = false;
-
         $storeId = (int) $this->getRequest()->getParam('store');
-        $parentId = (int) $this->getRequest()->getParam('parent');
-        $prevStoreId = Mage::getSingleton('admin/session')
-            ->getLastViewedStore(true);
-
-        if (!empty($prevStoreId) && !$this->getRequest()->getQuery('isAjax')) {
-            $params['store'] = $prevStoreId;
-            $redirect = true;
-        }
-
         $categoryId = (int) $this->getRequest()->getParam('id');
-        $prevCategoryId = Mage::getSingleton('admin/session')
-            ->getLastEditedCategory(true);
 
-        if ($prevCategoryId
-            && !$this->getRequest()->getQuery('isAjax')
-            && !$this->getRequest()->getParam('clear')
-        ) {
-            $this->getRequest()->setParam('id', $prevCategoryId);
-        }
+        $category = $this->_initCategory(true);
 
-        if ($redirect) {
-            $this->_redirect('*/*/edit', $params);
-            return;
-        }
-
-        if ($storeId && !$categoryId && !$parentId) {
-            $store = Mage::app()->getStore($storeId);
-            $prevCategoryId = (int) $store->getRootCategoryId();
-            $this->getRequest()->setParam('id', $prevCategoryId);
-        }
-
-        if (!($category = $this->_initCategory(true))) {
-            return;
-        }
+        // Restore saved data in case of exception during save
+        $data = Mage::getSingleton('adminhtml/session')->getCategoryData(true);
+        $category->addData($data['general'] ?? []);
 
         $this->loadLayout();
-        $this->_title($category->getId() ? $category->getName() : $this->__('New Category'));
 
-        /**
-         * Check if we have data in session (if duering category save was exceprion)
-         */
-        $data = Mage::getSingleton('adminhtml/session')->getCategoryData(true);
-        if (isset($data['general'])) {
-            $category->addData($data['general']);
-        }
-
-        /**
-         * Build response for ajax request
-         */
-        if ($this->getRequest()->getQuery('isAjax')) {
+        if ($this->getRequest()->isAjax()) {
             $eventResponse = new Varien_Object([
                 'content' => $this->getLayout()->getBlock('category.edit')->getFormHtml(),
                 'messages' => $this->getLayout()->getMessagesBlock()->getGroupedHtml(),
@@ -156,6 +130,11 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
             $this->_prepareDataJSON($eventResponse->getData());
             return;
         }
+
+        $this->_title($this->__('Catalog'))
+            ->_title($this->__('Categories'))
+            ->_title($this->__('Manage Categories'))
+            ->_title($category->getId() ? $category->getName() : $this->__('New Category'));
 
         $this->_setActiveMenu('catalog/categories');
 
@@ -196,21 +175,22 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
     public function categoriesJsonAction()
     {
         $recursionLevel = $this->getRequest()->getParam('expand_all') ? 0 : null;
+        $categoryId = (int) $this->getRequest()->getPost('id');
 
-        if ($categoryId = (int) $this->getRequest()->getPost('id')) {
-            $this->getRequest()->setParam('id', $categoryId);
-
-            if (!$category = $this->_initCategory()) {
-                return;
-            }
-
-            $this->getResponse()->setHeader('Content-type', 'application/json', true);
-            $this->getResponse()->setBody(
-                $this->getLayout()->createBlock('adminhtml/catalog_category_tree')
-                    ->setRecursionLevel($recursionLevel)
-                    ->getTreeJson($category)
-            );
+        $category = $this->_initCategory();
+        if (!$category || !$category->getId()) {
+            $this->_prepareDataJSON([
+                'error' => Mage::helper('catalog')->__('This category no longer exists.'),
+            ]);
+            return;
         }
+
+        $this->getResponse()->setHeader('Content-type', 'application/json', true);
+        $this->getResponse()->setBody(
+            $this->getLayout()->createBlock('adminhtml/catalog_category_tree')
+                ->setRecursionLevel($recursionLevel)
+                ->getTreeJson($category)
+        );
     }
 
     /**
@@ -218,61 +198,58 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
      */
     public function saveAction()
     {
-        if (!$category = $this->_initCategory()) {
-            return;
-        }
-
-        $storeId = $this->getRequest()->getParam('store');
-
-        if ($data = $this->getRequest()->getPost()) {
-            if (isset($data['general']['path'])) {
-                unset($data['general']['path']);
+        try {
+            if (!$data = $this->getRequest()->getPost()) {
+                Mage::throwException('Unable to complete this request.');
             }
-            $category->addData($data['general']);
+
+            $storeId = (int) $this->getRequest()->getParam('store');
+            $parentId = (int) $this->getRequest()->getParam('parent');
+            $categoryId = (int) $this->getRequest()->getParam('id');
+
+            $category = Mage::getModel('catalog/category')->load($categoryId);
+
             if (!$category->getId()) {
-                $parentId = $this->getRequest()->getParam('parent');
                 if (!$parentId) {
-                    if ($storeId) {
-                        $parentId = Mage::app()->getStore($storeId)->getRootCategoryId();
-                    } else {
-                        $parentId = Mage_Catalog_Model_Category::TREE_ROOT_ID;
-                    }
+                    $parentId = $storeId
+                        ? Mage::app()->getStore($storeId)->getRootCategoryId()
+                        : Mage_Catalog_Model_Category::TREE_ROOT_ID;
                 }
                 $parentCategory = Mage::getModel('catalog/category')->load($parentId);
                 $category->setPath($parentCategory->getPath());
             }
 
-            /**
-             * Check "Use Default Value" checkboxes values
-             */
+            // if (!$this->getRequest()->isAjax()) {
+            //     if ($activeTabId = (string) $this->getRequest()->getParam('active_tab_id')) {
+            //         Mage::getSingleton('admin/session')->setActiveTabId($activeTabId);
+            //     }
+            // }
+
+            unset($data['general']['path']);
+            $category->addData($data['general']);
+
+            // Check "Use Default Value" checkboxes values
             if ($useDefaults = $this->getRequest()->getPost('use_default')) {
                 foreach ($useDefaults as $attributeCode) {
                     $category->setData($attributeCode, false);
                 }
             }
 
-            /**
-             * Process "Use Config Settings" checkboxes
-             */
+            // Process "Use Config Settings" checkboxes
             if ($useConfig = $this->getRequest()->getPost('use_config')) {
                 foreach ($useConfig as $attributeCode) {
                     $category->setData($attributeCode, null);
                 }
             }
 
-            /**
-             * Create Permanent Redirect for old URL key
-             */
+            // Create Permanent Redirect for old URL key
             if ($category->getId() && isset($data['general']['url_key_create_redirect'])) {
-                // && $category->getOrigData('url_key') != $category->getData('url_key')
                 $category->setData('save_rewrites_history', (bool)$data['general']['url_key_create_redirect']);
             }
 
             $category->setAttributeSetId($category->getDefaultAttributeSetId());
 
-            if (isset($data['category_products']) &&
-                !$category->getProductsReadonly()
-            ) {
+            if (isset($data['category_products']) && !$category->getProductsReadonly()) {
                 $products = Mage::helper('core/string')->parseQueryStr($data['category_products']);
                 $category->setPostedProducts($products);
             }
@@ -282,81 +259,94 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 'request' => $this->getRequest()
             ]);
 
-            /**
-             * Proceed with $_POST['use_config']
-             * set into category model for processing through validation
-             */
+            // Proceed with $_POST['use_config']
+            // set into category model for processing through validation
             $category->setData('use_post_data_config', $this->getRequest()->getPost('use_config'));
 
-            try {
-
-                $validate = $category->validate();
-                if ($validate !== true) {
-                    foreach ($validate as $code => $error) {
-                        if ($error === true) {
-                            $attributeLabel = $category->getResource()->getAttribute($code)->getFrontend()->getLabel();
-                            Mage::throwException(Mage::helper('catalog')->__('Attribute "%s" is required.', $attributeLabel));
-                        } else {
-                            Mage::throwException($error);
-                        }
+            $validate = $category->validate();
+            if ($validate !== true) {
+                foreach ($validate as $code => $error) {
+                    if ($error === true) {
+                        $attributeLabel = $category->getResource()->getAttribute($code)->getFrontend()->getLabel();
+                        Mage::throwException(Mage::helper('catalog')->__('Attribute "%s" is required.', $attributeLabel));
+                    } else {
+                        Mage::throwException($error);
                     }
                 }
+            }
 
-                /**
-                 * Unset $_POST['use_config'] before save
-                 */
-                $category->unsetData('use_post_data_config');
-                $category->save();
+            // Unset $_POST['use_config'] before save
+            $category->unsetData('use_post_data_config');
 
-                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('The category has been saved.'));
+            $category->save();
+
+            // Add success message, will be displayed when frontend loads parent's edit form
+            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('catalog')->__('The category has been saved.'));
+
+            if ($this->getRequest()->isAjax()) {
                 $this->_prepareDataJSON([
                     'success' => true,
                     'category_id' => $category->getId(),
                 ]);
-
-            } catch (Exception $e) {
-                Mage::getSingleton('adminhtml/session')->setCategoryData($data);
-                $this->_prepareDataJSON([
-                    'error' => $e->getMessage(),
-                ]);
+                return;
             }
+
+            $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
+
+        } catch (Mage_Core_Exception $e) {
+            $error = $e->getMessage();
+        } catch (Exception $e) {
+            $error = Mage::helper('catalog')->__('An error occurred while trying to save the category.');
+            Mage::logException($e);
+        }
+
+        if (isset($error)) {
+            if ($this->getRequest()->isAjax()) {
+                $this->_prepareDataJSON(['error' => $error]);
+                return;
+            }
+
+            Mage::getSingleton('adminhtml/session')->setCategoryData($data);
+            Mage::getSingleton('adminhtml/session')->addError($error);
+            $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
         }
     }
 
     /**
-     * Move category action
+     * Move category action (AJAX)
      */
     public function moveAction()
     {
-        $category = $this->_initCategory();
-        if (!$category) {
-            $this->_prepareDataJSON([
-                'error' => Mage::helper('catalog')->__('Category move error'),
-            ]);
-            return;
-        }
-
-        // New parent category identifier
-        $parentNodeId   = $this->getRequest()->getPost('pid', false);
-
-        // Category id after which we have put our category
-        $prevNodeId     = $this->getRequest()->getPost('aid', false);
-
-        $category->setData('save_rewrites_history', Mage::helper('catalog')->shouldSaveUrlRewritesHistory());
         try {
+            $categoryId = (int) $this->getRequest()->getParam('id');
+            $category = Mage::getModel('catalog/category')->load($categoryId);
+
+            if (!$category->getId()) {
+                Mage::throwException('Category move operation is not possible: the current category was not found.');
+            }
+
+            // New parent category identifier
+            $parentNodeId = $this->getRequest()->getPost('pid', false);
+
+            // Category id after which we have put our category
+            $prevNodeId = $this->getRequest()->getPost('aid', false);
+
+            $category->setData('save_rewrites_history', Mage::helper('catalog')->shouldSaveUrlRewritesHistory());
+
             $category->move($parentNodeId, $prevNodeId);
+
             $this->_prepareDataJSON([
                 'success' => true,
             ]);
         } catch (Mage_Core_Exception $e) {
-            $this->_prepareDataJSON([
-                'error' => $e->getMessage(),
-            ]);
+            $error = $e->getMessage();
         } catch (Exception $e) {
-            $this->_prepareDataJSON([
-                'error' => Mage::helper('catalog')->__('Category move error %s', $e),
-            ]);
+            $error = Mage::helper('catalog')->__('Category move error');
             Mage::logException($e);
+        }
+
+        if (isset($error)) {
+            $this->_prepareDataJSON(['error' => $error]);
         }
     }
 
@@ -365,36 +355,51 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
      */
     public function deleteAction()
     {
-        if ($id = (int) $this->getRequest()->getParam('id')) {
-            try {
-                $category = Mage::getModel('catalog/category')->load($id);
-                Mage::dispatchEvent('catalog_controller_category_delete', ['category' => $category]);
+        try {
+            $categoryId = (int) $this->getRequest()->getParam('id');
+            $category = Mage::getModel('catalog/category')->load($categoryId);
 
-                $category->delete();
-                Mage::getSingleton('adminhtml/session')->addSuccess(
-                    Mage::helper('catalog')->__('The category has been deleted.')
-                );
+            if (!$category->getId()) {
+                Mage::throwException('Category delete operation is not possible: the current category was not found.');
+            }
 
+            Mage::dispatchEvent('catalog_controller_category_delete', ['category' => $category]);
+            $category->delete();
+
+            // Add success message, will be displayed when frontend loads parent's edit form
+            Mage::getSingleton('adminhtml/session')->addSuccess(
+                Mage::helper('catalog')->__('The category has been deleted.')
+            );
+
+            if ($this->getRequest()->isAjax()) {
                 $this->_prepareDataJSON([
                     'success' => true,
                     'category_id' => $category->getId(),
                     'parent_id' => $category->getParentId(),
                 ]);
                 return;
+            }
 
-            } catch (Mage_Core_Exception $e) {
-                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
-                $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
-                return;
-            } catch (Exception $e) {
-                Mage::getSingleton('adminhtml/session')->addError(
-                    Mage::helper('catalog')->__('An error occurred while trying to delete the category.')
-                );
-                $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
+            $this->getResponse()->setRedirect(
+                $this->getUrl('*/*/edit', ['_current' => true, 'id' => $category->getParentId()])
+            );
+
+        } catch (Mage_Core_Exception $e) {
+            $error = $e->getMessage();
+        } catch (Exception $e) {
+            $error = Mage::helper('catalog')->__('An error occurred while trying to delete the category.');
+            Mage::logException($e);
+        }
+
+        if (isset($error)) {
+            if ($this->getRequest()->isAjax()) {
+                $this->_prepareDataJSON(['error' => $error]);
                 return;
             }
+
+            Mage::getSingleton('adminhtml/session')->addError($error);
+            $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
         }
-        $this->getResponse()->setRedirect($this->getUrl('*/*/', ['_current' => true, 'id' => null]));
     }
 
     /**

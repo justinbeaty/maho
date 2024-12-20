@@ -221,22 +221,23 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
 
     public function getCategoryInfoJson(): string
     {
-        //$treeBlock = $this->getLayout()->getBlock('category.tree');
         $treeBlock = Mage::getBlockSingleton('adminhtml/catalog_category_tree');
 
         $categories = Mage::getResourceSingleton('catalog/category_tree')
-            ->setStoreId($this->getStore()->getId())
+            ->setStoreId($this->getCategory()->getStoreId())
             ->loadBreadcrumbsArray($this->getCategory()->getPath());
 
         foreach ($categories as $key => $category) {
             $categories[$key] = $treeBlock->getNodeJson($category);
         }
 
-        if ($last = array_key_last($categories)) {
+        if (($last = array_key_last($categories)) !== null) {
             $categories[$last]['checked'] = true;
         }
 
         return Mage::helper('core')->jsonEncode([
+            'store_id' => $this->getCategory()->getStoreId(),
+            'category_id' => $this->getCategory()->getId(),
             'breadcrumbs' => $categories,
             'can_add_sub' => (bool) $treeBlock->canAddSubCategory(),
         ]);
