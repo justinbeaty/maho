@@ -373,7 +373,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
             }
 
             $this->getResponse()->setRedirect(
-                $this->getUrl('*/*/edit', ['_current' => true, 'id' => $category->getParentId()])
+                $this->getUrl('*/*/edit', ['_current' => true, 'form_key' => null, 'id' => $category->getParentId()])
             );
 
         } catch (Mage_Core_Exception $e) {
@@ -390,7 +390,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
             }
 
             Mage::getSingleton('adminhtml/session')->addError($error);
-            $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true]));
+            $this->getResponse()->setRedirect($this->getUrl('*/*/edit', ['_current' => true, 'form_key' => null]));
         }
     }
 

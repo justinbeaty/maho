@@ -236,10 +236,10 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
         }
 
         return Mage::helper('core')->jsonEncode([
-            'store_id' => $this->getCategory()->getStoreId(),
-            'category_id' => $this->getCategory()->getId(),
-            'breadcrumbs' => $categories,
+            'store_id'    => (int) $this->getCategory()->getStoreId(),
+            'category_id' => (int) $this->getCategory()->getId(),
             'can_add_sub' => (bool) $treeBlock->canAddSubCategory(),
+            'breadcrumbs' => $categories,
         ]);
     }
 

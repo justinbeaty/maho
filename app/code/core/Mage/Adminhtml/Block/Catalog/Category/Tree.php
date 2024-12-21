@@ -24,7 +24,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
     {
         parent::__construct();
         $this->setTemplate('catalog/category/tree.phtml');
-        $this->setUseAjax(true);
         $this->_withProductCount = true;
     }
 
@@ -177,13 +176,13 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
 
         $rootForStores = in_array($node->getEntityId(), $this->getRootIds());
 
-        $item['id']  = $node->getId();
+        $item['id']  = (int) $node->getId();
         $item['store']  = (int) $this->getStore()->getId();
         $item['path'] = $node->getData('path');
 
         $item['cls'] = 'folder ' . ($node->getIsActive() ? 'active-category' : 'no-active-category');
 
-        $allowMove = $this->_isCategoryMoveable($node);
+        $allowMove = (bool) $this->_isCategoryMoveable($node);
         $item['allowDrop'] = $allowMove;
 
         // disallow drag if it's first level and category is root of a store

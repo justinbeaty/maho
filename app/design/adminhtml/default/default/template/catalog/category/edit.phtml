@@ -34,6 +34,7 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
             addSubCategoryBtn: 'add_subcategory_button',
 
             tabsJsObjectName: '<?= $tabsBlock->getJsObjectName() ?>',
+            useAjax: <?= (int) $this->getUseAjax() ?>,
         });
 
     <?php if ($rootNode = $treeBlock->getRoot()): ?>

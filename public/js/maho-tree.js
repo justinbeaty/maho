@@ -672,7 +672,7 @@ class MahoTreeSortablePlugin
 
     drop({ activeSortable }) {
         const state = MahoTreeSortablePlugin.state;
-        if (state.dropNode) {
+        if (state.dropNode && activeSortable) {
             // Prepare the dragged node to be inserted
             state.dragNode.isNew = true;
             state.dropNode.ui.details.open = true;

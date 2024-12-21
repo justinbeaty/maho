@@ -14,6 +14,7 @@ class CategoryEditForm {
 
     constructor(config = {}) {
         this.config = config;
+        console.log(config)
 
         this.containerEl = document.getElementById(config.containerDiv);
         if (!this.containerEl) {
@@ -70,7 +71,9 @@ class CategoryEditForm {
             throw new Error(`Container with ID ${config.containerDiv} does not contain a form element.`);
         }
         this.varienForm = new varienForm(this.formEl.id);
-        this.varienForm._submit = this.submitCategory.bind(this);
+        if (this.config.useAjax) {
+            this.varienForm._submit = this.submitCategory.bind(this);
+        }
     }
 
     renderTree(config) {
@@ -110,10 +113,7 @@ class CategoryEditForm {
 
     changeCategory() {
         const category = this.getSelectedCategory();
-        console.log(category.id, window.categoryInfo?.category_id);
-        console.log(this.storeId, window.categoryInfo?.store_id);
-
-        if (category.id !== window.categoryInfo?.category_id || this.storeId !== window.categoryInfo?.store_id) {
+        if (category.id != window.categoryInfo?.category_id || this.storeId != window.categoryInfo?.store_id) {
             this.updateContent(this.getEditUrl() + `store/${this.storeId}/id/${category.id}/`);
         }
     }
@@ -155,6 +155,11 @@ class CategoryEditForm {
         if (!confirmed) {
             return;
         }
+        if (!this.useAjax) {
+            url = url.replace(/\/form_key\/\w+/, '');
+            url += `form_key/${FORM_KEY}/`;
+            return setLocation(url);
+        }
 
         try {
             const response = await fetch(url, {
@@ -195,6 +200,10 @@ class CategoryEditForm {
     }
 
     async updateContent(url, params = {}) {
+        if (!this.useAjax) {
+            return setLocation(url);
+        }
+
         showLoader();
 
         try {
@@ -245,7 +254,7 @@ class CategoryEditForm {
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();
             this.initVarienForm();
 
-            history.pushState(null, '', url);
+            history.replaceState(null, '', url);
 
         } catch (error) {
             this.setMessage(error, 'error');
