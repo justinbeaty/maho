@@ -440,7 +440,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
             'data' => $block->getTree(),
             'parameters' => [
                 'text'        => $block->buildNodeName($root),
-                'draggable'   => false,
+                'allowDrag'   => false,
                 'allowDrop'   => ($root->getIsVisible()) ? true : false,
                 'id'          => (int) $root->getId(),
                 'store_id'    => (int) $block->getStore()->getId(),

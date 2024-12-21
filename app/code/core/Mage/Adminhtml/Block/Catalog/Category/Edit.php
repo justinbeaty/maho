@@ -25,6 +25,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit extends Mage_Adminhtml_Block_Wi
 
         parent::__construct();
         $this->setTemplate('catalog/category/edit.phtml');
-        //$this->setUseAjax(true);
+        $this->setUseAjax(true);
     }
 }
