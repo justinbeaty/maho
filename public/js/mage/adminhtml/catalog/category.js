@@ -52,6 +52,18 @@ class CategoryEditForm {
         })
     }
 
+    getEditUrl() {
+        let url = this.config.editUrl;
+
+        const activeTab = window[this.config.tabsJsObjectName]?.activeTab;
+        if (activeTab) {
+            url = url.replace(/\/active_tab\/\w+/, '');
+            url += `active_tab/${activeTab.name}/`;
+        }
+
+        return url;
+    }
+
     initVarienForm() {
         this.formEl = this.containerEl.querySelector('form');
         if (!this.formEl) {
@@ -98,7 +110,7 @@ class CategoryEditForm {
     changeCategory() {
         const category = this.getSelectedCategory();
         if (category.id !== window.categoryInfo?.category_id || this.storeId !== window.categoryInfo?.store_id) {
-            this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${category.id}/`);
+            this.updateContent(this.getEditUrl() + `store/${this.storeId}/id/${category.id}/`);
         }
     }
 
@@ -120,7 +132,7 @@ class CategoryEditForm {
                     throw new Error(result.error);
                 }
 
-                this.updateContent(this.config.editUrl + `store/${this.storeId}/id/${data.category_id}/`);
+                this.updateContent(this.config.getEditUrl() + `store/${this.storeId}/id/${data.category_id}/`);
 
             } catch (error) {
                 this.setMessage(error, 'error');
@@ -130,7 +142,7 @@ class CategoryEditForm {
     }
 
     resetCategory(url) {
-        this.updateContent(url, {active_tab_id: false})
+        this.updateContent(url);
     }
 
     async deleteCategory(url) {
@@ -183,8 +195,6 @@ class CategoryEditForm {
         try {
             url = new URL(url);
             url.searchParams.set('isAjax', 'true');
-
-            //params.active_tab_id ??= window[this.config.tabsJsObjectName]?.activeTab.id;
 
             const options = {
                 method: 'POST',
