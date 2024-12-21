@@ -36,8 +36,8 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         $storeId    = (int) $this->getRequest()->getParam('store');
         $categoryId = (int) $this->getRequest()->getParam('id', false);
 
-        $category = Mage::getModel('catalog/category');
-        $category->setStoreId($storeId);
+        $category = Mage::getModel('catalog/category')
+            ->setStoreId($storeId);
 
         if ($categoryId) {
             $category->load($categoryId);
@@ -47,7 +47,12 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         if ($categoryId && $storeId) {
             $rootId = Mage::app()->getStore($storeId)->getRootCategoryId();
             if (!in_array($rootId, $category->getPathIds())) {
-                return $getRootInstead ? $category->load($rootId) : false;
+                if (!$getRootInstead) {
+                    return false;
+                }
+                $category = Mage::getModel('catalog/category')
+                    ->setStoreId($storeId)
+                    ->load($rootId);
             }
         }
 

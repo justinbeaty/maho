@@ -155,7 +155,7 @@ class CategoryEditForm {
         if (!confirmed) {
             return;
         }
-        if (!this.useAjax) {
+        if (!this.config.useAjax) {
             url = url.replace(/\/form_key\/\w+/, '');
             url += `form_key/${FORM_KEY}/`;
             return setLocation(url);
@@ -200,7 +200,7 @@ class CategoryEditForm {
     }
 
     async updateContent(url, params = {}) {
-        if (!this.useAjax) {
+        if (!this.config.useAjax) {
             return setLocation(url);
         }
 
@@ -273,17 +273,29 @@ class CategoryEditForm {
             }
         }
 
+        const storeId = parseInt(event.target.value) || 0;
+        const category = this.getSelectedCategory();
+
+        if (!this.config.useAjax) {
+            let url = this.getEditUrl();
+            if (storeId) {
+                url += `store/${storeId}/`;
+            }
+            if (category) {
+                url += `id/${category.id}/`
+            }
+
+            return setLocation(url);
+        }
+
         showLoader();
 
         try {
-
-            const storeId = parseInt(event.target.value) || 0;
 
             let url = this.config.switchTreeUrl;
             if (storeId) {
                 url += `store/${storeId}/`;
             }
-            const category = this.getSelectedCategory();
             if (category) {
                 url += `id/${category.id}/`
             }
