@@ -217,12 +217,6 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
                 $category->setPath($parentCategory->getPath());
             }
 
-            // if (!$this->getRequest()->isAjax()) {
-            //     if ($activeTabId = (string) $this->getRequest()->getParam('active_tab_id')) {
-            //         Mage::getSingleton('admin/session')->setActiveTabId($activeTabId);
-            //     }
-            // }
-
             unset($data['general']['path']);
             $category->addData($data['general']);
 

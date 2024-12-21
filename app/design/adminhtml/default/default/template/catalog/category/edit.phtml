@@ -43,7 +43,7 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
                 draggable   : false,
                 allowDrop   : <?= (int) $rootNode->getIsVisible() ?>,
                 id          : <?= (int) $rootNode->getId() ?>,
-                store_id    : <?= (int) $treeBlock->getStore()->getId() ?>,
+                store_id    : <?= (int) $treeBlock->getStore()->getId() ?>, // fix this
                 category_id : <?= (int) $treeBlock->getCategoryId() ?>,
                 root_visible: <?= (int) $rootNode->getIsVisible() ?>,
                 can_add_root: true,
@@ -64,7 +64,7 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
         window.addNew = categoryForm.addCategory.bind(categoryForm);
         window.categoryReset = categoryForm.resetCategory.bind(categoryForm);
         window.categoryDelete = categoryForm.deleteCategory.bind(categoryForm);
-        window.categorySubmit = categoryForm.submitCategory.bind(categoryForm);
+        window.categorySubmit = categoryForm.saveCategory.bind(categoryForm);
     });
 </script>
 

@@ -70,6 +70,7 @@ class CategoryEditForm {
             throw new Error(`Container with ID ${config.containerDiv} does not contain a form element.`);
         }
         this.varienForm = new varienForm(this.formEl.id);
+        this.varienForm._submit = this.submitCategory.bind(this);
     }
 
     renderTree(config) {
@@ -109,6 +110,9 @@ class CategoryEditForm {
 
     changeCategory() {
         const category = this.getSelectedCategory();
+        console.log(category.id, window.categoryInfo?.category_id);
+        console.log(this.storeId, window.categoryInfo?.store_id);
+
         if (category.id !== window.categoryInfo?.category_id || this.storeId !== window.categoryInfo?.store_id) {
             this.updateContent(this.getEditUrl() + `store/${this.storeId}/id/${category.id}/`);
         }
@@ -118,31 +122,32 @@ class CategoryEditForm {
         this.updateContent(url);
     }
 
-    submitCategory(url) {
-        this.varienForm._submit = async () => {
-            try {
-                const formData = new FormData(this.formEl);
-                const response = await fetch(this.formEl.action, {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Server returned status ${response.status}`);
-                }
-
-                const result = await response.json();
-                if (result.error) {
-                    throw new Error(result.error);
-                }
-
-                this.updateContent(this.getEditUrl() + `store/${this.storeId}/id/${result.category_id}/`);
-
-            } catch (error) {
-                this.setMessage(error, 'error');
-            }
-        }
+    saveCategory(url) {
         this.varienForm.submit();
+    }
+
+    async submitCategory() {
+        try {
+            const formData = new FormData(this.formEl);
+            const response = await fetch(this.formEl.action, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server returned status ${response.status}`);
+            }
+
+            const result = await response.json();
+            if (result.error) {
+                throw new Error(result.error);
+            }
+
+            this.updateContent(this.getEditUrl() + `store/${this.storeId}/id/${result.category_id}/`);
+
+        } catch (error) {
+            this.setMessage(error, 'error');
+        }
     }
 
     async deleteCategory(url) {
@@ -193,10 +198,10 @@ class CategoryEditForm {
         showLoader();
 
         try {
-            url = new URL(url);
-            url.searchParams.set('isAjax', 'true');
+            const ajaxUrl = new URL(url);
+            ajaxUrl.searchParams.set('isAjax', 'true');
 
-            const response = await fetch(url, {
+            const response = await fetch(ajaxUrl, {
                 method: 'POST',
                 body: new URLSearchParams({
                     form_key: FORM_KEY,
@@ -239,6 +244,8 @@ class CategoryEditForm {
 
             window[this.config.tabsJsObjectName]?.moveTabContentInDest();
             this.initVarienForm();
+
+            history.pushState(null, '', url);
 
         } catch (error) {
             this.setMessage(error, 'error');
