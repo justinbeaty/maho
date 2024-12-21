@@ -38,20 +38,7 @@ $tabsBlock = $this->getLayout()->getBlock('tabs')
         });
 
     <?php if ($rootNode = $treeBlock->getRoot()): ?>
-        categoryForm.renderTree({
-            parameters : {
-                text        : '<?= Mage::helper('core')->jsQuoteEscape(htmlentities($rootNode->getName())) ?>',
-                allowDrag   : false,
-                allowDrop   : <?= (int) $rootNode->getIsVisible() ?>,
-                id          : <?= (int) $rootNode->getId() ?>,
-                store_id    : <?= (int) $treeBlock->getStore()->getId() ?>, // fix this
-                category_id : <?= (int) $treeBlock->getCategoryId() ?>,
-                root_visible: <?= (int) $rootNode->getIsVisible() ?>,
-                can_add_root: true,
-                expanded    : false,
-            },
-            data: <?= $treeBlock->getTreeJson() ?>,
-        });
+        categoryForm.renderTree(<?= Mage::helper('core')->jsonEncode($treeBlock->getRootTreeParameters()) ?>);
     <?php endif ?>
 
         // Expose global functions called by form buttons to instance methods

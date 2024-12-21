@@ -204,6 +204,25 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return $item;
     }
 
+    public function getRootTreeParameters(): array
+    {
+        $root = $this->getRoot();
+        return [
+            'data' => $this->getTree(),
+            'parameters' => [
+                'text'        => $this->buildNodeName($root),
+                'allowDrag'   => false,
+                'allowDrop'   => ($this->getIsVisible()) ? true : false,
+                'id'          => (int) $root->getId(),
+                'store_id'    => (int) $this->getStore()->getId(),
+                'category_id' => (int) $this->getCategory()->getId(),
+                'root_visible' => (int) $root->getIsVisible(),
+                'can_add_root' => (int) $this->canAddRootCategory(),
+                'expanded'    => $this->getRecursionLevel() === 0,
+            ],
+        ];
+    }
+
     /**
      * Get category name
      *

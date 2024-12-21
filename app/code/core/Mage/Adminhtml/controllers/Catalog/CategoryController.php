@@ -435,20 +435,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
         $block = $this->getLayout()->createBlock('adminhtml/catalog_category_tree');
         $block->setRecursionLevel($recursionLevel);
 
-        $root = $block->getRoot();
-        $this->_prepareDataJSON([
-            'data' => $block->getTree(),
-            'parameters' => [
-                'text'        => $block->buildNodeName($root),
-                'allowDrag'   => false,
-                'allowDrop'   => ($root->getIsVisible()) ? true : false,
-                'id'          => (int) $root->getId(),
-                'store_id'    => (int) $block->getStore()->getId(),
-                'category_id' => (int) $category->getId(),
-                'root_visible' => (int) $root->getIsVisible(),
-                'can_add_root' => (int) $block->canAddRootCategory(),
-                'expanded'    => $recursionLevel === 0,
-            ]]);
+        $this->_prepareDataJSON($block->getRootTreeParameters());
     }
 
     /**
