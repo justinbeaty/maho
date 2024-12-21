@@ -114,6 +114,10 @@ class CategoryEditForm {
         }
     }
 
+    resetCategory(url) {
+        this.updateContent(url);
+    }
+
     submitCategory(url) {
         this.varienForm._submit = async () => {
             try {
@@ -132,17 +136,13 @@ class CategoryEditForm {
                     throw new Error(result.error);
                 }
 
-                this.updateContent(this.config.getEditUrl() + `store/${this.storeId}/id/${data.category_id}/`);
+                this.updateContent(this.getEditUrl() + `store/${this.storeId}/id/${result.category_id}/`);
 
             } catch (error) {
                 this.setMessage(error, 'error');
             }
         }
         this.varienForm.submit();
-    }
-
-    resetCategory(url) {
-        this.updateContent(url);
     }
 
     async deleteCategory(url) {
@@ -196,17 +196,14 @@ class CategoryEditForm {
             url = new URL(url);
             url.searchParams.set('isAjax', 'true');
 
-            const options = {
+            const response = await fetch(url, {
                 method: 'POST',
                 body: new URLSearchParams({
                     form_key: FORM_KEY,
                     ...params,
                 }),
-            }
+            });
 
-            //await new Promise(r => setTimeout(r, 1000));
-
-            const response = await fetch(url, options);
             if (!response.ok) {
                 throw new Error(`Server returned status ${response.status}`);
             }
@@ -244,7 +241,6 @@ class CategoryEditForm {
             this.initVarienForm();
 
         } catch (error) {
-            console.log(error)
             this.setMessage(error, 'error');
         }
 
