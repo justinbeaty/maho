@@ -32,27 +32,50 @@ class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Bloc
         return Mage::registry('category');
     }
 
+    /**
+     * Retrieve current category's ID, or Mage_Catalog_Model_Category::TREE_ROOT_ID
+     *
+     * @return ?int
+     */
     public function getCategoryId()
     {
         if ($this->getCategory()) {
-            return $this->getCategory()->getId();
+            return $this->getCategory()->getId()
+                ? (int) $this->getCategory()->getId()
+                : null;
+        } else {
+            return Mage_Catalog_Model_Category::TREE_ROOT_ID;
         }
-        return Mage_Catalog_Model_Category::TREE_ROOT_ID;
     }
 
+    /**
+     * Retrieve current category's name
+     *
+     * @return ?string
+     */
     public function getCategoryName()
     {
         return $this->getCategory()->getName();
     }
 
+    /**
+     * Retrieve current category's path
+     *
+     * @return ?string
+     */
     public function getCategoryPath()
     {
         if ($this->getCategory()) {
             return $this->getCategory()->getPath();
         }
-        return Mage_Catalog_Model_Category::TREE_ROOT_ID;
+        return (string) Mage_Catalog_Model_Category::TREE_ROOT_ID;
     }
 
+    /**
+     * Check if store has a root category
+     *
+     * @return bool
+     */
     public function hasStoreRootCategory()
     {
         $root = $this->getRoot();
@@ -62,6 +85,12 @@ class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Bloc
         return false;
     }
 
+    /**
+     * Return current store requested in URL
+     *
+     * @return Mage_Core_Model_Store
+     * @throws Mage_Core_Model_Store_Exception
+     */
     public function getStore()
     {
         $storeId = (int) $this->getRequest()->getParam('store');
@@ -216,6 +245,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Bloc
         return $node;
     }
 
+    /**
+     * @return string
+     */
     public function getSaveUrl(array $args = [])
     {
         return $this->getUrl('*/*/save', [
@@ -224,6 +256,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Bloc
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function getEditUrl()
     {
         return $this->getUrl('*/catalog_category/edit', [

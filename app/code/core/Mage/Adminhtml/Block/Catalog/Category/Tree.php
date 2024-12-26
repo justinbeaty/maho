@@ -69,19 +69,27 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return parent::_prepareLayout();
     }
 
+    /**
+     * @return int
+     */
     protected function _getDefaultStoreId()
     {
         return Mage_Catalog_Model_Abstract::DEFAULT_STORE_ID;
     }
 
+    /**
+     * Load category collection with product count
+     *
+     * @return Mage_Catalog_Model_Resource_Category_Collection
+     */
     public function getCategoryCollection()
     {
         $storeId = $this->getRequest()->getParam('store', $this->_getDefaultStoreId());
         $collection = $this->getData('category_collection');
         if (is_null($collection)) {
+            /** @var Mage_Catalog_Model_Resource_Category_Collection $collection */
             $collection = Mage::getModel('catalog/category')->getCollection();
 
-            /** @var Mage_Catalog_Model_Resource_Category_Collection $collection */
             $collection->addAttributeToSelect('name')
                 ->addAttributeToSelect('is_active')
                 ->setProductStoreId($storeId)
@@ -93,16 +101,25 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return $collection;
     }
 
+    /**
+     * @return string
+     */
     public function getAddRootButtonHtml()
     {
         return $this->getChildHtml('add_root_button');
     }
 
+    /**
+     * @return string
+     */
     public function getAddSubButtonHtml()
     {
         return $this->getChildHtml('add_sub_button');
     }
 
+    /**
+     * @return string
+     */
     public function getStoreSwitcherHtml()
     {
         return $this->getChildHtml('store_switcher');
@@ -123,11 +140,17 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return $this->getUrl('*/*/categoriesJson', $params);
     }
 
+    /**
+     * @return string
+     */
     public function getNodesUrl()
     {
         return $this->getUrl('*/catalog_category/jsonTree');
     }
 
+    /**
+     * @return string
+     */
     public function getSwitchTreeUrl()
     {
         return $this->getUrl(
@@ -136,23 +159,42 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         );
     }
 
+    /**
+     * @return string
+     */
     public function getMoveUrl()
     {
         return $this->getUrl('*/catalog_category/move', ['store' => $this->getRequest()->getParam('store')]);
     }
 
+    /**
+     * Get category children as array
+     *
+     * @param Mage_Catalog_Model_Category|int|string $parentNodeCategory
+     * @return array
+     */
     public function getTree($parentNodeCategory = null)
     {
         $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory));
         return $rootArray['children'] ?? [];
     }
 
+    /**
+     * Get category children as JSON
+     *
+     * @param Mage_Catalog_Model_Category|int|string $parentNodeCategory
+     * @return string
+     */
     public function getTreeJson($parentNodeCategory = null)
     {
         $rootArray = $this->_getNodeJson($this->getRoot($parentNodeCategory));
         return Mage::helper('core')->jsonEncode($rootArray['children'] ?? []);
     }
 
+    /**
+     * Get JSON of a tree node or an associative array
+     *
+     */
     public function getNodeJson(Varien_Data_Tree_Node|array $node, int $level = 0): array
     {
         return $this->_getNodeJson($node, $level);
@@ -207,6 +249,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
         return $item;
     }
 
+    /**
+     * Get root category information
+     */
     public function getRootTreeParameters(): array
     {
         $root = $this->getRoot();
