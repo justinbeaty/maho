@@ -17,7 +17,7 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Block_Catalog_Category_Abstract
+class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Block_Catalog_Category_Tree
 {
     /**
      * Additional buttons on category page
@@ -50,7 +50,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
                 $this->getLayout()->createBlock('adminhtml/widget_button')
                     ->setData([
                         'label'     => Mage::helper('catalog')->__('Save Category'),
-                        'onclick'   => "categorySubmit('" . $this->getSaveUrl() . "', true)",
+                        'onclick'   => "categorySubmit('{$this->getSaveUrl()}')",
                         'class' => 'save',
                     ]),
             );
@@ -63,7 +63,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
                 $this->getLayout()->createBlock('adminhtml/widget_button')
                     ->setData([
                         'label'     => Mage::helper('catalog')->__('Delete Category'),
-                        'onclick'   => "categoryDelete('" . $this->getUrl('*/*/delete', ['_current' => true]) . "', true, {$categoryId})",
+                        'onclick'   => "categoryDelete('{$this->getUrl('*/*/delete', ['_current' => true])}')",
                         'class' => 'delete',
                     ]),
             );
@@ -77,7 +77,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
                 $this->getLayout()->createBlock('adminhtml/widget_button')
                     ->setData([
                         'label'     => Mage::helper('catalog')->__('Reset'),
-                        'onclick'   => "categoryReset('" . $this->getUrl($resetPath, ['_current' => true]) . "',true)",
+                        'onclick'   => "categoryReset('{$this->getUrl($resetPath, ['_current' => true])}')",
                     ]),
             );
         }
@@ -178,7 +178,8 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
     {
         if ($this->hasStoreRootCategory()) {
             if ($this->getCategoryId()) {
-                return $this->getCategoryName();
+                $categoryIdText = Mage::helper('catalog')->__('ID: %s', $this->getCategoryId());
+                return $this->getCategoryName() . " ($categoryIdText)";
             } else {
                 $parentId = (int) $this->getRequest()->getParam('parent');
                 if ($parentId && ($parentId != Mage_Catalog_Model_Category::TREE_ROOT_ID)) {
@@ -210,13 +211,51 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
         return $this->getUrl('*/*/refreshPath', $params);
     }
 
+    /**
+     * @deprecated
+     */
     public function getProductsJson()
     {
         $products = $this->getCategory()->getProductsPosition();
-        if (!empty($products)) {
-            return Mage::helper('core')->jsonEncode($products);
+        return Mage::helper('core')->jsonEncode((object) $products);
+    }
+
+    public function getProductsInfoJson()
+    {
+        $gridBlock = $this->getLayout()->getBlock('category.product.grid');
+        if ($gridBlock && $gridJsObject = $gridBlock->getJsObjectName()) {
+            $products = $this->getCategory()->getProductsPosition();
+            return Mage::helper('core')->jsonEncode([
+                'gridJsObjectName' => $gridJsObject,
+                'products' => (object) $products,
+            ]);
         }
         return '{}';
+    }
+
+    public function getCategoryInfoJson(): string
+    {
+        $treeBlock = $this->getLayout()->getBlock('category.tree');
+        //$treeBlock = Mage::getBlockSingleton('adminhtml/catalog_category_tree');
+
+        $categories = Mage::getResourceSingleton('catalog/category_tree')
+            ->setStoreId($this->getCategory()->getStoreId())
+            ->loadBreadcrumbsArray($this->getCategory()->getPath());
+
+        foreach ($categories as $key => $category) {
+            $categories[$key] = $treeBlock->getNodeJson($category);
+        }
+
+        if (($last = array_key_last($categories)) !== null) {
+            $categories[$last]['checked'] = true;
+        }
+
+        return Mage::helper('core')->jsonEncode([
+            'store_id'    => (int) $this->getCategory()->getStoreId(),
+            'category_id' => (int) $this->getCategory()->getId(),
+            'can_add_sub' => (bool) $treeBlock->canAddSubCategory(),
+            'breadcrumbs' => $categories,
+        ]);
     }
 
     public function isAjax()
