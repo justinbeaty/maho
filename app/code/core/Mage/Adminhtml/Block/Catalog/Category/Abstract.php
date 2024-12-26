@@ -68,6 +68,9 @@ class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Bloc
         return Mage::app()->getStore($storeId);
     }
 
+    /**
+     * Return the number of children levels when loading a tree node
+     */
     public function getRecursionLevel(): int
     {
         return (int) ($this->getDataByKey('recursion_level') ?? self::DEFAULT_RECURSION_LEVEL);
