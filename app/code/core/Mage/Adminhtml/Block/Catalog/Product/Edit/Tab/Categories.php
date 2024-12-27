@@ -17,14 +17,15 @@
  * @category   Mage
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Categories extends Mage_Adminhtml_Block_Catalog_Category_Tree
+class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Categories extends Mage_Adminhtml_Block_Catalog_Category_Abstract
 {
-    protected $_categoryIds;
+    /**
+     * Cache for selected tree nodes
+     *
+     * list<Varien_Data_Tree_Node>
+     */
     protected $_selectedNodes = null;
 
-    /**
-     * Specify template to use
-     */
     public function __construct()
     {
         parent::__construct();
