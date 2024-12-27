@@ -131,7 +131,6 @@ class MahoTree {
     }
 
     setRootNode(node) {
-        console.log(node)
         if (node instanceof MahoTreeNode) {
             this.rootNode = node;
         } else if (Array.isArray(node)) {
@@ -174,19 +173,19 @@ class MahoTree {
 
     bindEventListeners() {
         this.rootEl.addEventListener('change', (event) => {
-            //console.log('change', event)
-
-
-            // Check if event.originalEvent === DragEvent
-            const targetEl = event.target;
-            if (targetEl.tagName !== 'INPUT' || ['checkbox', 'radio'].includes(targetEl.type) === false) {
+            // Check conditions where checkboxes might change
+            const shouldUpdate = [
+                typeof event.originalEvent === 'DragEvent',
+                event.target.tagName === 'INPUT' && ['checkbox', 'radio'].includes(event.target.type),
+            ];
+            if (!shouldUpdate.any(Boolean)) {
                 return;
             }
             if (this.selectableOpts.mode === 'nested') {
                 this.updateNestedCheckboxes();
             } else if (this.selectableOpts.mode === 'single') {
                 this.rootEl.querySelectorAll('input[type=checkbox]:checked').forEach((el) => {
-                    el.checked = el === targetEl;
+                    el.checked = el === event.target;
                 });
             }
             if (typeof this.selectableOpts.onSelect === 'function') {
@@ -218,7 +217,7 @@ class MahoTree {
             return;
         }
 
-        const group = typeof this.sortableOpts.group === 'object'
+        const group = typeof this.sortableOpts.group === 'object' && this.sortableOpts.group !== null
               ? this.sortableOpts.group
               : { name: this.sortableOpts.group };
 
@@ -685,8 +684,6 @@ class MahoTreeNode {
             if (typeof this.tree.lazyloadOpts.onBeforeLoad === 'function') {
                 await this.tree.lazyloadOpts.onBeforeLoad(this, params);
             }
-
-            //await new Promise(r => setTimeout(r, 1000));
 
             const response = await fetch(this.tree.lazyloadOpts.dataUrl, {
                 method: 'POST',
