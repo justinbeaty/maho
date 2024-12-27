@@ -357,8 +357,6 @@ class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Bloc
         $item = [];
         $item['text'] = $this->buildNodeName($node);
 
-        $rootForStores = in_array($node->getEntityId(), $this->getRootIds());
-
         $item['id']  = (int) $node->getId();
         $item['type'] = 'folder';
 

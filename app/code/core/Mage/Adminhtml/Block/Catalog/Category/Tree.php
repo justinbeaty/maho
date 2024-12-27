@@ -112,13 +112,18 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
     #[\Override]
     protected function _getNodeJson($node, $level = 0)
     {
+        // create a node from data array
+        if (is_array($node)) {
+            $node = new Varien_Data_Tree_Node($node, 'entity_id', new Varien_Data_Tree());
+        }
+
         $item = parent::_getNodeJson($node, $level);
 
         $allowMove = (bool) $this->_isCategoryMoveable($node);
-        $item['allowDrop'] = $allowMove;
+        $isRoot = in_array($node->getEntityId(), $this->getRootIds());
 
         // disallow drag if it's first level and category is root of a store
-        $item['allowDrag'] = $allowMove && !($node->getLevel() == 1 && $rootForStores);
+        $item['allowDrag'] = $allowMove && !$isRoot && $node->getLevel() > 1;
 
         return $item;
     }
@@ -184,7 +189,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
             'store'    => $this->getStore()->getId(),
         ]);
 
-        return $options->getIsAllow();
+        return (bool) $options->getIsAllow();
     }
 
     /**
@@ -201,7 +206,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Tree extends Mage_Adminhtml_Block_Ca
             'store'    => $this->getStore()->getId(),
         ]);
 
-        return $options->getIsAllow();
+        return (bool) $options->getIsAllow();
     }
 
     /**
