@@ -266,6 +266,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Edit_Form extends Mage_Adminhtml_Blo
      */
     public function getCategoryInfoJson(): string
     {
+        /** @var Mage_Adminhtml_Block_Catalog_Category_Tree */
         $treeBlock = $this->getLayout()->getBlock('category.tree');
 
         $categories = Mage::getResourceSingleton('catalog/category_tree')

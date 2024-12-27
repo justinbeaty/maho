@@ -53,7 +53,7 @@
 <script type="module">
 document.addEventListener('DOMContentLoaded', () => {
     const setForm = new EavAttributeSetForm({
-        isReadOnly: <?= var_export((bool) $this->getIsReadOnly()) ?>,
+        isReadOnly: <?= var_export((bool) $this->getIsReadOnly(), true) ?>,
         saveUrl: '<?= $this->getSaveUrl() ?>',
         deleteUrl: '<?= $this->getDeleteUrl() ?>',
         canDeleteSet: () => {

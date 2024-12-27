@@ -103,7 +103,7 @@ class Mage_Adminhtml_Block_Urlrewrite_Category_Tree extends Mage_Adminhtml_Block
     {
         if ($this->getCategoryIds() !== null) {
             $children = array_keys($node->getAllChildNodes());
-            return count(array_intersect($children, $this->getCategoryIds()));
+            return !empty(array_intersect($children, $this->getCategoryIds()));
         }
         return false;
     }

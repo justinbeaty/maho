@@ -30,7 +30,7 @@
     ) ?>;
 
     const tree = new MahoTree('product-categories', {
-        rootVisible: <?= var_export((bool) $rootNode->getIsVisible()) ?>,
+        rootVisible: <?= var_export((bool) $rootNode->getIsVisible(), true) ?>,
         lazyload: {
             nodeParameter: 'category',
             dataUrl: '<?= $this->getLoadTreeUrl() ?>',
@@ -47,8 +47,8 @@
         id: '<?= $rootNode->getId() ?>',
         text: '<?= $this->jsQuoteEscape($this->buildNodeName($rootNode)) ?>',
         expanded: true,
-        checked: <?= var_export((bool) $rootNode->getChecked()) ?>,
-        disabled: <?= var_export((bool) $rootNode->getDisabled()) ?>,
+        checked: <?= var_export((bool) $rootNode->getChecked(), true) ?>,
+        disabled: <?= var_export((bool) $rootNode->getDisabled(), true) ?>,
         children: <?= $this->getTreeJson() ?>
     });
 </script>

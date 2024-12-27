@@ -417,7 +417,7 @@ class Mage_Adminhtml_Block_Catalog_Category_Abstract extends Mage_Adminhtml_Bloc
     /**
      * Returns URL for loading tree
      *
-     * @param bool $expanded
+     * @param ?bool $expanded
      * @return string
      */
     public function getLoadTreeUrl($expanded = null)
