@@ -323,7 +323,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
 
             if (!$category->getId()) {
                 Mage::throwException(
-                    Mage::helper('catalog')->__('Category move operation is not possible: the current category was not found.')
+                    Mage::helper('catalog')->__('Category move operation is not possible: the current category was not found.'),
                 );
             }
 
@@ -363,7 +363,7 @@ class Mage_Adminhtml_Catalog_CategoryController extends Mage_Adminhtml_Controlle
 
             if (!$category->getId()) {
                 Mage::throwException(
-                    Mage::helper('catalog')->__('Category delete operation is not possible: the current category was not found.')
+                    Mage::helper('catalog')->__('Category delete operation is not possible: the current category was not found.'),
                 );
             }
 
