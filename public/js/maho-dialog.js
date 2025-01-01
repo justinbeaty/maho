@@ -80,14 +80,14 @@
     function createDialog(options) {
         const dialogCount = document.querySelectorAll('dialog').length;
         const dialog = document.createElement('dialog');
-        dialog.id = `dialog-${dialogCount + 1}`;
-        dialog.options = options;
+        dialog.id = options.id ?? `dialog-${dialogCount + 1}`;
+
         dialog.innerHTML = `
             <div class="dialog-header">
                 <h2>${options.title || ''}</h2>
                 <button title="Close">&times;</button>
             </div>
-            <div class="dialog-content">${options.content || ''}</div>
+            <div class="dialog-content"></div>
         `;
         if (options.ok || options.cancel) {
             dialog.innerHTML += `
@@ -97,7 +97,10 @@
             </div>
         `;
         }
-        document.body.appendChild(dialog);
+
+        if (options.content) {
+            updateElementHtmlAndExecuteScripts(dialog.querySelector('.dialog-content'), options.content);
+        }
 
         // Set width and height if provided
         if (options.width) {
@@ -106,6 +109,8 @@
         if (options.height) {
             dialog.style.height = `${options.height}px`;
         }
+
+        document.body.appendChild(dialog);
 
         function closeDialog(action) {
             if (action === 'ok' && typeof options.ok === 'function') {
