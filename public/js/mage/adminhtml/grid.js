@@ -126,7 +126,7 @@ class varienGrid {
         if (event.button === 2) {
             return; // Ignore right click
         }
-        if (this.rowClickCallback) {
+        if (typeof this.rowClickCallback === 'function') {
             try {
                 this.rowClickCallback(this, event);
             } catch (error) {
@@ -240,10 +240,10 @@ class varienGrid {
             return;
         }
 
-        const filter = new URLSearchParams();
+        const filters = new URLSearchParams();
         this.getContainer().querySelectorAll('.filter input, .filter select').forEach((el) => {
             if (el.name && el.value && el.value.length) {
-                filter.append(el.name, el.value);
+                filters.append(el.name, el.value);
             }
         });
 
@@ -258,7 +258,7 @@ class varienGrid {
     resetFilter() {
         this.addVarsToUrl({
             [this.pageVar]: 1,
-            [this.filterVar]: null,
+            [this.filterVar]: btoa('__empty__'),
         });
 
         this.reload();
@@ -313,7 +313,7 @@ function openGridRow(grid, evt) {
 class varienGridMassaction {
 
     /* Predefined vars */
-    checkedValues = $H({});
+    checkedValues = new Map();
     checkedString = '';
     oldCallbacks = {};
     errorText ='';
@@ -334,10 +334,10 @@ class varienGridMassaction {
         this.setOldCallback('init_row',  grid.initRowCallback);
         this.setOldCallback('pre_init',  grid.preInitCallback);
 
-        this.useAjax        = false;
-        this.grid           = grid;
+        this.useAjax         = false;
+        this.grid            = grid;
         this.grid.massaction = this;
-        this.containerId    = containerId;
+        this.containerId     = containerId;
         this.initMassactionElements();
 
         this.checkedString          = checkedValues;
@@ -352,6 +352,14 @@ class varienGridMassaction {
         this.checkCheckboxes();
     }
 
+    getContainerId() {
+        return this.containerId;
+    }
+
+    getContainer(suffix = '') {
+        return document.getElementById(this.containerId + suffix);
+    }
+
     setUseAjax(flag) {
         this.useAjax = flag;
     }
@@ -361,25 +369,25 @@ class varienGridMassaction {
     }
 
     initMassactionElements() {
-        this.container      = $(this.containerId);
-        this.count          = $(this.containerId + '-count');
-        this.formHiddens    = $(this.containerId + '-form-hiddens');
-        this.formAdditional = $(this.containerId + '-form-additional');
-        this.select         = $(this.containerId + '-select');
+        this.container      = this.getContainer();
+        this.count          = this.getContainer('-count');
+        this.formHiddens    = this.getContainer('-form-hiddens');
+        this.formAdditional = this.getContainer('-form-additional');
+        this.select         = this.getContainer('-select');
         this.form           = this.prepareForm();
         this.validator      = new Validation(this.form);
-        this.select.observe('change', this.onSelectChange.bindAsEventListener(this));
+        this.select.addEventListener('change', this.onSelectChange.bind(this));
         this.lastChecked    = { left: false, top: false, checkbox: false };
         this.initMassSelect();
     }
 
     prepareForm() {
-        var form = $(this.containerId + '-form'), formPlace = null,
-            formElement = this.formHiddens || this.formAdditional;
+        let form = this.getContainer('-form');
+        let formPlace = null;
+        let formElement = this.formHiddens || this.formAdditional;
 
         if (!formElement) {
             formElement = this.container.getElementsByTagName('button')[0];
-            formElement && formElement.parentNode;
         }
         if (!form && formElement) {
             /* fix problem with rendering form in FF through innerHTML property */
@@ -421,7 +429,7 @@ class varienGridMassaction {
     }
 
     getOldCallback(callbackName) {
-        return this.oldCallbacks[callbackName] ? this.oldCallbacks[callbackName] : Prototype.emptyFunction;
+        return this.oldCallbacks[callbackName] ?? function(){};
     }
 
     setOldCallback(callbackName, callback) {
@@ -444,26 +452,32 @@ class varienGridMassaction {
         this.getOldCallback('init_row')(grid, row);
     }
 
-    onGridRowClick(grid, evt) {
+    onGridRowClick(grid, event) {
 
-        var tdElement = Event.findElement(evt, 'td');
-        var trElement = Event.findElement(evt, 'tr');
+        const tdElement = event.target.closest('td');
+        const trElement = event.target.closest('tr');
 
-        if (!$(tdElement).down('input')) {
-            if ($(tdElement).down('a') || $(tdElement).down('select')) {
+        if (tdElement.querySelector('input') === null) {
+            if (tdElement.querySelector('a, select')) {
                 return;
             }
             if (trElement.title) {
-                if (shouldOpenGridRowNewTab(evt)) {
+                if (shouldOpenGridRowNewTab(event)) {
                     window.open(trElement.title, '_blank');
                 } else {
                     setLocation(trElement.title);
                 }
-            }
-            else{
+            } else {
+                /*
+                const checkbox = trElement.querySelector('input[type=checkbox]');
+                const isInput  = event.target.tagName === 'INPUT'; // todo, was lowercase
+                const checked  = isInput ? checkbox[0].checked : !checkbox[0].checked;
+                */
                 var checkbox = Element.select(trElement, 'input');
-                var isInput  = Event.element(evt).tagName == 'input';
+                var isInput  = Event.element(event).tagName == 'input';
+                console.log(Event.element(event).tagName)
                 var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
+
 
                 if (checked) {
                     this.checkedString = varienStringArray.add(checkbox[0].value, this.checkedString);
@@ -476,12 +490,14 @@ class varienGridMassaction {
             return;
         }
 
-        if (Event.element(evt).isMassactionCheckbox) {
-            this.setCheckbox(Event.element(evt));
-        } else if (checkbox = this.findCheckbox(evt)) {
-            checkbox.checked = !checkbox.checked;
-            this.setCheckbox(checkbox);
+        if (event.target.isMassactionCheckbox) {
+            this.setCheckbox(event.target);
+            return;
         }
+
+        const checkbox = this.findCheckbox(event);
+        checkbox.checked = !checkbox.checked;
+        this.setCheckbox(checkbox);
     }
 
     onSelectChange(evt) {
@@ -499,7 +515,7 @@ class varienGridMassaction {
         if (['a', 'input', 'select'].indexOf(Event.element(evt).tagName.toLowerCase())!==-1) {
             return false;
         }
-        checkbox = false;
+        let checkbox = false;
         Event.findElement(evt, 'tr').select('.massaction-checkbox').each((element) => {
             if (element.isMassactionCheckbox) {
                 checkbox = element;
