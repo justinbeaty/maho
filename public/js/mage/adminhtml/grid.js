@@ -453,45 +453,24 @@ class varienGridMassaction {
     }
 
     onGridRowClick(grid, event) {
-
         const tdElement = event.target.closest('td');
         const trElement = event.target.closest('tr');
 
-        if (tdElement.querySelector('input') === null) {
-            if (tdElement.querySelector('a, select')) {
-                return;
-            }
-            if (trElement.title) {
-                if (shouldOpenGridRowNewTab(event)) {
-                    window.open(trElement.title, '_blank');
-                } else {
-                    setLocation(trElement.title);
-                }
-            } else {
-                /*
-                const checkbox = trElement.querySelector('input[type=checkbox]');
-                const isInput  = event.target.tagName === 'INPUT'; // todo, was lowercase
-                const checked  = isInput ? checkbox[0].checked : !checkbox[0].checked;
-                */
-                var checkbox = Element.select(trElement, 'input');
-                var isInput  = Event.element(event).tagName == 'input';
-                console.log(Event.element(event).tagName)
-                var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
-
-
-                if (checked) {
-                    this.checkedString = varienStringArray.add(checkbox[0].value, this.checkedString);
-                } else {
-                    this.checkedString = varienStringArray.remove(checkbox[0].value, this.checkedString);
-                }
-                this.grid.setCheckboxChecked(checkbox[0], checked);
-                this.updateCount();
-            }
+        if (event.target.isMassactionCheckbox) {
+            this.setCheckbox(event.target);
             return;
         }
 
-        if (event.target.isMassactionCheckbox) {
-            this.setCheckbox(event.target);
+        if (tdElement.querySelector('a, select')) {
+            return;
+        }
+
+        if (tdElement.querySelector('input') === null && trElement.title) {
+            if (shouldOpenGridRowNewTab(event)) {
+                window.open(trElement.title, '_blank');
+            } else {
+                setLocation(trElement.title);
+            }
             return;
         }
 
@@ -500,44 +479,45 @@ class varienGridMassaction {
         this.setCheckbox(checkbox);
     }
 
-    onSelectChange(evt) {
-        var item = this.getSelectedItem();
+    onSelectChange(event) {
+        const item = this.getSelectedItem();
         if (item) {
-            this.formAdditional.update($(this.containerId + '-item-' + item.id + '-block').innerHTML);
+            this.formAdditional.innerHTML = this.getContainer(`-item-${item.id}-block`).innerHTML;
         } else {
-            this.formAdditional.update('');
+            this.formAdditional.innerHTML = '';
         }
 
         this.validator.reset();
     }
 
-    findCheckbox(evt) {
-        if (['a', 'input', 'select'].indexOf(Event.element(evt).tagName.toLowerCase())!==-1) {
+    findCheckbox(event) {
+        if (['A', 'INPUT', 'SELECT'].includes(event.target.tagName)) {
             return false;
         }
+
         let checkbox = false;
-        Event.findElement(evt, 'tr').select('.massaction-checkbox').each((element) => {
-            if (element.isMassactionCheckbox) {
-                checkbox = element;
+        event.target.closest('tr').querySelectorAll('.massaction-checkbox').forEach((el) => {
+            if (el.isMassactionCheckbox) {
+                checkbox = el;
             }
         });
         return checkbox;
     }
 
     initCheckboxes() {
-        this.getCheckboxes().each((checkbox) => {
+        for (const checkbox of this.getCheckboxes()) {
             checkbox.isMassactionCheckbox = true;
-        });
+        }
     }
 
     checkCheckboxes() {
-        this.getCheckboxes().each((checkbox) => {
+        for (const checkbox of this.getCheckboxes()) {
             checkbox.checked = varienStringArray.has(checkbox.value, this.checkedString);
-        });
+        };
     }
 
     selectAll() {
-        this.setCheckedValues((this.useSelectAll ? this.getGridIds() : this.getCheckboxesValuesAsString()));
+        this.setCheckedValues(this.useSelectAll ? this.getGridIds() : this.getCheckboxesValuesAsString());
         this.checkCheckboxes();
         this.updateCount();
         this.clearLastChecked();
@@ -561,9 +541,9 @@ class varienGridMassaction {
     }
 
     unselectVisible() {
-        this.getCheckboxesValues().each((key) => {
+        for (const key of this.getCheckboxesValues()) {
             this.checkedString = varienStringArray.remove(key, this.checkedString);
-        });
+        };
         this.checkCheckboxes();
         this.updateCount();
         this.clearLastChecked();
@@ -579,22 +559,15 @@ class varienGridMassaction {
     }
 
     getCheckboxes() {
-        var result = [];
-        this.grid.rows.each(function(row) {
-            var checkboxes = row.select('.massaction-checkbox');
-            checkboxes.each(function(checkbox) {
-                result.push(checkbox);
-            });
-        });
+        const result = [];
+        for (const row of this.grid.rows) {
+            result.push(...row.querySelectorAll('.massaction-checkbox'));
+        }
         return result;
     }
 
     getCheckboxesValues() {
-        var result = [];
-        this.getCheckboxes().each((checkbox) => {
-            result.push(checkbox.value);
-        });
-        return result;
+        return this.getCheckboxes().map((checkbox) => checkbox.value);
     }
 
     getCheckboxesValuesAsString() {
@@ -611,7 +584,7 @@ class varienGridMassaction {
     }
 
     updateCount() {
-        this.count.update(varienStringArray.count(this.checkedString));
+        this.count.textContent = varienStringArray.count(this.checkedString);
         if (!this.grid.reloadParams) {
             this.grid.reloadParams = {};
         }
@@ -632,22 +605,22 @@ class varienGridMassaction {
             return;
         }
 
-        var item = this.getSelectedItem();
+        const item = this.getSelectedItem();
         if (!item) {
             this.validator.validate();
             return;
         }
-        this.currentItem = item;
-        var fieldName = (item.field ? item.field : this.formFieldName);
-        var fieldsHtml = '';
 
+        this.currentItem = item;
         if (this.currentItem.confirm && !window.confirm(this.currentItem.confirm)) {
             return;
         }
 
-        this.formHiddens.update('');
-        new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: fieldName, value: this.checkedString}));
-        new Insertion.Bottom(this.formHiddens, this.fieldTemplate.evaluate({name: 'massaction_prepare_key', value: fieldName}));
+        const fieldName = item.field ? item.field : this.formFieldName;
+
+        this.formHiddens.innerHTML =
+            this.fieldTemplate.evaluate({ name: fieldName, value: this.checkedString }) +
+            this.fieldTemplate.evaluate({ name: 'massaction_prepare_key', value: fieldName });
 
         if (!this.validator.validate()) {
             return;
@@ -668,7 +641,7 @@ class varienGridMassaction {
     onMassactionComplete(transport) {
         if (this.currentItem.complete) {
             try {
-                var listener = this.getListener(this.currentItem.complete) || Prototype.emptyFunction;
+                const listener = this.getListener(this.currentItem.complete) || function(){};
                 listener(this.grid, this, transport);
             } catch (error) {
                 console.error(error);
@@ -681,8 +654,9 @@ class varienGridMassaction {
     }
 
     initMassSelect() {
-        $$('input[class~="massaction-checkbox"]').each((element) => {
-            element.observe('click', this.massSelect.bind(this));
+        //document.querySelectorAll('input.massaction-checkbox').forEach((el) => {
+        this.getContainer().querySelectorAll('input.massaction-checkbox').forEach((el) => {
+            el.addEventListener('click', this.massSelect.bind(this));
         });
     }
 
@@ -694,13 +668,13 @@ class varienGridMassaction {
         };
     }
 
-    massSelect(evt) {
+    massSelect(event) {
         if (this.lastChecked.left !== false
             && this.lastChecked.top !== false
-            && evt.button === 0
-            && evt.shiftKey === true
+            && event.button === 0
+            && event.shiftKey === true
            ) {
-            var currentCheckbox = Event.element(evt);
+            const currentCheckbox = event.target;
             var lastCheckbox = this.lastChecked.checkbox;
             if (lastCheckbox != currentCheckbox) {
                 var start = this.getCheckboxOrder(lastCheckbox);
@@ -716,9 +690,9 @@ class varienGridMassaction {
         }
 
         this.lastChecked = {
-            left: Event.element(evt).viewportOffset().left,
-            top: Event.element(evt).viewportOffset().top,
-            checkbox: Event.element(evt) // "boundary" checkbox
+            left: Event.element(event).viewportOffset().left,
+            top: Event.element(event).viewportOffset().top,
+            checkbox: Event.element(event) // "boundary" checkbox
         };
     }
 
