@@ -495,13 +495,13 @@ class varienGridMassaction {
             return false;
         }
 
-        let checkbox = false;
-        event.target.closest('tr').querySelectorAll('.massaction-checkbox').forEach((el) => {
-            if (el.isMassactionCheckbox) {
-                checkbox = el;
+        const checkboxes = Array.from(event.target.closest('tr').querySelectorAll('.massaction-checkbox'));
+        for (const checkbox of checkboxes) {
+            if (checkbox.isMassactionCheckbox) {
+                return checkbox;
             }
-        });
-        return checkbox;
+        };
+        return false;
     }
 
     initCheckboxes() {
@@ -669,67 +669,76 @@ class varienGridMassaction {
     }
 
     massSelect(event) {
-        if (this.lastChecked.left !== false
-            && this.lastChecked.top !== false
-            && event.button === 0
-            && event.shiftKey === true
-           ) {
-            const currentCheckbox = event.target;
-            var lastCheckbox = this.lastChecked.checkbox;
-            if (lastCheckbox != currentCheckbox) {
-                var start = this.getCheckboxOrder(lastCheckbox);
-                var finish = this.getCheckboxOrder(currentCheckbox);
-                if (start !== false && finish !== false) {
-                    this.selectCheckboxRange(
-                        Math.min(start, finish),
-                        Math.max(start, finish),
-                        currentCheckbox.checked
-                    );
-                }
+        const currentCheckbox = event.target;
+        const lastCheckbox = this.lastChecked.checkbox;
+
+        const conditions = [
+            event.button === 0,
+            event.key === 'Shift',
+            this.lastChecked.left !== false,
+            this.lastChecked.top !== false,
+            lastCheckbox !== currentCheckbox,
+        ];
+
+        if (conditions.every(Boolean)) {
+            const start = this.getCheckboxOrder(lastCheckbox);
+            const finish = this.getCheckboxOrder(currentCheckbox);
+            if (start !== false && finish !== false) {
+                this.selectCheckboxRange(
+                    Math.min(start, finish),
+                    Math.max(start, finish),
+                    currentCheckbox.checked
+                );
             }
         }
 
+        const bbox = currentCheckbox.getBoundingClientRect();
         this.lastChecked = {
-            left: Event.element(event).viewportOffset().left,
-            top: Event.element(event).viewportOffset().top,
-            checkbox: Event.element(event) // "boundary" checkbox
+            left: bbox.left,
+            top: bbox.top,
+            checkbox: currentCheckbox, // "boundary" checkbox
         };
     }
 
-    getCheckboxOrder(curCheckbox) {
-        var order = false;
-        this.getCheckboxes().each(function(checkbox, key) {
-            if (curCheckbox == checkbox) {
-                order = key;
+    getCheckboxOrder(currentCheckbox) {
+        for (const [ key, checkbox ] of Object.entries(this.getCheckboxes())) {
+            if (currentCheckbox === checkbox) {
+                return key;
             }
-        });
-        return order;
+        };
+        return false
     }
 
     selectCheckboxRange(start, finish, isChecked) {
-        this.getCheckboxes().each((checkbox, key) => {
-            if (key >= start && key <= finish) {
+        for (const [ key, checkbox ] of Object.entries(this.getCheckboxes())) {
+            if (start <= key && key <= finish) {
                 checkbox.checked = isChecked;
                 this.setCheckbox(checkbox);
             }
-        });
+        };
     }
 };
 
 const varienGridAction = {
     execute(select) {
-        if (!select.value || !select.value.isJSON()) {
+        if (!select.value) {
             return;
         }
 
-        var config = select.value.evalJSON();
+        let config;
+        try {
+            config = JSON.parse(select.value);
+        } catch {
+            console.error('Invalid JSON value:', select.value);
+        }
+
         if (config.confirm && !window.confirm(config.confirm)) {
             select.options[0].selected = true;
             return;
         }
 
         if (config.popup) {
-            var win = window.open(config.href, 'action_window', 'width=500,height=600,resizable=1,scrollbars=1');
+            const win = window.open(config.href, 'action_window', 'width=500,height=600,resizable=1,scrollbars=1');
             win.focus();
             select.options[0].selected = true;
         } else {
@@ -796,33 +805,35 @@ class serializerController {
     }
 
     initialize(hiddenDataHolder, predefinedData, inputsToManage, grid, reloadParamName) {
-        //Grid inputs
+        // Grid inputs
         this.tabIndex = 1000;
         this.inputsToManage       = inputsToManage;
         this.multidimensionalMode = inputsToManage.length > 0;
 
-        //Hash with grid data
-        this.gridData             = this.getGridDataHash(predefinedData);
+        // Hash with grid data
+        this.gridData = this.getGridDataHash(predefinedData);
 
-        //Hidden input data holder
-        this.hiddenDataHolder     = $(hiddenDataHolder);
+        // Hidden input data holder
+        this.hiddenDataHolder       = document.getElementById(hiddenDataHolder);
         this.hiddenDataHolder.value = this.serializeObject();
-
-        this.grid = grid;
 
         // Set old callbacks
         this.setOldCallback('row_click', this.grid.rowClickCallback);
         this.setOldCallback('init_row', this.grid.initRowCallback);
         this.setOldCallback('checkbox_check', this.grid.checkboxCheckCallback);
 
-        //Grid
+        // Grid
         this.reloadParamName = reloadParamName;
+        this.grid = grid;
         this.grid.reloadParams = {};
         this.grid.reloadParams[this.reloadParamName+'[]'] = this.getDataForReloadParam();
         this.grid.rowClickCallback = this.rowClick.bind(this);
         this.grid.initRowCallback = this.rowInit.bind(this);
         this.grid.checkboxCheckCallback = this.registerData.bind(this);
-        this.grid.rows.each(this.eachRow.bind(this));
+
+        for (const row of this.grid.rows) {
+            this.eachRow(row);
+        }
     }
 
     setOldCallback(callbackName, callback) {
@@ -830,7 +841,7 @@ class serializerController {
     }
 
     getOldCallback(callbackName) {
-        return this.oldCallbacks[callbackName] ? this.oldCallbacks[callbackName] : Prototype.emptyFunction;
+        return this.oldCallbacks[callbackName] ?? function(){};
     }
 
     registerData(grid, element, checked) {
@@ -838,15 +849,15 @@ class serializerController {
             if (checked) {
                 if (element.inputElements) {
                     this.gridData.set(element.value, {});
-                    for (var i = 0; i < element.inputElements.length; i++) {
-                        element.inputElements[i].disabled = false;
-                        this.gridData.get(element.value)[element.inputElements[i].name] = element.inputElements[i].value;
+                    for (const inputElement of element.inputElements) {
+                        inputElement.disabled = true;
+                        this.gridData.get(element.value)[inputElement.name] = inputElement.value;
                     }
                 }
             } else {
                 if (element.inputElements) {
-                    for (var i = 0; i < element.inputElements.length; i++) {
-                        element.inputElements[i].disabled = true;
+                    for (const inputElement of element.inputElements) {
+                        inputElement.disabled = true;
                     }
                 }
                 this.gridData.unset(element.value);
@@ -861,7 +872,7 @@ class serializerController {
 
         this.hiddenDataHolder.value = this.serializeObject();
         this.grid.reloadParams = {};
-        this.grid.reloadParams[this.reloadParamName+'[]'] = this.getDataForReloadParam();
+        this.grid.reloadParams[`${this.reloadParamName}[]`] = this.getDataForReloadParam();
         this.getOldCallback('checkbox_check')(grid, element, checked);
     }
 
@@ -870,21 +881,20 @@ class serializerController {
     }
 
     rowClick(grid, event) {
-        var tdElement = Event.findElement(event, 'td');
-        var isInput   = Event.element(event).tagName == 'INPUT';
+        const tdElement = event.target.closest('td');
         if (tdElement) {
-            var checkbox = Element.select(tdElement, 'input');
-            if (checkbox[0] && !checkbox[0].disabled) {
-                var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
-                this.grid.setCheckboxChecked(checkbox[0], checked);
+            const checkbox = tdElement.querySelector('input');
+            if (checkbox && !checkbox.disabled) {
+                const checked = event.target.tagName === 'INPUT' ? checkbox.checked : !checkbox.checked;
+                this.grid.setCheckboxChecked(checkbox, checked);
             }
         }
         this.getOldCallback('row_click')(grid, event);
     }
 
     inputChange(event) {
-        var element = Event.element(event);
-        if (element && element.checkboxElement && element.checkboxElement.checked) {
+        const element = event.target;
+        if (element?.checkboxElement?.checked) {
             this.gridData.get(element.checkboxElement.value)[element.name] = element.value;
             this.hiddenDataHolder.value = this.serializeObject();
         }
@@ -892,29 +902,32 @@ class serializerController {
 
     rowInit(grid, row) {
         if (this.multidimensionalMode) {
-            var checkbox = $(row).select('.checkbox')[0];
-            var selectors = this.inputsToManage.map(function (name) { return ['input[name="' + name + '"]', 'select[name="' + name + '"]']; });
-            var inputs = $(row).select.apply($(row), selectors.flatten());
-            if (checkbox && inputs.length > 0) {
+            const checkbox = row.querySelector('.checkbox');
+            const selectors = [];
+            for (const name of this.inputsToManage) {
+                selectors.push(`input[name="${name}"]`, `select[name="${name}"]`);
+            }
+
+            const inputs = Array.from(row.querySelectorAll(selectors.join(',')));
+            if (checkbox && inputs.length) {
                 checkbox.inputElements = inputs;
-                for (var i = 0; i < inputs.length; i++) {
-                    inputs[i].checkboxElement = checkbox;
-                    if (this.gridData.get(checkbox.value) && this.gridData.get(checkbox.value)[inputs[i].name]) {
-                        inputs[i].value = this.gridData.get(checkbox.value)[inputs[i].name];
+                for (const input of inputs) {
+                    input.checkboxElement = checkbox;
+                    if (this.gridData.get(checkbox.value)?.[input.name]) {
+                        input.value = this.gridData.get(checkbox.value)[input.name];
                     }
-                    inputs[i].disabled = !checkbox.checked;
-                    inputs[i].tabIndex = this.tabIndex++;
-                    Event.observe(inputs[i],'keyup', this.inputChange.bind(this));
-                    Event.observe(inputs[i],'change', this.inputChange.bind(this));
+                    input.disabled = !checkbox.checked;
+                    input.tabIndex = this.tabIndex++;
+                    input.addEventListener('keyup', this.inputChange.bind(this));
+                    input.addEventListener('change', this.inputChange.bind(this));
                 }
             }
         }
         this.getOldCallback('init_row')(grid, row);
     }
 
-    //Stuff methods
-    getGridDataHash(_object) {
-        return $H(this.multidimensionalMode ? _object : this.convertArrayToObject(_object));
+    getGridDataHash(obj) {
+        return new Map(this.multidimensionalMode ? obj : this.convertArrayToObject(obj));
     }
 
     getDataForReloadParam() {
@@ -923,21 +936,17 @@ class serializerController {
 
     serializeObject() {
         if (this.multidimensionalMode) {
-            var clone = this.gridData.clone();
-            clone.each(function(pair) {
-                clone.set(pair.key, btoa(Object.toQueryString(pair.value)));
-            });
-            return clone.toQueryString();
+            const serialized = new URLSearchParams();
+            for (const [ key, value ] of this.gridData) {
+                serialized.set(key, btoa(new URLSearchParams(value).toString()));
+            };
+            return serialized.toString();
         } else {
             return this.gridData.values().join('&');
         }
     }
 
-    convertArrayToObject(_array) {
-        var _object = {};
-        for (var i = 0, l = _array.length; i < l; i++) {
-            _object[_array[i]] = _array[i];
-        }
-        return _object;
+    convertArrayToObject(arr) {
+        return { ...arr };
     }
 };
