@@ -43,35 +43,33 @@ class varienGrid {
     }
 
     initGrid() {
-        if (this.preInitCallback) {
+        if (typeof this.preInitCallback === 'function') {
             this.preInitCallback(this);
         }
-        if ($(this.containerId+this.tableSufix)) {
-            this.rows = $$('#'+this.containerId+this.tableSufix+' tbody tr');
-            for (var row = 0; row < this.rows.length; row++) {
-                if (row % 2 === 0) {
-                    Element.addClassName(this.rows[row], 'even');
-                } else {
-                    Element.addClassName(this.rows[row], 'odd');
+
+        const table = this.getTable();
+        if (table) {
+            this.rows = Array.from(table.querySelectorAll('tbody tr'));
+            for (const [ index, row ] of Object.entries(this.rows)) {
+                row.classList.add(index % 2 ? 'odd' : 'even');
+                row.addEventListener('mouseover', this.trOnMouseOver);
+                row.addEventListener('mouseout', this.trOnMouseOut);
+                row.addEventListener('mousedown', this.trOnClick);
+                row.addEventListener('click', this.trOnClick);
+                row.addEventListener('dblclick', this.trOnDblClick);
+            }
+            if (this.sortVar && this.dirVar) {
+                const columns = Array.from(table.querySelectorAll('thead a'));
+                for (const column of columns) {
+                    column.addEventListener('click', this.thLinkOnClick);
                 }
-
-                Event.observe(this.rows[row],'mouseover',this.trOnMouseOver);
-                Event.observe(this.rows[row],'mouseout',this.trOnMouseOut);
-                Event.observe(this.rows[row],'mousedown',this.trOnClick);
-                Event.observe(this.rows[row],'click',this.trOnClick);
-                Event.observe(this.rows[row],'dblclick',this.trOnDblClick);
             }
         }
-        if (this.sortVar && this.dirVar) {
-            var columns = $$('#'+this.containerId+this.tableSufix+' thead a');
 
-            for (var col=0; col<columns.length; col++) {
-                Event.observe(columns[col],'click',this.thLinkOnClick);
-            }
-        }
         this.bindFilterFields();
         this.bindFieldsChange();
-        if (this.initCallback) {
+
+        if (typeof this.initCallback === 'function') {
             try {
                 this.initCallback(this);
             } catch (error) {
@@ -86,10 +84,10 @@ class varienGrid {
     }
 
     initGridRows() {
-        if (this.initRowCallback) {
-            for (var row=0; row<this.rows.length; row++) {
+        if (typeof this.initRowCallback === 'function') {
+            for (const row of this.rows) {
                 try {
-                    this.initRowCallback(this, this.rows[row]);
+                    this.initRowCallback(this, row);
                 } catch (error) {
                     console.error(error);
                 }
@@ -101,31 +99,31 @@ class varienGrid {
         return this.containerId;
     }
 
+    getContainer(suffix = '') {
+        return document.getElementById(this.containerId + suffix);
+    }
+
+    getTable() {
+        return this.getContainer(this.tableSufix);
+    }
+
     rowMouseOver(event) {
-        var element = Event.findElement(event, 'tr');
-
-        if (!element.title) return;
-
-        Element.addClassName(element, 'on-mouse');
-
-        if (!Element.hasClassName('pointer')
-            && (this.rowClickCallback !== openGridRow || element.title)) {
-            if (element.title) {
-                Element.addClassName(element, 'pointer');
-            }
+        const element = event.target.closest('tr');
+        if (element.title) {
+            element.classList.add('on-mouse');
         }
     }
 
     rowMouseOut(event) {
-        var element = Event.findElement(event, 'tr');
-        Element.removeClassName(element, 'on-mouse');
+        const element = event.target.closest('tr');
+        element.classList.remove('on-mouse');
     }
 
     rowMouseClick(event) {
-        if (event.button != 1 && event.type == "mousedown") {
+        if (event.button !== 1 && event.type === 'mousedown') {
             return; // Ignore mousedown for any button except middle
         }
-        if (event.button == 2) {
+        if (event.button === 2) {
             return; // Ignore right click
         }
         if (this.rowClickCallback) {
@@ -147,14 +145,13 @@ class varienGrid {
     }
 
     doSort(event) {
-        var element = Event.findElement(event, 'a');
-
+        const element = event.target.closest('a');
         if (element.name && element.title) {
             this.addVarToUrl(this.sortVar, element.name);
             this.addVarToUrl(this.dirVar, element.title);
             this.reload(this.url);
         }
-        Event.stop(event);
+        event.preventDefault();
         return false;
     }
 
@@ -164,146 +161,132 @@ class varienGrid {
         }
     }
 
-    reload(url) {
-        if (!this.reloadParams) {
-            this.reloadParams = {form_key: FORM_KEY};
-        } else {
-            this.reloadParams.form_key = FORM_KEY;
-        }
-        url = url || this.url;
-        if (this.useAjax) {
-            new Ajax.Request(url + (url.match(new RegExp('\\?')) ? '&ajax=true' : '?ajax=true' ), {
-                loaderArea: this.containerId,
-                parameters: this.reloadParams || {},
-                evalScripts: true,
-                onFailure: this._processFailure.bind(this),
-                onComplete: this.initGridAjax.bind(this),
-                onSuccess: (transport) => {
-                    try {
-                        var responseText = transport.responseText.replace(/>\s+</g, '><');
+    async reload(url) {
+        url ??= this.url;
 
-                        if (transport.responseText.isJSON()) {
-                            var response = transport.responseText.evalJSON();
-                            if (response.error) {
-                                alert(response.message);
-                            }
-                            if (response.ajaxExpired && response.ajaxRedirect) {
-                                setLocation(response.ajaxRedirect);
-                            }
-                        } else {
-                            $(this.containerId).update(responseText);
-                        }
-                    } catch (error) {
-                        $(this.containerId).update(responseText);
-                    }
-                },
-            });
-            return;
-        } else {
+        if (!this.useAjax) {
             if (this.reloadParams) {
-                $H(this.reloadParams).each((pair) => {
-                    url = this.addVarToUrl(pair.key, pair.value);
-                });
+                url = this._addVarsToUrl(url, this.reloadParams);
             }
-            location.href = url;
+            setLocation(url);
         }
-    }
 
-    _processFailure(transport) {
-        location.href = BASE_URL;
+        try {
+            const container = this.getContainer();
+            const result = await mahoFetch(url, {
+                loaderArea: container,
+                method: 'POST',
+                body: new URLSearchParams(this.reloadParams || {}),
+            });
+
+            if (typeof result === 'string') {
+                // const html = result.replace(/>\s+</g, '><');
+                updateElementHtmlAndExecuteScripts(container, result);
+                this.initGridAjax();
+            }
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
     _addVarToUrl(url, varName, varValue) {
-        var re = new RegExp('\/('+varName+'\/.*?\/)');
-        var parts = url.split(new RegExp('\\?'));
-        url = parts[0].replace(re, '/');
-        url+= varName+'/'+varValue+'/';
-        if (parts.size()>1) {
-            url+= '?' + parts[1];
-        }
-        return url;
+        return setRouteParams(url, { [varName]: varValue });
     }
 
     addVarToUrl(varName, varValue) {
-        this.url = this._addVarToUrl(this.url, varName, varValue);
-        return this.url;
+        return this.url = this._addVarToUrl(this.url, varName, varValue);
+    }
+
+    _addVarsToUrl(url, vars) {
+        return setRouteParams(url, vars);
+    }
+
+    addVarsToUrl(vars) {
+        return this.url = this._addVarsToUrl(this.url, vars);
     }
 
     doExport() {
-        if ($(this.containerId+'_export')) {
-            var exportUrl = $(this.containerId+'_export').value;
-            if (this.massaction && this.massaction.checkedString) {
-                exportUrl = this._addVarToUrl(exportUrl, this.massaction.formFieldNameInternal, this.massaction.checkedString);
-            }
-            location.href = exportUrl;
+        const exportSelect = this.getContainer('_export');
+        if (!exportSelect) {
+            return;
         }
+        let exportUrl = exportSelect.value;
+        if (this.massaction && this.massaction.checkedString) {
+            exportUrl = this._addVarToUrl(exportUrl, this.massaction.formFieldNameInternal, this.massaction.checkedString);
+        }
+        setLocation(exportUrl);
     }
 
     bindFilterFields() {
-        var filters = $$('#'+this.containerId+' .filter input', '#'+this.containerId+' .filter select');
-        for (var i=0; i<filters.length; i++) {
-            Event.observe(filters[i],'keypress',this.filterKeyPress.bind(this));
-        }
+        this.getContainer().querySelectorAll('.filter input, .filter select').forEach((el) => {
+            el.addEventListener('keypress', this.filterKeyPress.bind(this));
+        });
     }
 
     bindFieldsChange() {
-        if (!$(this.containerId)) {
-            return;
-        }
-        var dataElements = $(this.containerId+this.tableSufix).down('tbody').select('input', 'select');
-        for (var i=0; i<dataElements.length;i++) {
-            Event.observe(dataElements[i], 'change', dataElements[i].setHasChanges.bind(dataElements[i]));
-        }
+        this.getTable()?.querySelectorAll('tbody input, tbody select').forEach((el) => {
+            el.addEventListener('change', el.setHasChanges.bind(el));
+        });
     }
 
     filterKeyPress(event) {
-        if (event.keyCode==Event.KEY_RETURN) {
+        if (event.key === 'Enter') {
             this.doFilter();
         }
     }
 
     doFilter() {
-        var filters = $$('#'+this.containerId+' .filter input', '#'+this.containerId+' .filter select');
-        var elements = [];
-        for (var i in filters) {
-            if (filters[i].value && filters[i].value.length) elements.push(filters[i]);
+        if (typeof this.doFilterCallback === 'function' && !this.doFilterCallback()) {
+            return;
         }
-        if (!this.doFilterCallback || (this.doFilterCallback && this.doFilterCallback())) {
-            this.addVarToUrl(this.pageVar, 1);
-            this.reload(this.addVarToUrl(this.filterVar, btoa(Form.serializeElements(elements))));
-        }
+
+        const filter = new URLSearchParams();
+        this.getContainer().querySelectorAll('.filter input, .filter select').forEach((el) => {
+            if (el.name && el.value && el.value.length) {
+                filter.append(el.name, el.value);
+            }
+        });
+
+        this.addVarsToUrl({
+            [this.pageVar]: 1,
+            [this.filterVar]: btoa(filters.toString()),
+        });
+
+        this.reload();
     }
 
     resetFilter() {
-        this.addVarToUrl(this.pageVar, 1);
-        this.reload(this.addVarToUrl(this.filterVar, ''));
+        this.addVarsToUrl({
+            [this.pageVar]: 1,
+            [this.filterVar]: null,
+        });
+
+        this.reload();
     }
 
     checkCheckboxes(element) {
-        elements = Element.select($(this.containerId), 'input[name="'+element.name+'"]');
-        for (var i=0; i<elements.length;i++) {
-            this.setCheckboxChecked(elements[i], element.checked);
-        }
+        this.getContainer().querySelectorAll(`input[name="${element.name}"]`).forEach((el) => {
+            this.setCheckboxChecked(el, el.checked);
+        });
     }
 
     setCheckboxChecked(element, checked) {
         element.checked = checked;
         element.setHasChanges({});
-        if (this.checkboxCheckCallback) {
-            this.checkboxCheckCallback(this,element,checked);
+        if (typeof this.checkboxCheckCallback === 'function') {
+            this.checkboxCheckCallback(this, element, checked);
         }
     }
 
     inputPage(event, maxNum) {
-        var element = Event.element(event);
-        var keyCode = event.keyCode || event.which;
-        if (keyCode == Event.KEY_RETURN) {
-            this.setPage(element.value);
+        if (event.key === 'Enter') {
+            this.setPage(event.target.value);
         }
     }
 
     setPage(pageNumber) {
-        this.reload(this.addVarToUrl(this.pageVar, pageNumber));
+        this.addVarToUrl(this.pageVar, pageNumber);
+        this.reload();
     }
 };
 
