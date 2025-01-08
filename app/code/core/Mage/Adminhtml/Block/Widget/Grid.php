@@ -1479,10 +1479,7 @@ class Mage_Adminhtml_Block_Widget_Grid extends Mage_Adminhtml_Block_Widget
      */
     public function canDisplayContainer()
     {
-        if ($this->getRequest()->getQuery('ajax')) {
-            return false;
-        }
-        return true;
+        return !$this->getRequest()->isAjax();
     }
 
     /**
