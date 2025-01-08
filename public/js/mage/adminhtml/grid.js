@@ -14,7 +14,7 @@ class varienGrid {
         this.initialize(...arguments);
     }
 
-    initialize(containerId, url, pageVar, sortVar, dirVar, filterVar){
+    initialize(containerId, url, pageVar, sortVar, dirVar, filterVar) {
         this.containerId = containerId;
         this.url = url;
         this.pageVar = pageVar || false;
@@ -218,7 +218,7 @@ class varienGrid {
     }
 
     bindFilterFields() {
-        this.getContainer().querySelectorAll('.filter input, .filter select').forEach((el) => {
+        this.getContainer()?.querySelectorAll('.filter input, .filter select').forEach((el) => {
             el.addEventListener('keypress', this.filterKeyPress.bind(this));
         });
     }
@@ -241,7 +241,7 @@ class varienGrid {
         }
 
         const filters = new URLSearchParams();
-        this.getContainer().querySelectorAll('.filter input, .filter select').forEach((el) => {
+        this.getContainer()?.querySelectorAll('.filter input, .filter select').forEach((el) => {
             if (el.name && el.value && el.value.length) {
                 filters.append(el.name, el.value);
             }
@@ -265,7 +265,7 @@ class varienGrid {
     }
 
     checkCheckboxes(element) {
-        this.getContainer().querySelectorAll(`input[name="${element.name}"]`).forEach((el) => {
+        this.getContainer()?.querySelectorAll(`input[name="${element.name}"]`).forEach((el) => {
             this.setCheckboxChecked(el, el.checked);
         });
     }
