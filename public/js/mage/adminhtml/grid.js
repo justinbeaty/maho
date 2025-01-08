@@ -51,7 +51,7 @@ class varienGrid {
         if (table) {
             this.rows = Array.from(table.querySelectorAll('tbody tr'));
             for (const [ index, row ] of Object.entries(this.rows)) {
-                row.classList.add(index % 2 ? 'odd' : 'even');
+                // row.classList.add(index % 2 ? 'odd' : 'even');
                 row.addEventListener('mouseover', this.trOnMouseOver);
                 row.addEventListener('mouseout', this.trOnMouseOut);
                 row.addEventListener('mousedown', this.trOnClick);
