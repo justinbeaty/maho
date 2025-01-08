@@ -313,11 +313,11 @@ small {
 .grid table tbody tr.selected td {
   background: #f0f9ff;
 }
-.grid table tbody tr:hover td {
-  background: #f0f9ff;
+.grid table tbody tr:nth-child(even):hover td {
+  background: #f0f9ff !important;
 }
 .grid table tbody tr:nth-child(odd):hover td {
-  background: #f0f9ff;
+  background: #f0f9ff !important;
 }
 .grid tr.filter {
   background: #fff !important;
@@ -396,10 +396,7 @@ small {
   color: #fff;
   padding: 4px;
 }
-.grid tr.even td {
-  background: #eee;
-}
-.grid tr.even tr td {
+.grid tr:nth-child(even) td, .grid tr:nth-child(even) tr td {
   background: #eee;
 }
 .grid tbody.even tr td {
@@ -408,10 +405,10 @@ small {
 .grid tbody.odd tr td {
   background: #f6f6f6 !important;
 }
-.grid tbody tr.even td.sorted {
+.grid tbody tr:nth-child(even) td.sorted {
   background: #e6e6e6 !important;
 }
-.grid tbody tr.odd td.sorted {
+.grid tbody tr:nth-child(odd) td.sorted {
   background: #f7f7f7 !important;
 }
 .grid tbody tr.selected td.sorted {
