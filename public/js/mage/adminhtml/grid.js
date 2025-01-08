@@ -19,8 +19,8 @@ class varienGrid {
         this.url = url;
         this.pageVar = pageVar || false;
         this.sortVar = sortVar || false;
-        this.dirVar  = dirVar || false;
-        this.filterVar  = filterVar || false;
+        this.dirVar = dirVar || false;
+        this.filterVar = filterVar || false;
         this.tableSufix = '_table';
         this.useAjax = false;
         this.rowClickCallback = false;
@@ -180,11 +180,11 @@ class varienGrid {
             });
 
             if (typeof result === 'string') {
-                // const html = result.replace(/>\s+</g, '><');
                 updateElementHtmlAndExecuteScripts(container, result);
                 this.initGridAjax();
             }
         } catch (error) {
+            console.error(error);
             alert(error.message);
         }
     }
@@ -290,19 +290,19 @@ class varienGrid {
     }
 };
 
-function shouldOpenGridRowNewTab(evt) {
-    return evt.ctrlKey // Windows ctrl + click
-        || evt.metaKey // macOS command + click
-        || evt.button == 1 // Middle mouse click
+function shouldOpenGridRowNewTab(event) {
+    return event.ctrlKey // Windows ctrl + click
+        || event.metaKey // macOS command + click
+        || event.button === 1 // Middle mouse click
 }
 
-function openGridRow(grid, evt) {
-    var trElement = Event.findElement(evt, 'tr');
-    if (['a', 'input', 'select', 'option'].indexOf(Event.element(evt).tagName.toLowerCase())!=-1) {
+function openGridRow(grid, event) {
+    const trElement = event.target.closest('tr');
+    if (['A', 'INPUT', 'SELECT', 'OPTION'].includes(event.target.tagName)) {
         return;
     }
     if (trElement.title) {
-        if (shouldOpenGridRowNewTab(evt)) {
+        if (shouldOpenGridRowNewTab(event)) {
             window.open(trElement.title, '_blank');
         } else {
             setLocation(trElement.title);
@@ -429,7 +429,7 @@ class varienGridMassaction {
     }
 
     getOldCallback(callbackName) {
-        return this.oldCallbacks[callbackName] ?? function(){};
+        return this.oldCallbacks[callbackName] || function(){};
     }
 
     setOldCallback(callbackName, callback) {
@@ -495,7 +495,7 @@ class varienGridMassaction {
             return false;
         }
 
-        const checkboxes = Array.from(event.target.closest('tr').querySelectorAll('.massaction-checkbox'));
+        const checkboxes = Array.from(event.target.closest('tr').querySelectorAll('input.massaction-checkbox'));
         for (const checkbox of checkboxes) {
             if (checkbox.isMassactionCheckbox) {
                 return checkbox;
@@ -561,7 +561,7 @@ class varienGridMassaction {
     getCheckboxes() {
         const result = [];
         for (const row of this.grid.rows) {
-            result.push(...row.querySelectorAll('.massaction-checkbox'));
+            result.push(...row.querySelectorAll('input.massaction-checkbox'));
         }
         return result;
     }
@@ -627,6 +627,8 @@ class varienGridMassaction {
         }
 
         if (this.useAjax && item.url) {
+            // TODO: mass action callbacks receive PrototypeJS's transport object
+            // need to either convert or find way to be backwards compatible
             new Ajax.Request(item.url, {
                 'method': 'post',
                 'parameters': this.form.serialize(true),
@@ -654,7 +656,6 @@ class varienGridMassaction {
     }
 
     initMassSelect() {
-        //document.querySelectorAll('input.massaction-checkbox').forEach((el) => {
         this.getContainer().querySelectorAll('input.massaction-checkbox').forEach((el) => {
             el.addEventListener('click', this.massSelect.bind(this));
         });
@@ -664,7 +665,7 @@ class varienGridMassaction {
         this.lastChecked = {
             left: false,
             top: false,
-            checkbox: false
+            checkbox: false,
         };
     }
 
@@ -841,7 +842,7 @@ class serializerController {
     }
 
     getOldCallback(callbackName) {
-        return this.oldCallbacks[callbackName] ?? function(){};
+        return this.oldCallbacks[callbackName] || function(){};
     }
 
     registerData(grid, element, checked) {
