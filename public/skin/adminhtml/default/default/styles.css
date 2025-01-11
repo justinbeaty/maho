@@ -494,32 +494,13 @@ div.autocomplete {
 }
 
 .nav-bar {
-    background: black;
-    padding: 0 350px 0 70px;
-    border: 0;
-}
-
-.nav-bar:after {
-    content: ".";
-    display: block;
-    clear: both;
-    font-size: 0;
-    line-height: 0;
-    height: 0;
-    overflow: hidden;
-}
-
-#nav ul li.active, #nav ul li {
-    float: none;
-    height: auto;
-    background: none;
-    margin: 0;
+    padding: 0 64px;
 }
 
 #nav {
     padding-left: 0;
 
-    & li {
+    li {
         position: relative;
         text-align: left;
         float: left;
@@ -681,6 +662,7 @@ div.autocomplete {
         box-shadow: rgba(0, 0, 0, 0.180392) 1px 3px 4px;
 
         & li {
+            float: none;
             padding: 0;
 
             &.active {
