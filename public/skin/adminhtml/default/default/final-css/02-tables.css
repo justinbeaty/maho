@@ -1,4 +1,4 @@
-
+/* 02 - table */
 .grid {
   border-bottom: 0;
   padding-bottom: .5em;
@@ -707,4 +707,3 @@ tr.dynamic-grid {
 }
 
 /*==== excluded from nesting ===*/
-

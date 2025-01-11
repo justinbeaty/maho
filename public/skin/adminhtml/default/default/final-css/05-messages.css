@@ -1,4 +1,4 @@
-
+/* 05 messages */
 .warning-msg, .success-msg, .error-msg, .notice-msg {
   border-radius: 5px;
   margin: 20px 0;
@@ -198,4 +198,3 @@ input.validation-failed, textarea.validation-failed {
 }
 
 /*==== excluded from nesting ===*/
-

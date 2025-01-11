@@ -1,18 +1,5 @@
 
-#loading-process {
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  margin-left: -60px;
-  border: 2px solid #f1af73;
-  padding: 15px 60px;
-  background: #fff4e9;
-  color: #d85909;
-  font-size: 1.1em;
-  font-weight: bold;
-  text-align: center;
-  z-index: 501;
-}
+/* 01 - loading */
 
 #loading-mask {
   position: absolute;
@@ -175,4 +162,3 @@
 }
 
 /*==== excluded from nesting ===*/
-

@@ -1,4 +1,4 @@
-
+/* 14 sales */
 .overlay {
 
   & span {
@@ -212,7 +212,6 @@ ul.item-options {
 }
 
 #popup-window-mask, .popup-window-mask {
-  background: url(images/bg_window_mask.png) repeat 0 0;
   background: rgba(239, 239, 239, 0.5);
   position: absolute;
   top: 0;
@@ -222,7 +221,6 @@ ul.item-options {
   width: 100%;
   height: 100%;
   z-index: 399;
-  background: url(images/bg_window_mask.png) repeat 0 0;
   background: rgba(239, 239, 239, 0.5);
   position: absolute;
   top: 0;
@@ -447,7 +445,6 @@ ul.item-options {
     }
 
     .time-picker {
-      display: -moz-inline-box;
       display: inline-block;
       padding: 2px 0;
       vertical-align: middle;
@@ -833,7 +830,6 @@ ul.item-options {
   -webkit-box-shadow: 0px 3px 5px #ccc;
   -moz-box-shadow: 0px 3px 5px #ccc;
   box-shadow: 0px 3px 5px #ccc;
-  z-index: 400;
 }
 
 .packaging-window {
@@ -862,7 +858,6 @@ ul.item-options {
 
   .packaging-content {
     overflow: auto;
-    height: 400px;
     height: auto !important;
     max-height: 400px;
     margin: 0 0 10px;
@@ -1033,4 +1028,3 @@ ul.item-options {
 }
 
 /*==== excluded from nesting ===*/
-
