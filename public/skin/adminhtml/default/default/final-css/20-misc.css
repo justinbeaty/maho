@@ -1,0 +1,105 @@
+
+.f-left, .left {
+  float: left;
+}
+
+.f-right, .right {
+  float: right;
+}
+
+.v-top {
+  vertical-align: top;
+}
+
+.v-middle {
+  vertical-align: middle !important;
+}
+
+.v-bottom {
+  vertical-align: bottom;
+}
+
+.a-left {
+  text-align: left !important;
+}
+
+.a-center {
+  text-align: center !important;
+}
+
+.a-right {
+  text-align: right !important;
+}
+
+.nm {
+  margin: 0 !important;
+}
+
+.np {
+  padding: 0 !important;
+}
+
+.no-display {
+  display: none;
+}
+
+.no-show {
+  display: none;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.nowrap, .nobr {
+  white-space: nowrap;
+}
+
+.wrap {
+  white-space: normal !important;
+}
+
+.no-float {
+  float: none !important;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.half {
+  width: 50%;
+}
+
+.emph, .accent {
+  color: #eb5e00 !important;
+}
+
+.subdue {
+  color: #306375;
+}
+
+.bold {
+  font-weight: bold !important;
+}
+
+.normal {
+  font-weight: normal !important;
+}
+
+.strike {
+  text-decoration: line-through;
+}
+
+.config-heading:after, .side-col .switcher:after, .message-popup .message-popup-head:after, .message-popup .message-popup-content .message:after, .login-form .form-buttons:after, .wrapper:after, .option-title:after, .columns:after, .main-col:after, .content-header-floating:after, .entry-edit .entry-edit-head:after, .content-header:after, .login-box .button-set:after, ul.tabs-horiz:after, .header-top:after, dl.accordion dt:after, .field-100:after, .entry-edit fieldset li:after, .entry-edit fieldset span.field-row:after, .content:after, #topnav:after, .main:after, .container:after, .footer:after, .middle:after, .header:after, .box-head:after, div.actions:after, .tier-container:after, .clear:after, .notification-global:after, .files .row:after, .files-wide .row:after, .grid tr.filter .range .range-line:after, .store-scope:after {
+  display: block;
+  clear: both;
+  content: ".";
+  font-size: 0;
+  line-height: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/*==== excluded from nesting ===*/
+

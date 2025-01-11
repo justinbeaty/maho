@@ -44,14 +44,6 @@ cite                    { font-style:normal; font-size:10px; }
 q:before,
 q:after                 { content:'';}
 
-/* Form */
-form                    { display:inline; }
-fieldset                { border:0; }
-legend                  { display:none; display:block !important; height:0; line-height:0; margin:0; overflow:hidden; padding:0; width:0; visibility:hidden; }
-label                   { color:#333; }
-input, select           { vertical-align:middle; }
-textarea                { overflow:auto; }
-
 /* Lists */
 ul,ol                   { list-style:none; }
 dt                      { display:block; }
@@ -68,15 +60,6 @@ body {
 }
 
 
-
-
-.warning-msg, .success-msg, .error-msg, .notice-msg {
-  border-radius: 5px;
-  margin: 20px 0;
-  padding: 10px 26px 10px 35px;
-  position: relative;
-  text-shadow: none;
-}
 
 
 

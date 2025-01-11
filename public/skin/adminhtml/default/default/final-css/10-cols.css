@@ -1,0 +1,14 @@
+
+.order-summary {
+
+  .side-col {
+    padding-right: 25px;
+  }
+
+  .main-col {
+    padding-left: 25px;
+  }
+}
+
+/*==== excluded from nesting ===*/
+

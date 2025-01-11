@@ -1,0 +1,13 @@
+
+.dashboard-container {
+  border: 1px solid #ccc;
+  border: none;
+
+  .switcher {
+    margin-bottom: 0;
+    border: 0;
+  }
+}
+
+/*==== excluded from nesting ===*/
+

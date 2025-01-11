@@ -1,0 +1,307 @@
+
+.breadcrumbs {
+  margin: 0 0 10px;
+
+  & li {
+    display: inline;
+
+    & span {
+      margin: 0 2px;
+    }
+  }
+}
+
+.cms-revision-preview {
+  height: 100%;
+
+  & iframe {
+    width: 100%;
+    height: 91%;
+    border: 0;
+  }
+}
+
+.options-box {
+
+  .option-box {
+    border: 1px solid #cddddd;
+    padding: 1em;
+    background: #e7efef;
+    margin: 1.5em 0;
+    background: #fff;
+    border: 0;
+  }
+
+  .option-title {
+    padding: 0 0 10px;
+    border-bottom: 1px solid #cddddd;
+    border-bottom: 1px solid #c8c8c8;
+
+    & button {
+      float: right;
+    }
+
+    & label {
+      font-weight: bold;
+      line-height: 21px;
+      padding-right: 1em;
+      float: left;
+    }
+
+    & select {
+      float: left;
+      width: 260px;
+      vertical-align: middle;
+    }
+  }
+
+  .option-header {
+    margin: 5px 0 0;
+    width: 100%;
+    border: 0;
+    background: #e7efef;
+    border-bottom: 1em solid #e7efef;
+    background: none;
+    border: 0;
+
+    & th {
+      padding: 2px;
+    }
+
+    & td {
+      padding: 5px 2px;
+    }
+
+    .tree {
+      margin: 5px 0 0;
+    }
+  }
+}
+
+.options-box .option-header .input-text, .options-box .option-header select {
+  width: 95%;
+}
+
+dialog {
+
+  .uploader {
+
+    .file-row {
+      margin: 16px 0;
+      width: auto;
+    }
+  }
+
+  #contents-uploader {
+    margin-bottom: 10px;
+    background: #d7e5ef;
+    padding: 5px 10px;
+
+    .flex {
+      font-size: 0;
+      line-height: 0;
+      height: 20px;
+    }
+  }
+
+  #contents {
+    margin-left: -3px;
+    overflow: auto;
+    display: flex;
+    flex-wrap: wrap;
+
+    .filecnt {
+      border: 1px solid #ccc;
+      cursor: pointer;
+      padding: 3px;
+      margin: 0 0 15px 4px;
+      overflow: hidden;
+      width: 100px;
+    }
+
+    .selected {
+      border: 1px solid #f1af73;
+      background: #f0f0f0;
+      cursor: default;
+    }
+
+    .nm {
+      text-align: center;
+
+      & img {
+        vertical-align: bottom;
+      }
+    }
+  }
+}
+
+#widget_window {
+
+  .magento_content {
+    height: auto !important;
+    min-height: 450px;
+  }
+}
+
+#widget-chooser {
+
+  .columns {
+    background-image: none;
+  }
+
+  .magento_message {
+    padding: 10px 18px;
+  }
+
+  .grid {
+
+    & tr.filter {
+
+      & th {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+    }
+  }
+
+  .side-col {
+    padding-top: 0.5em;
+  }
+
+  .main-col {
+    padding-right: 4px;
+  }
+}
+
+#widget-chooser .grid th, #widget-chooser .grid td {
+  padding: 2px 4px 2px 4px;
+}
+
+#variables-chooser {
+
+  .magento_message {
+    padding: 10px 18px;
+  }
+}
+
+#catalog-wysiwyg-editor {
+
+  .buttons-set {
+    margin-top: 10px;
+  }
+
+  .magento_content {
+    height: auto !important;
+    overflow: hidden;
+  }
+
+  .textarea {
+    width: 930px !important;
+  }
+
+  .magento_message {
+    padding: 0 7px;
+  }
+
+  .magento_buttons {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+}
+
+.backup-dialog {
+  background-color: #6f8992;
+  background: rgba(111, 137, 146, 0.5);
+  cursor: default;
+  left: 50%;
+  margin: 0 0 0 -271px;
+  position: fixed;
+  top: 50%;
+  width: 470px;
+  padding: 8px;
+  z-index: 400;
+  -moz-box-shadow: 0 0 100px #ccc;
+  -webkit-box-shadow: 0 0 100px #ccc;
+  box-shadow: 0 0 100px #ccc;
+
+  .entry-edit {
+    border: 1px solid #6f8992;
+  }
+
+  .content {
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    max-height: 400px;
+    overflow: auto;
+  }
+
+  .question {
+    margin-top: 15px;
+  }
+
+  .buttons-set {
+    border-top: 1px solid #ddd;
+    background: #eee;
+    margin: 0;
+    overflow: hidden;
+    padding: 7px 10px 8px;
+    width: 448px;
+
+    & button {
+      margin: 0 0 0 5px;
+    }
+  }
+
+  #ftp-credentials-container {
+    margin-top: 25px;
+
+    & fieldset {
+      margin-bottom: 0;
+    }
+  }
+
+  .password-box-container {
+    margin-top: 15px;
+  }
+
+  .exclude-media-checkbox-container {
+    margin-top: 15px;
+  }
+
+  & td.maintenance-checkbox-container {
+    margin-top: 0;
+    padding-top: 4px;
+  }
+}
+
+.backup-dialog input[type=text], .backup-dialog input[type=password] {
+  width: 180px;
+}
+
+.dialog {
+
+  & table.table_window {
+    background: #fff;
+    border: 0;
+
+    & td {
+      padding: 6px 0;
+      vertical-align: middle;
+    }
+
+    & th {
+      padding: 6px 0;
+      vertical-align: middle;
+    }
+
+    .fieldset {
+
+      & td {
+        vertical-align: top;
+      }
+    }
+  }
+}
+
+/*==== excluded from nesting ===*/
+

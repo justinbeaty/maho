@@ -1,0 +1,140 @@
+
+.content-header {
+  margin-bottom: 18px;
+  border-bottom: 4px solid #dfdfdf;
+  padding-bottom: .25em;
+  margin-bottom: 0;
+  padding-bottom: 0;
+
+  & table {
+    width: 100%;
+  }
+
+  & h3 {
+    float: left;
+    margin: .3em .5em 0 0;
+    color: #eb5e00;
+    font-size: 1.25em;
+    line-height: 1.2em;
+    margin: 0 0 0.3em;
+    line-height: 32px;
+  }
+
+  .head {
+
+    & h3 {
+      float: none;
+    }
+  }
+
+  .button-set {
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .content-buttons {
+    white-space: nowrap!important;
+    margin: 0;
+  }
+
+  & td.content-buttons {
+    width: 13%;
+    white-space: nowrap!important;
+    margin: 0;
+  }
+}
+
+.content-buttons button, .content-header button, .filter-actions button {
+  margin: 0 0 0 5px;
+}
+
+.side-col {
+
+  .content-header {
+    border-bottom: 0;
+    margin-right: 12px;
+    margin-bottom: .6em;
+  }
+}
+
+.left-col-block {
+  width: 200px;
+}
+
+.content-header-floating {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  border-bottom: solid 1px #988753;
+  z-index: 100;
+  background: #fdfaa4;
+  opacity: .85;
+  opacity: 0.9;
+  border-bottom: solid 1px #c8c8c8;
+
+  .content-header {
+    padding: 6px 8px 4px 8px;
+    margin-bottom: 0;
+    border: 0;
+  }
+
+  & td {
+    padding-right: 20px;
+    padding-right: 0;
+  }
+
+  & button {
+    margin-top: 3px;
+  }
+
+  .content-buttons {
+    float: right;
+  }
+
+  .form-buttons {
+    padding-right: 20px;
+    padding-right: 0;
+  }
+
+  & h3 {
+    margin-left: 20px;
+    display: inline;
+    font-size: 18px;
+  }
+}
+
+.content-buttons {
+  margin-bottom: 5px;
+  float: right;
+  display: inline;
+  white-space: nowrap;
+}
+
+.box-head {
+  margin-bottom: .6em;
+  text-align: right;
+
+  & h4 {
+    float: left;
+    margin-bottom: 0;
+  }
+}
+
+.content-header-floating .content-header, .footer-content, .middle, #nav, .header-top {
+  padding-left: 15px;
+  padding-right: 15px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.content-header h3, .content-header {
+  border: 0;
+  color: #2f2f2f;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+/*==== excluded from nesting ===*/
+

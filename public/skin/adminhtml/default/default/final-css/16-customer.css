@@ -1,0 +1,64 @@
+
+.address-list {
+  width: 28em;
+  padding-right: 22px;
+
+  & address {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .btn-edit-address {
+    right: 8px;
+  }
+
+  .btn-remove-address {
+    right: 27px;
+  }
+
+  & li {
+    position: relative;
+    padding: 12px 14px;
+    cursor: pointer;
+    border-top: 1px solid #e6e6e6;
+    background: url(images/address_list_li.gif) repeat;
+
+    &.on {
+      background: #e7efef;
+      background: #fff;
+    }
+
+    &.over {
+      background-color: #fcf5dd;
+    }
+
+    & table {
+      width: 100%;
+    }
+  }
+}
+
+.address-list .btn-edit-address, .address-list .btn-remove-address {
+  position: absolute;
+  top: 8px;
+}
+
+.delete-address {
+  float: right;
+  margin: 0 0 10px 10px;
+}
+
+.address-type {
+
+  .address-type-line {
+    display: block;
+    margin: 2px 0;
+
+    & input {
+      margin-right: 3px;
+    }
+  }
+}
+
+/*==== excluded from nesting ===*/
+
