@@ -1,5 +1,5 @@
 #!/bin/bash
 
 for file in *.css; do
-    echo "$file";
+    cat "$file" >> ../styles.css
 done
