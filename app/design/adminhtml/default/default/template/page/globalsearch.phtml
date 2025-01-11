@@ -1,0 +1,63 @@
+<?php
+/**
+ * Maho
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2006-2018 Magento, Inc. (https://magento.com)
+ * @copyright   Copyright (c) 2020-2024 The OpenMage Contributors (https://openmage.org)
+ * @copyright   Copyright (c) 2024-2025 Maho (https://mahocommerce.com)
+ * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/** @var Mage_Adminhtml_Block_Page_Header $this */
+?>
+<template id="global_search_dialog">
+    <div class="flex-col gap">
+        <div class="flex-row gap">
+            <input id="global_search" name="query" class="input-text" autocomplete="off">
+            <span id="global_search_indicator" class="no-display"></span>
+        </div>
+        <div id="global_search_autocomplete"></div>
+    </div>
+</template>
+
+<script>
+    function openGlobalSearch() {
+        const dialog = Dialog.info(document.getElementById('global_search_dialog').innerHTML, {
+            title: '<?= $this->__('Global Record Search') ?>',
+            width: 700,
+        });
+
+        const inputEl = dialog.querySelector('#global_search');
+        const resultsEl = dialog.querySelector('#global_search_autocomplete');
+        const loadingEl = dialog.querySelector('#global_search_indicator');
+
+        let controller;
+
+        inputEl.addEventListener('input', async () => {
+            const query = inputEl.value;
+            if (query.length < 2) {
+                toggleVis(loadingEl, false);
+                return;
+            }
+
+            toggleVis(loadingEl, true);
+
+            const html = await mahoFetch('<?= $this->getUrl('adminhtml/index/globalSearch') ?>', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    'query': query,
+                })
+            });
+
+            resultsEl.innerHTML = html;
+
+            resultsEl.querySelectorAll('li').forEach((li) => {
+                li.addEventListener('click', () => setLocation(li.getAttribute('url')));
+            });
+
+            toggleVis(loadingEl, false);
+        })
+    }
+</script>

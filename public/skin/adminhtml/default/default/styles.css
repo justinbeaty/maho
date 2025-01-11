@@ -226,6 +226,20 @@ strong, b {
     display: inline-block;
 }
 
+.flex {
+    display: flex;
+    &.gap {
+        gap: 16px;
+    }
+}
+.flex-row {
+    display: flex;
+}
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
 .nowrap, .nobr {
     white-space: nowrap;
 }

@@ -70,7 +70,9 @@ Default layout, loads most of the pages
             </block>
 
             <block type="adminhtml/page_notices" name="global_notices" as="global_notices" template="page/notices.phtml" />
-            <block type="adminhtml/page_header" name="header" as="header"></block>
+            <block type="adminhtml/page_header" name="header" as="header">
+                <block type="core/template" name="globalsearch" as="globalsearch" template="page/globalsearch.phtml"/>
+            </block>
             <block type="adminhtml/page_menu" name="menu" as="menu"></block>
             <block type="core/text_list" name="notifications" as="notifications">
                 <block type="adminhtml/notification_baseurl" name="notification_baseurl" as="notification_baseurl" template="notification/baseurl.phtml"></block>
