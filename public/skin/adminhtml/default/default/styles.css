@@ -1,25 +1,41 @@
 
+:root {
+
+    --primary-color: green;
+    --secondary-color: blue;
+    --accent-color: red;
+    --text-color: #2f2f2f;
+    --link-color: #269de7;
+    --bg-color: #f6f6f6;
+
+
+    --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+}
+
 *, *::before, *::after {
     box-sizing: border-box;
 }
+
 * {
     margin: 0;
     padding: 0;
 }
 
 body {
-    font: 400 12px/1.33 ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    color: #2f2f2f;
-    background: #f6f6f6;
+    font: 0.5625rem var(--font-sans);
+    color: var(--text-color);
+    background: var(--bg-color);
 }
 
 a {
-    display: inline;
-    color: #269de7;
+    color: var(--link-color);
     text-decoration: none;
 
     &:visited {
-        color: #269de7;
+        color: var(--link-color);
     }
 
     &:hover, &:focus, &:active {
@@ -27,7 +43,7 @@ a {
         text-decoration: none;
     }
 
-    & img {
+    img {
         border: 0;
     }
 
@@ -53,32 +69,32 @@ h1 {
 }
 
 h2 {
-    font-size: 1.7em;
     color: #2f2f2f;
+    font-size: 1.7em;
     font-weight: 400;
 }
 
 h3 {
-    font-size: 1.25em;
     color: #2f2f2f;
+    font-size: 1.25em;
     font-weight: 400;
 }
 
 h4 {
-    font-size: 1.05em;
     color: #2f2f2f;
+    font-size: 1.05em;
     font-weight: 400;
 }
 
 h5 {
-    font-size: 1.05em;
     color: #2f2f2f;
+    font-size: 1.05em;
     font-weight: 400;
 }
 
 h6 {
-    font-size: 1em;
     color: #2f2f2f;
+    font-size: 1em;
     font-weight: 400;
 }
 
@@ -150,14 +166,17 @@ strong, b {
     text-decoration: line-through;
 }
 
-.no-display, .no-show {
-    display: none !important;
-}
 
 .emph, .accent {
     color: #0090FF !important;
 }
 
+
+/* === Utility Classes === */
+
+.no-display, .no-show {
+    display: none !important;
+}
 
 .f-left, .left {
     float: left;
@@ -252,9 +271,8 @@ strong, b {
 
 
 
+/* === Main Layout === */
 
-/*==== excluded from nesting ===*/
-/* 09 layout */
 .wrapper {
     min-width: 960px;
     display: flex;
@@ -1485,7 +1503,7 @@ tr.dynamic-grid {
 }
 
 .grid-severity-minor span, .grid-severity-major span, .grid-severity-critical span, .grid-severity-notice span {
-    font: 400 12px/1.33 ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font: 400 0.5625rem ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     padding: 2px 10px;
 }
 
@@ -2898,7 +2916,7 @@ button:active {
 }
 
 input.input-text, textarea, select {
-    font: 400 12px/1.33 ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font: 400 0.5625rem ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     display: inline-block;
     padding: 1px 3px;
     margin: 0;
