@@ -11,7 +11,7 @@
 
     --body-bg-color: #f6f6f6;
     --header-bg-color: #000000;
-
+    --footer-bg-color: #eeeeee;
 
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
@@ -288,22 +288,37 @@ strong, b {
 }
 
 
+
 .wrapper {
-    min-width: 960px;
     display: flex;
     flex-direction: column;
+    min-width: 960px;
     min-height: 100vh;
 
+    & > * {
+        padding: 0 16px;
+    }
+
     & > .header {
-        background: var(--header-bg-color);
         position: relative;
+        background: var(--header-bg-color);
     }
 
     & > .middle {
-        padding: 23px 27px 0 27px;
         flex-grow: 1;
+        padding: 24px 16px;
     }
 
+    & > .footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 0.5em;
+        padding: 16px;
+        background: var(--footer-bg-color);
+        border-top: 1px solid color-mix(in oklab, var(--footer-bg-color), black 10%);
+    }
 }
 
 .container-collapsed {
@@ -333,28 +348,7 @@ div.main-col-inner {
     width: 100%;
 }
 
-.footer {
-    clear: both;
-    background: url(images/footer_bg.gif) repeat-x #e6e6e6;
-    padding: 105px 2.8em 2.8em 2.8em;
-    font-size: .95em;
-    text-align: center;
-    background: #eee;
-    padding: 15px;
-    margin-top: 30px;
-    border-top: 1px solid #c8c8c8;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5em;
-}
 
-.simple-container-popup {
-    min-height: 50px !important;
-    padding: 1.8em 2.3em 6em 2.3em;
-    background: url(images/simple_container_bg.gif) repeat-x;
-}
 
 .page-popup {
     background: #fff;
@@ -3343,7 +3337,7 @@ td.divider {
     }
 }
 
-.content-header-floating .content-header, .footer-content, .middle, #nav, .header-top {
+.content-header-floating .content-header, .footer-content, #nav, .header-top {
     padding-left: 15px;
     padding-right: 15px;
     width: 100%;
