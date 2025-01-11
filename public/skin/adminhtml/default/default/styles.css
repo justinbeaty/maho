@@ -4,9 +4,13 @@
     --primary-color: green;
     --secondary-color: blue;
     --accent-color: red;
+
     --text-color: #2f2f2f;
     --link-color: #269de7;
-    --bg-color: #f6f6f6;
+    --link-hover-color: #3378a3;
+
+    --body-bg-color: #f6f6f6;
+    --header-bg-color: #000000;
 
 
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -25,9 +29,9 @@
 }
 
 body {
-    font: 0.5625rem var(--font-sans);
+    font: 0.75rem var(--font-sans);
     color: var(--text-color);
-    background: var(--bg-color);
+    background: var(--body-bg-color);
 }
 
 a {
@@ -39,7 +43,7 @@ a {
     }
 
     &:hover, &:focus, &:active {
-        color: #3378a3;
+        color: var(--link-hover-color);
         text-decoration: none;
     }
 
@@ -273,34 +277,33 @@ strong, b {
 
 /* === Main Layout === */
 
+
+.wrapper-popup {
+    min-width: 750px;
+}
+.middle-popup {
+    border-bottom: 3px solid #fff;
+    background: yellow;
+    padding: 0 0 0 0;
+}
+
+
 .wrapper {
     min-width: 960px;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
 
-.wrapper-popup {
-    min-width: 750px;
-}
+    & > .header {
+        background: var(--header-bg-color);
+        position: relative;
+    }
 
-.header {
-    text-align: right;
-    background: black;
-    position: relative;
-}
+    & > .middle {
+        padding: 23px 27px 0 27px;
+        flex-grow: 1;
+    }
 
-.middle {
-    min-height: 450px;
-    padding: 23px 27px 0 27px;
-    background: #f6f6f6;
-    flex-grow: 1;
-}
-
-.middle-popup {
-    border-bottom: 3px solid #fff;
-    background: yellow;
-    padding: 0 0 0 0;
 }
 
 .container-collapsed {
@@ -1503,7 +1506,7 @@ tr.dynamic-grid {
 }
 
 .grid-severity-minor span, .grid-severity-major span, .grid-severity-critical span, .grid-severity-notice span {
-    font: 400 0.5625rem ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font: 400 0.75rem ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     padding: 2px 10px;
 }
 
@@ -2916,7 +2919,7 @@ button:active {
 }
 
 input.input-text, textarea, select {
-    font: 400 0.5625rem ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font: 400 0.75rem ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     display: inline-block;
     padding: 1px 3px;
     margin: 0;
