@@ -1,0 +1,6 @@
+
+/* STORE MANAGEMENT
+*******************************************************************************/
+.adminhtml-system-store-deletestore .content-footer .content-buttons,
+.adminhtml-system-store-deletegroup .content-footer .content-buttons,
+.adminhtml-system-store-deletewebsite .content-footer .content-buttons { float:left; }

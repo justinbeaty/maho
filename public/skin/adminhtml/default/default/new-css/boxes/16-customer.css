@@ -1,0 +1,18 @@
+
+/* CUSTOMER
+*******************************************************************************/
+
+/* Addresses */
+.address-list                           { width:28em; padding-right:22px; }
+.address-list address                   { width:100%; overflow:hidden; }
+.address-list .btn-edit-address,
+.address-list .btn-remove-address       { position:absolute; top:8px; }
+.address-list .btn-edit-address         { right:8px; }
+.address-list .btn-remove-address       { right:27px; }
+.address-list li                        { position:relative; padding:12px 14px; cursor:pointer; border-top:1px solid #e6e6e6; background:url(images/address_list_li.gif) repeat; }
+.address-list li.on                     { background:#e7efef; }
+.address-list li.over                   { background-color:#fcf5dd; }
+.address-list li table                  { width:100%; }
+.delete-address                         { float:right; margin:0 0 10px 10px; }
+.address-type .address-type-line        { display:block; margin:2px 0; }
+.address-type .address-type-line input  { margin-right:3px; }

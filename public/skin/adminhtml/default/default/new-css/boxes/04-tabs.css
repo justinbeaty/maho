@@ -1,0 +1,30 @@
+/* TABS
+*******************************************************************************/
+
+/* Vertical  Tabs */
+ul.tabs                         { border-top:1px solid #bebebe; background-color:#e7efef; }
+ul.tabs a, ul.tabs span         { display:block; }
+ul.tabs a, ul.tabs a:hover      { text-decoration:none; }
+/* ul.tabs a.notloaded             { color:#999; } */
+ul.tabs a, ul.tabs a:hover      { color:#000; }
+ul.tabs, ul.tabs a              { background:url(images/tabs_link_bg.gif) repeat-y 100% #E7EFEF; }
+ul.tabs a:hover                 { background-color:#D8E6E6; background-image:url(images/tabs_link_over_bg.gif); }
+ul.tabs a.active                { padding:0; border-bottom:1px solid #bebebe; background:none; }
+ul.tabs a:hover.active          { padding:0; }
+ul.tabs span                    { background:url(images/tabs_span_bg.gif) repeat-x 0 100%; padding:.3em 0.5em .28em 1.5em; cursor:pointer; }
+ul.tabs span em                 { float:right; }
+ul.tabs a.active span,
+ul.tabs a:hover.active span     { background:#fff; font-weight:bold; }
+ul.tabs a.subitem               { padding-left:2.2em; }
+ul.tabs span.changed,
+ul.tabs span.error              { float:right; background:0; padding:0; }
+ul.tabs a.changed span.changed  { background:url(images/fam_bullet_disk.gif) 0 0 no-repeat !important; width:16px; height:16px; }
+ul.tabs a.error span.error      { background:url(images/fam_bullet_error.gif) 0 0 no-repeat !important; width:16px; height:16px; }
+ul.tabs a.changed               { font-style:italic; }
+
+/* Horizontal Tabs */
+ul.tabs-horiz                   { margin:0 0 18px 0; background:url(images/horiz_tabs_ul_bg.gif) repeat-x 0 100% #f8f8f8; padding:8px 0 0 5px; }
+ul.tabs-horiz li                { float:left; margin:0 4px; }
+ul.tabs-horiz li a              { display:block; background:#e2e2e2; border:1px solid #ccc; padding:2px 10px; color:#333 !important; text-decoration:none !important; }
+ul.tabs-horiz li a.notloaded    { /* not used for now */ }
+ul.tabs-horiz li a.active       { border-bottom:1px solid #fff; background:#fff; }

@@ -1,0 +1,5 @@
+/* COLUMNS
+********************************************************************************************/
+
+.order-summary .side-col        { padding-right:25px; }             /* Order/Create */
+.order-summary .main-col        { padding-left:25px; }              /* Order/Create */

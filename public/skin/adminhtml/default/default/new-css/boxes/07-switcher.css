@@ -1,0 +1,14 @@
+/* SWITCHER
+*******************************************************************************/
+.switcher { margin-bottom:10px; border:1px solid #cddddd; background:#e7efef; padding:10px; }
+.side-col .switcher { padding-right:26px; }
+.side-col .switcher label { display:block; }
+.side-col .switcher .link-store-scope { float:right; margin-right:-19px; margin-left:3px; }
+.side-col .switcher select { width:100%; float:left; }
+/*.side-col .switcher     { margin-right:20px; margin-bottom:20px; }*/
+.link-store-scope { display:inline-block; vertical-align:middle; margin:0 0 1px; width:16px; height:16px; background:url(images/i_question-mark.png) 0 0 no-repeat; text-decoration:none !important; text-indent:-999em; overflow:hidden; }
+.store-scope .link-store-scope { float:left; margin-right:10px; }
+.store-scope .tree-store-scope { float:left; padding:7px 10px; border:1px dotted #dedede; }
+.store-scope table.stores-tree { float:left; width:auto !important; }
+.form-list td.value .store-scope { white-space:nowrap; }
+.form-list td.value .link-store-scope { float:none; margin-right:0; vertical-align:top; margin-top:6px; }

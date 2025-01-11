@@ -1,0 +1,38 @@
+/* SCOLLER */ /* Used primarily in Sales -> Order -> Create Order */ /*
+*******************************************************************************/
+.scroll-cont {
+    position:absolute;
+    top:-25px;
+    left:503px;
+    width:16px;
+    height:265px;
+    background:transparent url(images/db-scroll-bg.gif) no-repeat top;
+    z-index:10000;
+    }
+.auto-scroll                { overflow:auto; height:11em; }
+.root                       { position:relative; height:260px; margin:0; width:1px; }
+.thumb                      { position:absolute; height:40px; width:16px; margin-top:-28px; z-index:11000; }
+.up                         { margin-top:254px; height:16px; }
+.dn                         { margin-top:0; padding:0; height:15px; }
+.up a, .up a img,
+.dn a, .dn a img,
+.thumb a ,
+.thumb a img                { border:0; }
+.up a:active, .dn a:active  { outline:none; }
+.scrollContainer {
+    position:absolute;
+    left:0;
+    top:19px;
+    clip:rect(0 467px 200px 0);
+    overflow:auto;
+    border:0;
+    }
+.scrollContent              { position:absolute; left:0; top:0; }
+
+/* Horizontal scroll */
+.hor-scroll                 { width:100%; overflow:auto; padding-bottom:4px; margin-bottom:-4px; }
+
+
+/**/
+.note-list { width:100%; overflow:hidden; }
+.note-list li { border-top:1px solid #e3e3e3; margin-top:9px !important; background:url(images/icon_note_list.gif) no-repeat 0 4px; padding-bottom:9px; padding-left:18px; }

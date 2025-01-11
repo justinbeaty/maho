@@ -1,0 +1,165 @@
+/* FORMS
+*******************************************************************************/
+select.countries option         { background-repeat:no-repeat; }
+
+/* Entry Edit  */ /* Site-wide form fieldset */
+table.form-edit                         { width:100%; }
+.box,
+.entry-edit fieldset,
+.entry-edit .fieldset                   { padding:10px 15px; margin-bottom:15px; }
+.entry-edit .entry-edit-head h4         { float:left; padding:0; background:none; margin:0; color:#fff; font-size:1em; line-height:18px; min-height:0; }
+.entry-edit .entry-edit-head .tools     { float:right;}
+.entry-edit .entry-edit-head strong,
+.entry-edit .entry-edit-head a          { color:#fff; font-size:1em; line-height:18px; min-height:0; font-weight:bold}
+.entry-edit .content                    { margin-left:0 !important; padding:10px 15px; }
+.entry-edit fieldset li,
+.entry-edit .fieldset li                { margin:4px 0; }
+.entry-edit fieldset span.form_row,
+.entry-edit .fieldset span.form_row,
+.entry-edit fieldset .field-row .hint,
+.entry-edit .fieldset .field-row .hint  { float:left; color:#999; padding-left:12em; }
+.entry-edit .form-buttons               { float:right; margin:2px -3px 2px 0pt; }
+label.inline                            { float:none !important; width:auto !important; }
+.nested-content .entry-edit             { margin-left:2em; }
+.nested-content .entry-edit .entry-edit { margin-left:0; }
+#coupon_container .entry-edit { min-width:310px; }
+
+/* Form Elements */
+input.input-text,input.input-color,textarea,select { border-width:1px; border-style:solid; border-color:#aaa #c8c8c8 #c8c8c8 #aaa; background:#fff; font-size: 12px; }
+select { min-height:17px; /* to set the height for empty selects */ }
+input.input-text,textarea       { padding:2px; }
+input.input-color               { padding:2px; width:222px !important; }
+input.input-color-html5         { width:48px !important; }
+input.qty                       { width:40px !important; }
+input.item-qty                  { width:22px !important; }
+input.price                     { width:50px !important; text-align:right; }
+input[type=text].disabled       { background:#eee; }
+select optgroup                 { font-style:normal; }
+select optgroup option          { padding-left:10px; }
+select optgroup option.even     { background:#f6f6f6; } /* Zebra even-row */
+select.multiselect option       { padding:3px 4px; border-bottom:1px solid #ddd; }
+.checkboxes li                  { margin:0 0 5px !important; }
+.field-100 { background-color:#fff; border-width:1px; border-style:solid; border-color:#aaa #c8c8c8 #c8c8c8 #aaa; padding:2px; }
+.field-100 textarea,
+.field-100 input.input-text { float:left; width:100% !important; border:0 !important; padding:0 !important; }
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    select option:disabled,
+    select:disabled option { color:#999!important; }
+}
+
+/* Form List */ /* Table for default form data */
+.form-list                      { width:auto; border:0 !important; }
+.form-list td.label,
+.form-list td.value,
+.form-list td.value2,
+.form-list td.note,
+.form-list td.scope-label,
+.form-list td.use-default       { border:0 !important; padding-top:5px !important; padding-bottom:5px !important; padding-left:5px !important; background:0 !important; }
+.form-list td.hidden            { border:0 !important; padding:0 !important; background:0 !important; }
+.form-list td.label             { width:200px; }
+.form-list td.use-default label { display:inline-block; vertical-align:middle; padding:0 3px; }
+.form-list td.label label       { display:block; padding-right:15px; padding-top:1px; }
+.form-list td.value input.input-text,
+.form-list td.value textarea    { width:274px; }
+.form-list td.value textarea    { height:15em; }
+.form-list td.value select      { width:280px; }
+.form-list td.value select.select-date { width:87px; }
+.form-list td.note              { background:url(images/note_cell_bg.gif) 6px 10px no-repeat !important; padding-left:18px; }
+.form-list td.scope-label       { padding-left:5px; color:#6f8992; font-size:.9em; }
+.form-list p.note               { margin:0; padding:0 0 0 13px; background:url(images/note_bg.gif) 1px 6px no-repeat; font-size:11px; }
+.form-list td.value p.note      { width:268px; }
+
+.columns .form-list             { width:auto; }
+.columns .form-list td.value    { width:300px; padding-right:5px !important; }
+.columns .form-list td.value .next-toinput { width:75px; display:inline; margin-right:5px; }
+.columns .form-list td.value .next-toselect input.input-text { width:195px!important; display:inline; }
+
+.columns .form-list td.value input[type="checkbox"][id*="use_"] { margin:4px 10px 0 0; vertical-align:top; }
+.columns .form-list td.value input[type="checkbox"][id*="use_"] + label { display:inline-block; vertical-align:top; margin:2px 0 0 -7px; }
+
+.fieldset-wide .form-list { width:100% !important; }
+.fieldset-wide .form-list td.value { width:auto !important; }
+.fieldset-wide .form-list td.value p.note,
+.fieldset-wide .form-list td.value input.input-text,
+.fieldset-wide .form-list td.value textarea { width:98% !important; }
+/*.fieldset-wide .form-list td.value select { display:block; }*/
+.fieldset-wide .form-list td.scope-label { white-space:nowrap; width:1px; }
+.fieldset-wide .form-list td.note { width:120px; }
+
+.multi-input                    { margin-bottom:8px; } /* Example: Address fields with 2 input lines */
+.grid tr .form-list tr          { background:#fff !important; } /* Follows grid row background-color */
+.grid tr.even .form-list tr     { background:#f6f6f6 !important; } /* Follows grid row background-color */
+.grid tr.on-mouse .form-list tr { background:#fcf5dd !important; } /* Follows grid row background-color */
+.grid tr .form-list             { margin:8px 0; }
+.field-row                      { display:block; margin-bottom:5px; }
+span.delete-image,
+span.delete-file                { display:block; white-space:nowrap; padding-left:25px; }
+span.delete-file                { padding:0; }
+
+/* Back compatibility with span forms */
+.entry-edit .field-row          { display:block; }
+.entry-edit .field-row label    { float:left; width:150px; }
+
+/* Form Button */
+.content-buttons.form-buttons,
+.content-header .form-buttons   { text-align:right; margin-bottom:0; }
+.content-header .content-buttons-placeholder { display:inline !important; }
+.content-header .form-buttons   { float:right; }
+.content-header td.form-buttons   { float:none; }
+.content-header .form-buttons button { margin-bottom:3px; }
+.sub-btn-set { border:1px solid #ddd; border-width:0 1px; background:url(images/sub_button_bg.gif) repeat; padding:3px 10px; text-align:right; }
+button::-moz-focus-inner { padding:0; border:0; } /* FF Fix */
+button { -webkit-border-fit:lines; } /* <- Safari & Google Chrome Fix */
+button,
+.form-button { border-width:1px; border-style:solid; border-color:#ed6502 #a04300 #a04300 #ed6502; padding:1px 7px 2px 7px; background:#ffac47 url(images/btn_bg.gif) repeat-x 0 100%; color:#fff; font-size: 12px; font-weight: bold; cursor:pointer; text-align:center !important; white-space:nowrap; }
+button:hover                    { background:#f77c16 url(images/btn_over_bg.gif) repeat-x 0 0; }
+button:active                   { background:#f77c16 url(images/btn_on_bg.gif) repeat-x 0 0; }
+button.delete,
+button.save,
+button.add                      { padding-left:6px; }
+button.cancel span,
+button.delete span,
+button.save span,
+button.add span,
+button.back span,
+button.add-image span,
+button.add-widget span { padding-left:20px; }
+/* Google Chrome specific fix for empty buttons */
+button.add span:after,
+button.delete span:after { display:inline-block; clear:both; content:"."; font-size:0; line-height:0; height:0; overflow:hidden; }
+button.back { border-color:#ccc #aaa #aaa #ccc; background-color:#fff; background-image:url(images/btn_back_bg.gif); color:#555; }
+button.back span { background-image:url(images/icon_btn_back.gif); }
+button.fail,
+button.cancel,
+button.delete { border-color:#d24403 #a92000 #a92000 #d24403; background-image:url(images/cancel_btn_bg.gif); background-color:#fcaf81; color:#fff; }
+button.fail:hover,
+button.cancel:hover,
+button.delete:hover { background-image:url(images/cancel_btn_over_bg.gif); }
+button.fail:active,
+button.cancel:active,
+button.delete:active { background-image:url(images/cancel_btn_active_bg.gif); background-color:#e0612f; }
+button.cancel span,
+button.delete span { background-image:url(images/cancel_btn_icon.gif); }
+button.add span     { background-image:url(images/add_btn_icon.gif); }
+button.save span    { background-image:url(images/save_btn_icon.gif); }
+button.add-image span { background-image:url(images/btn_add-image_icon.gif); }
+button.add-widget span { background-image:url(images/btn_add-widget_icon2.gif); padding-left:24px; }
+button.add-variable span { background-image:url(images/btn_add-variable_icon.gif); padding-left:26px; }
+button.go span { background-image:url(images/btn_go.gif); padding-left:16px; }
+button.btn-chooser { display:block; margin:0 0 10px; }
+button.success { background-image:url(images/btn_gr_bg.gif); border-color:#46745E; }
+button.success:hover { background:url(images/btn_gr_over.gif) #6cac46; }
+button.success:active { background:url(images/btn_gr_on.gif) repeat-x 0 0 #3fa05e; }
+
+button.disabled,
+button.disabled:hover,
+button.disabled:active { border-color:#777 #505050 #505050 #777; background:#919191 url(images/btn_bg-disabled.gif) 0 0 repeat-x; color:#fff; cursor:default; opacity:.8; }
+button.add.disabled span { background-image:url(images/add_btn_icon-disabled.gif); }
+
+button.loading > span { padding-left:20px; background-image: url(images/btn_loading-icon.gif) !important;}
+
+button.icon-btn { width:32px !important; }
+button.icon-btn span { text-indent:-999em; display:block; width:16px; padding:0; overflow:hidden; }
+
+.buttons-set { margin:0 0 10px; }
+.buttons-set button { margin-right:5px; }

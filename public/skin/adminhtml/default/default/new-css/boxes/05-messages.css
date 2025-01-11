@@ -1,0 +1,32 @@
+/* MESSAGES
+*******************************************************************************/
+.notification-global { padding:5px 27px 5px 47px; background:#fff9e9 url(images/error_msg_icon.gif) 27px 5px no-repeat; border-bottom:1px solid #eee2be; border-top:1px solid #eee2be; font-size:11px; line-height:16px; margin:0 0 -3px; color:#444; position:relative; }
+.notification-global-notice { background-image:url(images/note_msg_icon.gif); }
+.notification-global .label { color:#eb5e00; }
+.notification-global .clickable { cursor:pointer; }
+.notification-global span.critical { color:#d20000; }
+.notification-global a:hover { text-decoration:none; }
+
+.error,
+a.error span,
+.required,
+.validation-advice { color:#D40707 !important; font-weight:bold !important; }
+.notice { color:#ea7601}
+.messages ul { border:0 !important; }
+.messages li { min-height:23px !important; margin-bottom:11px !important; padding:8px 8px 2px 32px !important; font-size:.95em !important; font-weight:bold !important; }
+.messages ul li { margin:0 0 3px 0 !important; border:0 !important; padding:0 !important; }
+.error-msg { border:1px solid #f16048 !important; color:#df280a !important; background:#faebe7 url(images/error_msg_icon.gif) no-repeat 10px 10px !important; }
+.success-msg { border:1px solid #95a486 !important; color:#3d6611 !important; background:#eff5ea url(images/success_msg_icon.gif) no-repeat 10px 10px !important; }
+.notice-msg { border:1px solid #ffd967 !important; background:#fffbf0 url(images/note_msg_icon.gif) no-repeat 10px 10px !important; color:#3d6611 !important; }
+.warning-msg { border:1px solid #666e73 !important; background:#e6e6e6 url(images/warning_msg_icon.gif) no-repeat 10px 10px !important; color:#000000 !important; }
+.validation-advice { clear:both; min-height:15px; margin:3px 0 0 9px; background:url(images/validation_advice_bg.gif) no-repeat 2px 1px; padding-left:16px; font-size:.95em; font-weight:bold; line-height:1.25em; }
+.staging-datetime-advice .validation-advice { background-position:right center; padding:0 16px 0 0; }
+input.validation-failed, textarea.validation-failed { background:#fef0ed; border:1px dashed #d6340e; }
+
+/* Noscript Notice */
+.noscript { border:1px solid #000; border-width:0 0 1px; background:#ffff90; font-size:12px; line-height:1.25; text-align:center; color:#2f2f2f; }
+.noscript .noscript-inner { width:900px; margin:0 auto; padding:12px 0 12px; background:url(images/i_notice.gif) 20px 50% no-repeat; }
+.noscript p { margin:0; }
+
+/* For Demo store only */
+.demo-notice { margin:0; background:#d75f07; padding:5px 10px 6px 10px; color:#fff; line-height:1em; text-align:center; }

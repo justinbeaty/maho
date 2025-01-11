@@ -1,0 +1,126 @@
+
+/* TABLES
+*******************************************************************************/
+
+/* Grid - General */
+.grid                           { border-bottom:0; padding-bottom:.5em; }
+.grid table                     { width:100%; border:1px solid #cbd3d4; border-bottom:none; }
+.grid table.border              { border:1px solid #cbd3d4; }
+.grid tbody                     { background:#fff; }    /* Zebra odd-row */
+.grid tr.even, .grid tr.even tr { background:#f6f6f6; } /* Zebra even-row */
+.grid tr.on-mouse               { background:#fcf5dd; cursor:pointer; } /* Rows mouse-over */
+.grid tr.invalid                { background-color:#f5d6c7; }
+.grid th, .grid td              { padding:2px 4px 2px 4px; }
+.grid th                        { white-space:nowrap; }
+.grid td.editable input.input-text { width:50px !important; margin-left:4px !important; }
+.grid td input.input-text       { width:86%; }
+.grid td input.input-text-export-filter { width:272px; }
+.grid td input.input-text-range { width:104px; }
+.grid td input.input-text-range-date { width:87px; }
+.grid td input.input-inactive   { background:#eee; }
+.grid table td                  { border-width:0 1px 1px 0; border-color:#dadfe0; border-style:solid; }
+.grid table.border td           { background:#fff !important; }
+.grid table td.first,
+.grid table td.last             { border-right:0; }
+.grid table td.product          { text-align:right; }
+.grid table td.empty-text       { padding:15px; }
+.grid table td .action-select   { width:100%; }
+.grid .separator                { padding:0 4px; color:#b9b9b9; }
+
+.grid tbody.odd tr              { background:#fff !important; }
+.grid tbody.even tr             { background:#f6f6f6 !important; }
+.grid tbody.odd tr td,
+.grid tbody.even tr td          { border-bottom:0; }
+.grid tbody.odd tr.border td,
+.grid tbody.even tr.border td   { border-bottom:1px solid #dadfe0; }
+
+
+/* Grid - Pager and Buttons row */
+table.actions                   { width:100%; margin:.5em 0; }
+table.actions td                { vertical-align:top; }
+.pager select                   { width:4em!important; margin:0 4px; }
+.pager input.page               { width:2em !important; }
+.pager .arrow                   { margin:0 3px; vertical-align:middle; }
+
+
+/* Grid - Headings */
+.grid tr.headings { background:url(images/sort_row_bg.gif) 0 50% repeat-x; }
+.grid tr.headings th { border-width:1px; border-color:#f9f9f9 #d1cfcf #f9f9f9 #f9f9f9; border-style:solid; padding-top:1px; padding-bottom:0; font-size:.9em; white-space:nowrap;}
+.grid tr.headings th.last { border-right:0; }
+.grid tr.headings th.no-link { /* Grid th with no sorting functionality */ padding-top:2px; padding-bottom:1px; color:#67767e; }
+.grid tr.headings th a { display:block; padding:2px 4px 1px 0; color:#2d444f; text-decoration:none; }
+.grid tr.headings th a:hover { color:#d85909; text-decoration:none; }
+.grid tr.headings th a.sort-arrow-desc,
+.grid tr.headings th a.sort-arrow-asc { background:url(images/sort_on_bg.gif) 0 0 no-repeat; border-bottom:1px solid #fff; border-right:1px solid #fff; padding-bottom:2px; }
+.grid tr.headings th span.sort-title { display:block; padding:3px 12px 4px 0; line-height:1; }
+.grid tr.headings th a.sort-arrow-desc span.sort-title,
+.grid tr.headings th a.sort-arrow-asc span.sort-title { background-position:right 50%; background-repeat:no-repeat; padding:3px 12px 2px 8px; }
+.grid tr.headings th a.sort-arrow-desc span.sort-title { background-image:url(images/grid_sort_desc.gif); }
+.grid tr.headings th a.sort-arrow-asc span.sort-title { background-image:url(images/grid_sort_asc.gif); }
+
+
+/* Grid - Mass Action */
+.massaction { width:100%; height:26px; border:1px solid #d1cfcf; border-bottom:none; background:url(images/massaction_bg.gif) repeat-x 0 100% #ebebeb; font-size:.9em; }
+.massaction td                              { width:auto; border-top:1px solid #fff; padding:1px 8px; vertical-align:middle; }
+.massaction .entry-edit fieldset .select    { width:auto; /*width:120px;*/ display:inline; }
+.massaction .entry-edit fieldset select.validation-failed { border:1px dashed #eb340a !important; background:#faebe7 !important }
+.massaction .entry-edit fieldset            { margin:0; padding:0; background:none; border:none; }
+.massaction .entry-edit fieldset .field-row { display:inline; }
+.massaction .entry-edit .field-row label    { float:none; width:auto; margin-left:13px; }
+.massaction .entry-edit                     { margin:0 !important; padding:0; }
+.massaction .entry-edit .validation-advice  { display:none !important; }
+.massaction a { text-decoration:none; }
+.massaction .entry-edit fieldset span.form_row,
+.massaction .entry-edit fieldset span.field-row { clear:none !important; display:inline; float:left !important; margin:0; padding:0 5px 0 0; }
+
+.massaction .entry-edit .outer-span { float:left; }
+
+/* Grid - Filter */
+.grid tr.filter                  { background:url(images/filter_row_bg.gif) repeat-x #e3eff1; cursor:default; }
+.grid tr.filter th               { padding-top:5px; padding-bottom:5px; border:1px solid #bdbdbd; border-width:0 1px 1px 0; white-space:normal; }
+.grid tr.filter th.last          { border-right:0; }
+.grid tr.filter input.input-text { width:85%; }
+.grid tr.filter select           { width:100%; }
+.grid tr.filter .range .range-line { margin-bottom:3px; width:100px; }
+/*.grid tr.filter .range.filter-range .range-line { width: initial; }*/
+.grid tr.filter .range div.date  { min-width:121px; }
+.grid tr.filter .range input     { width:60px !important; margin-top:0; }
+.grid tr.filter .range input::placeholder { color: transparent; }
+.grid tr.filter .range select    { float:right; width:65px !important; margin-top:0; }
+.grid tr.filter .range .label    { display:block; width:30px; float:left; padding-right:3px; text-align:right; }
+/*.grid tr.filter .filter-range .label { display:none;}*/
+.grid tr.filter .date img        { width:15px; height:15px; cursor:pointer; vertical-align:middle; padding-left:3px; }
+.grid .head-massaction select    { width:auto !important; max-width:90px; }
+.grid select.select-export-filter,
+.grid select.multiselect-export-filter { width:278px; }
+
+/* Grid Footer */
+.grid table tfoot tr            { background:#D7E5EF; }
+.grid table tfoot tr td         { border-top:1px solid #9babb9; background:#e5ecf2; line-height:1.7em; }
+.grid table.border tfoot tr td  { background:#D7E5EF !important; }
+
+
+/* Dynamic Grid */ /* Used in pages like Catalog -> Attributes */
+.dynamic-grid th                { padding:2px;width:100px; }
+.dynamic-grid td                { padding:2px; }
+tr.dynamic-grid td,
+tr.dynamic-grid th { padding:2px 10px 2px 0; width:auto; }
+tr.dynamic-grid input.input-text { width:154px; }
+.available { color:#080; font-weight:bold; }
+.not-available { color:#800; }
+
+/* Grid - Copyable Cells */
+.icon-copy {
+    display: inline-block;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 111.07 122.88"><path d="M97.67 20.81h0l.01.02a13.38 13.38 0 0 1 9.46 3.93 13.32 13.32 0 0 1 3.9 9.42h.02v.02 75.28.01h-.02c-.01 3.68-1.51 7.03-3.93 9.46a13.32 13.32 0 0 1-9.42 3.9v.02h-.02-59.19-.01v-.02c-3.69-.01-7.04-1.5-9.46-3.93a13.37 13.37 0 0 1-3.91-9.42h0V34.2v-.01h.02c.01-3.69 1.52-7.04 3.94-9.46 2.41-2.4 5.73-3.9 9.42-3.91v-.02h.02l59.17.01h0zM.02 75.38L0 13.39v-.01h.02a13.44 13.44 0 0 1 3.93-9.46A13.37 13.37 0 0 1 13.37.01V0h.02 59.19c7.69 0 8.9 9.96.01 10.16H13.4h-.02v-.02c-.88 0-1.68.37-2.27.97-.59.58-.96 1.4-.96 2.27h.02v.01 3.17 58.81c0 8.26-10.15 8.72-10.15.01h0zm100.89 34.11V34.2v-.02h.02c0-.87-.37-1.68-.97-2.27-.59-.58-1.4-.96-2.28-.96v.02h-.01-59.19-.02v-.02c-.88 0-1.68.38-2.27.97-.59.58-.96 1.4-.96 2.27h.02v.01 75.28.02h-.02c0 .88.38 1.68.97 2.27s1.4.96 2.27.96v-.02h.01 59.19.02v.02c.87 0 1.68-.38 2.27-.97.59-.58.96-1.4.96-2.27h-.01 0 0 0z" fill-rule="evenodd"/></svg>');
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+    width: 12px;
+    height: 12px;
+    margin: 2px 0 0 2px;
+}
+
+.entry-edit-head .icon-copy { width: 11px; height: 11px; margin: 0 0 0 5px; filter: hue-rotate(0) brightness(0) contrast(1) saturate(0) invert(1); }
+
+.icon-copy-copied { background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 30 30"><path d="M26.98 5.99a1 1 0 0 0-.687.303L11 21.586l-6.293-6.293a1 1 0 1 0-1.414 1.414l7 7a1 1 0 0 0 1.414 0l16-16a1 1 0 0 0-.727-1.717z"/></svg>'); }
