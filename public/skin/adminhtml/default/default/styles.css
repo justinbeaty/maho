@@ -226,17 +226,13 @@ strong, b {
     display: inline-block;
 }
 
-.flex {
+.flex-row, .flex-col {
     display: flex;
     &.gap {
         gap: 16px;
     }
 }
-.flex-row {
-    display: flex;
-}
 .flex-col {
-    display: flex;
     flex-direction: column;
 }
 

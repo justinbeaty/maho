@@ -73,11 +73,13 @@ async function mahoFetch(url, options) {
         return result;
 
     } catch (error) {
-        console.error('mahoFetch error:', error);
         if (loaderArea !== false && typeof hideLoader === 'function') {
             hideLoader();
         }
-        throw error;
+        if (!error instanceof AbortError) {
+            console.error('mahoFetch error:', error);
+            throw error;
+        }
     }
 }
 
