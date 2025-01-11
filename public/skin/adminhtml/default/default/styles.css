@@ -329,38 +329,8 @@ strong, b {
                 }
             }
 
-            .header-right {
-                right: 0;
-                z-index: 200;
-
-                fieldset {
-                    display: inline;
-                    padding-left: 10px;
-                    line-height: 40px;
-
-                    input.input-text {
-                        width: 18em;
-                        width: 250px;
-                        border: 0 solid rgba(255, 102, 110, 0.4509803922);
-                        margin-top: -4px;
-                        background-color: #fff;
-                        padding-left: 10px;
-                        min-width: 250px;
-                        transition: width 100ms;
-                        transition-delay: 200ms;
-
-                        &:focus {
-                            width: calc(100vw - 160px);
-                        }
-                    }
-                }
-
-                .super {
-                    float: right;
-                    line-height: 1.8em;
-                    margin-bottom: 14px;
-                    margin-left: 1.3em;
-                }
+            #usermenu {
+                right: 16px;
             }
         }
     }
@@ -455,12 +425,6 @@ div.autocomplete {
     }
 }
 
-#nav ul li.active, #nav ul li {
-    float: none;
-    height: auto;
-    background: none;
-    margin: 0;
-}
 
 #usermenu {
     display: inline;
@@ -543,6 +507,13 @@ div.autocomplete {
     line-height: 0;
     height: 0;
     overflow: hidden;
+}
+
+#nav ul li.active, #nav ul li {
+    float: none;
+    height: auto;
+    background: none;
+    margin: 0;
 }
 
 #nav {
@@ -3323,7 +3294,7 @@ td.divider {
     }
 }
 
-.content-header-floating .content-header, .footer-content, #nav, .header-top {
+.content-header-floating .content-header, .footer-content, .header-top {
     padding-left: 15px;
     padding-right: 15px;
     width: 100%;
