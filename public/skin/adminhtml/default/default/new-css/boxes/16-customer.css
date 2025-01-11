@@ -16,3 +16,7 @@
 .delete-address                         { float:right; margin:0 0 10px 10px; }
 .address-type .address-type-line        { display:block; margin:2px 0; }
 .address-type .address-type-line input  { margin-right:3px; }
+
+.address-list li.on {
+  background: #fff;
+}

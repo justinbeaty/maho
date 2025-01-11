@@ -15,3 +15,68 @@ dl.accordion dt.open a, div.collapseable a.open  { background:url(images/entry_e
 dl.accordion dd         { display:none; }
 dl.accordion dd.open    { display:block; }
 img.accordion-btn       { float:right; margin-top:1px; margin-right:5px; }
+
+dl.accordion dt, .entry-edit .entry-edit-head {
+  background: #fefefe;
+  color: #2f2f2f;
+  padding: 4px 16px;
+  border: 1px solid lightgrey;
+}
+
+
+
+dl.accordion dt.open a, dl.accordion dt a:hover, dl.accordion dt a, div.collapseable a.open, div.collapseable a:hover, div.collapseable a, .entry-edit .entry-edit-head a, .entry-edit .entry-edit-head strong {
+  color: #2f2f2f;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 32px;
+}
+
+dl.accordion dt a:after, div.collapseable a:after {
+  content: "";
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 6px 0 6px;
+  border-color: #888 transparent transparent transparent;
+}
+
+dl.accordion dt.open a:after, div.collapseable a.open:after {
+  content: "";
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 6px 8px 6px;
+  border-color: transparent transparent #888 transparent;
+}
+
+div.collapseable {
+  margin-top: 10px;
+}
+div.collapseable a {
+  position: relative;
+  background: none;
+}
+div.collapseable a.open {
+  background: none;
+}
+
+
+dl.accordion dt {
+  margin-top: 10px;
+}
+dl.accordion dt a {
+  position: relative;
+  background: none;
+}
+dl.accordion dt.open a {
+  background: none;
+}

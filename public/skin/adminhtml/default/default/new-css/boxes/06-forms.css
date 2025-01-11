@@ -163,3 +163,40 @@ button.icon-btn span { text-indent:-999em; display:block; width:16px; padding:0;
 
 .buttons-set { margin:0 0 10px; }
 .buttons-set button { margin-right:5px; }
+
+
+.box, .entry-edit .fieldset, .entry-edit fieldset {
+  border: 1px solid lightgrey;
+  background: #eee;
+  border-top: 1px solid lightgrey;
+}
+
+.entry-edit {
+  margin-top: 10px;
+}
+.entry-edit .entry-edit-head h4 {
+  color: #2f2f2f;
+  line-height: 32px;
+  font-size: 16px;
+  font-weight: 300;
+}
+.entry-edit .entry-edit-head .tools {
+  line-height: 32px;
+}
+.entry-edit .entry-edit-head .tools a:hover {
+  text-decoration: none;
+}
+.entry-edit .entry-edit-head .icon-copy {
+  width: 16px;
+  height: 16px;
+  margin: 8px 0 0 5px;
+  filter: revert;
+}
+
+
+.sub-btn-set {
+  border: 0;
+  padding: 6px 10px;
+  background: #eee;
+  border-top: 1px solid lightgrey;
+}

@@ -237,3 +237,32 @@ ul.item-options li { padding-left:.7em; }
 .packed-window .package-options td,
 .packed-window .package-options th { padding:1px 0; }
 .packed-window .buttons-set { padding-right:5px; }
+
+
+.order-totals {
+  background: #eee;
+  border: 1px solid lightgrey !important;
+}
+
+.order-choose-address {
+  background: #fff;
+}
+
+.order-save-in-address-book {
+  background: #fff;
+}
+
+#payment_pphs_settings_advanced-head {
+  margin-bottom: 10px;
+}
+
+#payment_settings_payments_standart_advanced-head {
+  margin-bottom: 10px;
+}
+
+#payment_settings_ec_advanced-head {
+  margin-bottom: 10px;
+}
+#address_form_container {
+  margin-top: 0;
+}

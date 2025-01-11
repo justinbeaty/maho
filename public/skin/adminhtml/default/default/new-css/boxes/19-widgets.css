@@ -66,3 +66,33 @@ dialog #contents .nm img { vertical-align:bottom; }
 .backup-dialog input[type=text], .backup-dialog input[type=password] {width: 180px}
 .backup-dialog .exclude-media-checkbox-container {margin-top: 15px;}
 .backup-dialog td.maintenance-checkbox-container {margin-top: 0; padding-top: 4px;}
+
+
+.options-box .option-header {
+  background: none;
+  border: 0;
+}
+.options-box .option-title {
+  border-bottom: 1px solid #c8c8c8;
+}
+.options-box .option-box {
+  background: #fff;
+  border: 0;
+}
+
+
+.dialog table.table_window {
+  background: #fff;
+  border: 0;
+}
+.dialog table.table_window td {
+  padding: 6px 0;
+  vertical-align: middle;
+}
+.dialog table.table_window th {
+  padding: 6px 0;
+  vertical-align: middle;
+}
+.dialog table.table_window .fieldset td {
+  vertical-align: top;
+}

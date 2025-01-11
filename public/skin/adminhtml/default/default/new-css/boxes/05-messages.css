@@ -30,3 +30,77 @@ input.validation-failed, textarea.validation-failed { background:#fef0ed; border
 
 /* For Demo store only */
 .demo-notice { margin:0; background:#d75f07; padding:5px 10px 6px 10px; color:#fff; line-height:1em; text-align:center; }
+
+
+.notification-global {
+  background: #f9f5ec url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='%23d50000' d='M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z' /%3E%3C/svg%3E") 27px 5px no-repeat;
+  background-size: 15px;
+}
+
+#page-help-link {
+  display: none;
+}
+
+
+.messages li {
+  font-weight: 400 !important;
+  font-size: 12px !important;
+  padding: 10px 26px 10px 35px !important;
+  min-height: inherit !important;
+}
+.messages ul li {
+  margin: 0 !important;
+}
+.notice-msg {
+  background-image: url(images/information-variant.svg) !important;
+  background-repeat: no-repeat !important;
+  background-size: 23px 23px !important;
+  background-color: #f9f5ec !important;
+  background-position: 8px center !important;
+  border: 1px solid #dfc97a !important;
+  color: #2f2f2f !important;
+}
+
+.error-msg {
+  background-image: url(images/icon-error.png) !important;
+  background-repeat: no-repeat !important;
+  background-size: 23px 23px !important;
+  background-color: #f3dcd8 !important;
+  background-position: 8px center !important;
+  border: 1px solid #963535 !important;
+  color: #963535 !important;
+}
+
+.success-msg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='%23185b00' d='M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z' /%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-size: 16px 16px !important;
+  background-color: #e4eecb !important;
+  background-position: 8px center !important;
+  border: 1px solid #ceceb6 !important;
+  color: #185b00 !important;
+}
+
+.warning-msg {
+  background-image: url(images/information-variant.svg) !important;
+  background-repeat: no-repeat !important;
+  background-size: 23px 23px !important;
+  background-color: #fffbf0 !important;
+  background-position: 8px center !important;
+  border: 1px solid #d87e34 !important;
+  color: #2f2f2f !important;
+}
+
+.validation-advice {
+  color: #fa4545 !important;
+  font-size: 12px;
+  font-weight: 600 !important;
+}
+
+.error {
+  color: #fa4545 !important;
+}
+
+.required {
+  color: #fa4545 !important;
+}

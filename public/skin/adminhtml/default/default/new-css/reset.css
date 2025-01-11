@@ -59,3 +59,118 @@ dt                      { display:block; }
 /* Size */
 small                   { font-size:.9em; }
 big                     { font-size:1.25em; }
+
+
+body {
+  color: #2f2f2f;
+  font: 400 12px/1.33 ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  background: #f6f6f6;
+}
+
+
+
+
+.warning-msg, .success-msg, .error-msg, .notice-msg {
+  border-radius: 5px;
+  margin: 20px 0;
+  padding: 10px 26px 10px 35px;
+  position: relative;
+  text-shadow: none;
+}
+
+
+
+h1 {
+  color: #2f2f2f;
+  font-weight: 400;
+}
+
+h2 {
+  color: #2f2f2f;
+  font-weight: 400;
+}
+
+h3 {
+  color: #2f2f2f;
+  font-weight: 400;
+}
+
+h4 {
+  color: #2f2f2f;
+  font-weight: 400;
+}
+
+h5 {
+  color: #2f2f2f;
+  font-weight: 400;
+}
+
+h6 {
+  color: #2f2f2f;
+  font-weight: 400;
+}
+
+label {
+  color: #2f2f2f;
+  font-weight: 400;
+}
+
+a {
+  display: inline;
+  color: #269de7;
+  text-decoration: none;
+}
+a:visited {
+  color: #269de7;
+}
+a:focus {
+  color: #3378a3;
+  text-decoration: none;
+}
+a:hover {
+  color: #3378a3;
+  text-decoration: none;
+}
+a:active {
+  color: #3378a3;
+  text-decoration: none;
+}
+a.error span {
+  color: #fa4545 !important;
+}
+
+strong {
+  font-weight: 600;
+}
+
+b {
+  font-weight: 600;
+}
+
+small {
+  font-size: 12px;
+  color: #2f2f2f;
+}
+
+
+.bold {
+  font-weight: 600 !important;
+}
+
+
+
+.no-display {
+  display: none !important;
+}
+
+
+
+
+.emph, .accent {
+  color: #0090FF !important;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  select option:disabled,
+  select:disabled option { color:#202856!important; }
+}
