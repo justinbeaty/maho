@@ -426,72 +426,6 @@ div.autocomplete {
 }
 
 
-#usermenu {
-    display: inline;
-    float: right;
-    text-align: left;
-
-    & ul {
-        position: absolute;
-        width: 220px;
-        top: 40px;
-        right: -10000px;
-        display: none;
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.207843), 0 0 5px rgba(0, 0, 0, 0.207843);
-        background: #fff;
-
-        & li {
-
-            & a:hover {
-                color: #2f2f2f;
-                text-decoration: none;
-                background: var(--color-main-xs);
-                display: block;
-                background: #202856;
-            }
-
-            &.last {
-
-                & span {
-                    border-bottom: none;
-                }
-            }
-        }
-    }
-
-    & li {
-
-        & ul {
-
-            & li {
-                right: 5px;
-                display: block;
-            }
-
-            & span {
-                border-bottom: 1px dotted hsl(205, 40%, 75%);
-                display: block;
-                line-height: 31px;
-                padding: 0 10px;
-            }
-        }
-    }
-
-    & li:hover {
-
-        & ul {
-            right: 27px;
-            display: block;
-
-            & a {
-                color: #000537;
-                text-decoration: none;
-                background: hsl(205, 52%, 95%);
-                display: block;
-            }
-        }
-    }
-}
 
 .nav-bar {
     padding: 0 64px;
@@ -576,21 +510,71 @@ div.autocomplete {
     }
 }
 
-#nav {
 
+#usermenu {
+    display: inline;
+    float: right;
+    text-align: left;
 
+    & ul {
+        position: absolute;
+        width: 220px;
+        top: 40px;
+        right: -10000px;
+        display: none;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.207843), 0 0 5px rgba(0, 0, 0, 0.207843);
+        background: #fff;
 
-    .level0 > a:after {
-        content: "";
-        display: block;
-        margin-top: 10px;
-        height: 3px;
-        font-size: 0;
+        & li {
+
+            & a:hover {
+                color: #2f2f2f;
+                text-decoration: none;
+                background: var(--color-main-xs);
+                display: block;
+                background: #202856;
+            }
+
+            &.last {
+
+                & span {
+                    border-bottom: none;
+                }
+            }
+        }
     }
 
-    .level0.active > a {
-        font-weight: 600;
-        background: #273169;
+    & li {
+
+        & ul {
+
+            & li {
+                right: 5px;
+                display: block;
+            }
+
+            & span {
+                border-bottom: 1px dotted hsl(205, 40%, 75%);
+                display: block;
+                line-height: 31px;
+                padding: 0 10px;
+            }
+        }
+    }
+
+    & li:hover {
+
+        & ul {
+            right: 27px;
+            display: block;
+
+            & a {
+                color: #000537;
+                text-decoration: none;
+                background: hsl(205, 52%, 95%);
+                display: block;
+            }
+        }
     }
 }
 
