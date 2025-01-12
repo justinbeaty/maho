@@ -1036,49 +1036,38 @@ ul.tabs, ul.tabs-horiz {
 
 
 
-
 .notification-global {
-    padding: 5px 27px 5px 47px;
-    background: #fff9e9 url(images/error_msg_icon.gif) 27px 5px no-repeat;
+    display: flex;
+    gap: 8px;
+    padding: 8px 24px;
+    background: #fff9e9;
     border-bottom: 1px solid #eee2be;
-    border-top: 1px solid #eee2be;
-    font-size: 11px;
-    line-height: 16px;
-    margin: 0 0 -3px;
-    color: #444;
-    position: relative;
-    background: #f9f5ec url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' style='width:24px;height:24px' viewBox='0 0 24 24'%3E%3Cpath fill='%23d50000' d='M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z' /%3E%3C/svg%3E") 27px 5px no-repeat;
-    background-size: 15px;
+    font-size: 0.75rem;
+
+    &:before {
+        content: "";
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%23d50000" d="M13,13H11V7H13M13,17H11V15H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>');
+    }
 
     .label {
-        color: #eb5e00;
+        flex-grow: 1;
     }
 
     .clickable {
         cursor: pointer;
     }
 
-    & span.critical {
-        color: #d20000;
-    }
-
-    & a:hover {
-        text-decoration: none;
+    .critical {
+        color: #d50000;
     }
 }
 
-.notification-global-notice {
-    background-image: url(images/note_msg_icon.gif);
-}
-
-.error, a.error span, .required, .validation-advice {
-    color: #D40707 !important;
-    font-weight: bold !important;
-}
-
-.notice {
-    color: #ea7601;
-}
 
 
 .validation-advice {
@@ -1095,13 +1084,6 @@ ul.tabs, ul.tabs-horiz {
     font-weight: 600 !important;
 }
 
-.staging-datetime-advice {
-
-    .validation-advice {
-        background-position: right center;
-        padding: 0 16px 0 0;
-    }
-}
 
 input.validation-failed, textarea.validation-failed {
     background: #fef0ed;
@@ -1109,8 +1091,13 @@ input.validation-failed, textarea.validation-failed {
 }
 
 
-#page-help-link {
-    display: none;
+.error, a.error span, .required {
+    color: #D40707 !important;
+    font-weight: bold !important;
+}
+
+.notice {
+    color: #ea7601;
 }
 
 .error {

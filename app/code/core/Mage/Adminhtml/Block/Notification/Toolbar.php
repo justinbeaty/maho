@@ -60,6 +60,33 @@ class Mage_Adminhtml_Block_Notification_Toolbar extends Mage_Adminhtml_Block_Tem
     }
 
     /**
+     * Retrieve count of each error as HTML
+     */
+    public function getMessageStats(): string
+    {
+        $parts = [];
+
+        if ($this->getCriticalCount()) {
+            $parts[] = '<strong class="critical">'.$this->getCriticalCount().'</strong> ' . $this->__('critical');
+        }
+
+        if ($this->getMajorCount()) {
+            $parts[] = '<strong>'.$this->getMajorCount().'</strong> ' . $this->__('major');
+        }
+
+        if ($this->getMinorCount()) {
+            $parts[] = '<strong>'.$this->getMinorCount().'</strong> ' . $this->__('minor');
+        }
+
+        if ($this->getNoticeCount()) {
+            $parts[] = '<strong>'.$this->getNoticeCount().'</strong> ' . $this->__('notice');
+        }
+
+        $last = array_pop($parts);
+        return implode(', ', $parts) . $this->__(' and ') . $last;
+    }
+
+    /**
      * Retrieve count of critical errors
      *
      * @return int
