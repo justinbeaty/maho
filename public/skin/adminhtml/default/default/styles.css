@@ -510,25 +510,21 @@ div.autocomplete {
             height: 38px;
             line-height: 38px;
 
-            .active & {
-                color: #fff;
-                font-weight: bold;
-            }
         }
         &:hover > a {
-            background: #2c3878;
             color: #fff;
+            background: #2c3878;
+        }
+        &.active > a {
+            font-weight: bold;
         }
     }
 
     li.parent {
-        a {
+        & > a {
             cursor: default;
         }
-    }
-
-    li.level0 ul {
-        li.parent > a:after {
+        &:not(.level0) > a:after {
             /* Draw triangle */
             content: "";
             position: absolute;
@@ -541,49 +537,11 @@ div.autocomplete {
             border-color: transparent transparent transparent #c8c8c8;
         }
     }
+
 }
 
 #nav {
-    li {
 
-
-            & li.parent {
-
-                & a {
-                    cursor: default;
-                }
-
-                & li.parent {
-
-                    & a {
-                        cursor: default;
-                    }
-
-                    & li {
-
-                        & a {
-                            cursor: pointer;
-                        }
-                    }
-                }
-
-                & li {
-
-                    & a {
-                        cursor: pointer;
-                    }
-                }
-            }
-
-            & li {
-
-                & a {
-                    cursor: pointer;
-                }
-            }
-        }
-
-    }
 
     & li:hover {
         z-index: 999;
