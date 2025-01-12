@@ -331,6 +331,10 @@ strong, b {
 
             #usermenu {
                 right: 16px;
+                svg {
+                    height: 100%;
+                    width: auto;
+                }
             }
         }
 
@@ -406,6 +410,10 @@ strong, b {
                     top: 40px;
                     left: 0px;
                 }
+                #usermenu & {
+                    left: unset;
+                    right: 0;
+                }
             }
         }
 
@@ -452,82 +460,6 @@ strong, b {
 }
 
 
-#usermenu {
-    display: inline;
-    float: right;
-    text-align: left;
-
-    & ul {
-        position: absolute;
-        width: 220px;
-        top: 40px;
-        right: -10000px;
-        display: none;
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.207843), 0 0 5px rgba(0, 0, 0, 0.207843);
-        background: #fff;
-
-        & li {
-
-            & a:hover {
-                color: #2f2f2f;
-                text-decoration: none;
-                background: var(--color-main-xs);
-                display: block;
-                background: #202856;
-            }
-
-            &.last {
-
-                & span {
-                    border-bottom: none;
-                }
-            }
-        }
-    }
-
-    & li {
-
-        & ul {
-
-            & li {
-                right: 5px;
-                display: block;
-            }
-
-            & span {
-                border-bottom: 1px dotted hsl(205, 40%, 75%);
-                display: block;
-                line-height: 31px;
-                padding: 0 10px;
-            }
-        }
-    }
-
-    & li:hover {
-
-        & ul {
-            right: 27px;
-            display: block;
-
-            & a {
-                color: #000537;
-                text-decoration: none;
-                background: hsl(205, 52%, 95%);
-                display: block;
-            }
-        }
-    }
-}
-
-#usermenu > li > a {
-    padding: 0 27px 0 20px;
-    display: block;
-
-    & svg {
-        height: 40px;
-        width: auto;
-    }
-}
 
 /*==== excluded from nesting ===*/
 /* 02 - table */
