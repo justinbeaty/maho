@@ -176,6 +176,15 @@ strong, b {
     color: #0090FF !important;
 }
 
+.box {
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+}
+
+
+
 
 /* === Utility Classes === */
 
@@ -266,7 +275,7 @@ strong, b {
 }
 
 
-.config-heading:after, .side-col .switcher:after, .message-popup .message-popup-head:after, .message-popup .message-popup-content .message:after, .login-form .form-buttons:after, .wrapper:after, .option-title:after, .columns:after, .main-col:after, .content-header-floating:after, .entry-edit .entry-edit-head:after, .content-header:after, .login-box .button-set:after, ul.tabs-horiz:after, .header-top:after, dl.accordion dt:after, .field-100:after, .entry-edit fieldset li:after, .entry-edit fieldset span.field-row:after, .content:after, #topnav:after, .main:after, .container:after, .footer:after, .middle:after, .header:after, .box-head:after, div.actions:after, .tier-container:after, .clear:after, .notification-global:after, .files .row:after, .files-wide .row:after, .grid tr.filter .range .range-line:after, .store-scope:after {
+.config-heading:after, .side-col .switcher:after, .message-popup .message-popup-head:after, .message-popup .message-popup-content .message:after, .login-form .form-buttons:after, .wrapper:after, .option-title:after, .columns:after, .main-col:after, .content-header-floating:after, .content-header:after, .login-box .button-set:after, ul.tabs-horiz:after, .header-top:after, dl.accordion dt:after, .field-100:after, .entry-edit fieldset li:after, .entry-edit fieldset span.field-row:after, .content:after, #topnav:after, .main:after, .container:after, .footer:after, .middle:after, .header:after, .box-head:after, div.actions:after, .tier-container:after, .clear:after, .notification-global:after, .files .row:after, .files-wide .row:after, .grid tr.filter .range .range-line:after, .store-scope:after {
     display: block;
     clear: both;
     content: ".";
@@ -704,39 +713,6 @@ strong, b {
     }
 
 
-    .grid-severity-minor, .grid-severity-major, .grid-severity-critical, .grid-severity-notice {
-        background: none;
-        padding: 0;
-        height: auto;
-    }
-
-    .grid-severity-minor span, .grid-severity-major span, .grid-severity-critical span, .grid-severity-notice span {
-        padding: 2px 10px;
-    }
-
-    .grid-severity-minor span, .grid-severity-major span {
-        border: 0;
-        background: #f0ad4e;
-        color: #fff;
-    }
-
-    .grid-severity-notice {
-
-        & span {
-            border: 0;
-            background: #56af45;
-            color: #fff;
-        }
-    }
-
-    .grid-severity-critical {
-        & span {
-            border: 0;
-            background: #fa4545;
-            color: #fff;
-        }
-    }
-
 }
 
 .grid-container {
@@ -1164,13 +1140,6 @@ table.form-edit {
 }
 
 
-.entry-edit .entry-edit-head {
-    padding: 4px 16px;
-    border: 1px solid lightgrey;
-    color: #2f2f2f;
-    background: #fefefe;
-}
-
 
 div.disabled {
     background: #c6cbc9 !important;
@@ -1181,61 +1150,57 @@ div.disabled {
     }
 }
 
+/* ================= myentry  */
+
 .entry-edit {
 
-    & fieldset.collapseable {
-        margin-bottom: 10px;
+    background: #fff;
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+    margin-bottom: 16px;
+
+    & > * {
+        padding: 8px 16px;
+        &:not(:last-child) {
+            border-bottom: 1px solid lightgrey;
+        }
     }
-}
-
-.box, .entry-edit fieldset, .entry-edit .fieldset {
-    padding: 10px 15px;
-    margin-bottom: 15px;
-}
-
-.entry-edit {
-    margin-top: 10px;
 
     .entry-edit-head {
 
-        & h4 {
-            float: left;
-            padding: 0;
-            background: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        h4 {
+            flex-grow: 1;
             margin: 0;
-            color: #fff;
-            font-size: 1em;
-            line-height: 18px;
-            min-height: 0;
-            color: #2f2f2f;
-            line-height: 32px;
-            font-size: 16px;
-            font-weight: 300;
-        }
-
-        .tools {
-            float: right;
-            line-height: 32px;
-
-            & a:hover {
-                text-decoration: none;
-            }
-        }
-
-        .icon-copy {
-            width: 16px;
-            height: 16px;
-            margin: 8px 0 0 5px;
-            filter: revert;
         }
     }
 
+}
+
+
+.nested-content {
+    .entry-edit {
+        margin-left: 2em;
+        .entry-edit {
+            margin-left: 0;
+        }
+    }
+}
+
+
+
+
+/* move to forms */
+
+.entry-edit {
     .content {
-        margin-left: 0 !important;
-        padding: 10px 15px;
+        .form-list {
+            width: 100%;
+        }
     }
-
-
     .field-row {
         display: block;
 
@@ -1244,36 +1209,30 @@ div.disabled {
             width: 150px;
         }
     }
-}
 
-.entry-edit .entry-edit-head strong, .entry-edit .entry-edit-head a {
-    color: #fff;
-    font-size: 1em;
-    line-height: 18px;
-    min-height: 0;
-    font-weight: bold;
-}
+    .fieldset, fieldset {
+        .form_row, .hint {
+            float: left;
+            color: #999;
+            padding-left: 12em;
+        }
 
-.entry-edit fieldset li, .entry-edit .fieldset li {
-    margin: 4px 0;
-}
-
-.entry-edit fieldset span.form_row, .entry-edit .fieldset span.form_row, .entry-edit fieldset .field-row .hint, .entry-edit .fieldset .field-row .hint {
-    float: left;
-    color: #999;
-    padding-left: 12em;
-}
-
-.nested-content {
-
-    .entry-edit {
-        margin-left: 2em;
-
-        .entry-edit {
-            margin-left: 0;
+        li {
+            margin: 4px  0;
         }
     }
+
+
 }
+
+
+
+
+
+
+
+
+
 
 #coupon_container {
 
@@ -1551,26 +1510,6 @@ input[type=text].disabled {
                 background: #fff !important;
             }
         }
-
-        &.even {
-
-            .form-list {
-
-                & tr {
-                    background: #f6f6f6 !important;
-                }
-            }
-        }
-
-        &.on-mouse {
-
-            .form-list {
-
-                & tr {
-                    background: #fcf5dd !important;
-                }
-            }
-        }
     }
 }
 
@@ -1607,6 +1546,7 @@ span.delete-file {
 .form-buttons, .buttons-set {
     display: inline-flex;
     align-items: center;
+    justify-content: end;
     gap: 8px;
 }
 
@@ -1699,11 +1639,6 @@ button, .form-button {
 
 
 
-.box, .entry-edit .fieldset, .entry-edit fieldset {
-    border: 1px solid lightgrey;
-    background: #eee;
-    border-top: 1px solid lightgrey;
-}
 
 input.input-text, textarea, select {
     font: 400 0.75rem ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -1797,10 +1732,7 @@ td.divider {
     line-height: 0;
 }
 
-.box, .entry-edit fieldset, .entry-edit .fieldset {
-    border: 1px solid #d6d6d6;
-    background: #fafafa;
-}
+
 
 /*==== excluded from nesting ===*/
 
@@ -2287,14 +2219,9 @@ ul.item-options {
     background: #fff;
 }
 
+
+
 .entry-edit {
-
-    .content {
-
-        .form-list {
-            width: 100%;
-        }
-    }
 
     .order-address {
 
@@ -2308,6 +2235,9 @@ ul.item-options {
         .select {
             width: 96.5%;
         }
+        .input-text, .textarea {
+            width: 95% !important;
+        }
 
         .validate-vat {
             text-align: right;
@@ -2317,9 +2247,6 @@ ul.item-options {
     }
 }
 
-.entry-edit .order-address input.input-text, .entry-edit .order-address .textarea {
-    width: 95% !important;
-}
 
 .order-search-items {
 
@@ -4025,80 +3952,6 @@ img.attribute-global {
         border: 0;
     }
 
-    .section-config > .entry-edit-head {
-        background: #e6e6e6;
-        border: 1px solid #d6d6d6;
-        margin: -1px 0 0;
-        padding: 4px 12px;
-        border: 0;
-    }
-
-    .section-config > .entry-edit-head > a {
-        color: #2f2f2f;
-        background: url(images/bkg_config-nested.png) 100% 5px no-repeat;
-        background: none;
-        color: #2f2f2f;
-        font-size: 14px;
-        font-weight: 400;
-        border: 0;
-
-        &.open {
-            background-position: 100% -195px;
-        }
-    }
-
-    .section-config > .entry-edit-head > a:hover {
-    }
-
-    .section-config.active > .entry-edit-head > a.open {
-    }
-
-    .config-advanced > .entry-edit-head {
-        background: none;
-        padding: 0 0 0;
-        border: 0;
-        border: 0;
-        font-size: 14px;
-        box-shadow: none;
-
-        & a {
-            background: none;
-            padding: 0;
-            display: inline-block;
-            border-bottom: 1px dotted #f67610;
-            color: #f67610!important;
-            line-height: 1.1;
-            white-space: nowrap;
-
-            &.open:after {
-                background-position: 0 -5px;
-            }
-        }
-
-        & a:after {
-            content: '';
-            width: 7px;
-            height: 5px;
-            background: url(images/bkg_config-advanced.png) no-repeat 0 0;
-            overflow: hidden;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: -13px;
-            margin-left: 5px;
-            top: 5px;
-        }
-
-        &.collapseable {
-
-            & a:after {
-                border: none;
-            }
-
-            & a.open:after {
-                border: none;
-            }
-        }
-    }
 
     .config-advanced > .config {
         border: 0;
@@ -4447,6 +4300,40 @@ ul.super-product-attributes {
     color: #444;
     font-weight: bold;
 }
+
+.grid-severity-minor, .grid-severity-major, .grid-severity-critical, .grid-severity-notice {
+    background: none;
+    padding: 0;
+    height: auto;
+}
+
+.grid-severity-minor span, .grid-severity-major span, .grid-severity-critical span, .grid-severity-notice span {
+    padding: 2px 10px;
+}
+
+.grid-severity-minor span, .grid-severity-major span {
+    border: 0;
+    background: #f0ad4e;
+    color: #fff;
+}
+
+.grid-severity-notice {
+
+    & span {
+        border: 0;
+        background: #56af45;
+        color: #fff;
+    }
+}
+
+.grid-severity-critical {
+    & span {
+        border: 0;
+        background: #fa4545;
+        color: #fff;
+    }
+}
+
 
 .grid-severity-critical, .grid-severity-critical span, .grid-severity-major, .grid-severity-major span, .grid-severity-minor, .grid-severity-minor span, .grid-severity-notice, .grid-severity-notice span {
     display: block;
