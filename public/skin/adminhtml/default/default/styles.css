@@ -333,6 +333,10 @@ strong, b {
                 right: 16px;
             }
         }
+
+        .nav-bar {
+            padding: 0 64px;
+        }
     }
 
     & > .middle {
@@ -385,51 +389,8 @@ div.main-col-inner {
 
 
 
-#global_search_indicator {
-    position: absolute;
-    margin-left: -20px;
-}
-
-div.autocomplete {
-    z-index: 10000;
-    position: absolute;
-    width: 250px;
-    background-color: white;
-    border: 1px solid #888;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    box-shadow: 0 3px 3px rgba(50, 50, 50, 0.15);
-
-    & ul {
-        margin: 0;
-        padding: 0;
-
-        & li.selected {
-            background-color: #dcebf0;
-        }
-
-        & li {
-            padding: .5em .7em;
-            min-height: 32px;
-            cursor: pointer;
-            text-align: left;
-            color: #2f2f2f;
-            line-height: 1.3em;
-            color: #2f2f2f;
-
-            &.selected {
-                background: #eee;
-            }
-        }
-    }
-}
 
 
-
-.nav-bar {
-    padding: 0 64px;
-}
 
 #nav {
     display: flex;
