@@ -1235,10 +1235,6 @@ div.disabled {
         padding: 10px 15px;
     }
 
-    .form-buttons {
-        float: right;
-        margin: 2px -3px 2px 0pt;
-    }
 
     .field-row {
         display: block;
@@ -1593,29 +1589,6 @@ span.delete-file {
     padding: 0;
 }
 
-.content-buttons.form-buttons, .content-header .form-buttons {
-    text-align: right;
-    margin-bottom: 0;
-}
-
-.content-header {
-
-    .content-buttons-placeholder {
-        display: inline !important;
-    }
-
-    .form-buttons {
-        float: right;
-
-        & button {
-            margin-bottom: 3px;
-        }
-    }
-
-    & td.form-buttons {
-        float: none;
-    }
-}
 
 .sub-btn-set {
     border: 1px solid #ddd;
@@ -1630,6 +1603,12 @@ span.delete-file {
 }
 
 
+
+.form-buttons, .buttons-set {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
 
 button, .form-button {
 
@@ -1719,15 +1698,6 @@ button, .form-button {
 }
 
 
-
-
-.buttons-set {
-    margin: 0 0 10px;
-
-    & button {
-        margin-right: 5px;
-    }
-}
 
 .box, .entry-edit .fieldset, .entry-edit fieldset {
     border: 1px solid lightgrey;
@@ -2018,8 +1988,18 @@ td.divider {
     }
 }
 
-/*==== excluded from nesting ===*/
+
 /* 11 headings */
+
+
+.content-header {
+
+    .content-buttons-placeholder {
+        display: inline !important;
+    }
+
+}
+
 .content-header {
     margin-bottom: 18px;
     border-bottom: 4px solid #dfdfdf;
@@ -2048,15 +2028,6 @@ td.divider {
         }
     }
 
-    .button-set {
-        white-space: nowrap;
-        text-align: right;
-    }
-
-    .content-buttons {
-        white-space: nowrap!important;
-        margin: 0;
-    }
 
     & td.content-buttons {
         width: 13%;
@@ -2065,9 +2036,6 @@ td.divider {
     }
 }
 
-.content-buttons button, .content-header button {
-    margin: 0 0 0 5px;
-}
 
 .side-col {
 
@@ -2106,19 +2074,6 @@ td.divider {
         padding-right: 0;
     }
 
-    & button {
-        margin-top: 3px;
-    }
-
-    .content-buttons {
-        float: right;
-    }
-
-    .form-buttons {
-        padding-right: 20px;
-        padding-right: 0;
-    }
-
     & h3 {
         margin-left: 20px;
         display: inline;
@@ -2126,12 +2081,6 @@ td.divider {
     }
 }
 
-.content-buttons {
-    margin-bottom: 5px;
-    float: right;
-    display: inline;
-    white-space: nowrap;
-}
 
 .box-head {
     margin-bottom: .6em;
@@ -2156,6 +2105,10 @@ td.divider {
     font-weight: 400;
 }
 
+
+
+
+
 /*==== excluded from nesting ===*/
 /* 12 dashboard */
 .dashboard-container {
@@ -2168,11 +2121,6 @@ td.divider {
     }
 }
 
-/*==== excluded from nesting ===*/
-/* 13 store mgmt */
-.adminhtml-system-store-deletestore .content-footer .content-buttons, .adminhtml-system-store-deletegroup .content-footer .content-buttons, .adminhtml-system-store-deletewebsite .content-footer .content-buttons {
-    float: left;
-}
 
 /*==== excluded from nesting ===*/
 /* 14 sales */
@@ -2460,14 +2408,6 @@ ul.item-options {
         }
     }
 
-    .buttons-set {
-        margin: 0;
-        padding: 10px;
-
-        & button {
-            margin: 0 0 0 5px;
-        }
-    }
 }
 
 #product_composite_configure_messages {
@@ -3009,14 +2949,6 @@ ul.item-options {
 
 .packaging-window {
 
-    .entry-edit-head {
-        padding: 3px 5px;
-
-        & button {
-            float: right;
-        }
-    }
-
     .messages {
         border: 1px solid #f16048;
         color: #df280a;
@@ -3109,9 +3041,6 @@ ul.item-options {
         .grid {
             padding: 0;
 
-            & button {
-                vertical-align: middle;
-            }
         }
     }
 
@@ -3934,9 +3863,6 @@ img.rule-param-add {
         }
     }
 
-    .buttons-set {
-        margin: 10px 0;
-    }
 }
 
 .log-details {
@@ -4246,24 +4172,7 @@ tr:last-child {
     border: 0;
     margin: 4px 0 0;
 
-    .button-container {
-        float: right;
-        text-align: right;
-    }
-
     .button {
-
-        & span {
-            font-size: 14px;
-            font-weight: bold;
-            display: block;
-            text-shadow: 0 1px 1px #666;
-            text-transform: capitalize;
-            font-size: 13px;
-            font-weight: 400;
-            line-height: 28px;
-            text-shadow: none;
-        }
 
         .state-closed {
             height: auto;
@@ -4324,9 +4233,6 @@ tr:last-child {
     }
 }
 
-.config-heading .button:active, .config-heading .button:active span {
-    outline: 0!important;
-}
 
 td.label {
 
@@ -4434,20 +4340,7 @@ td.label {
         width: 200px;
     }
 
-    .field-row {
 
-        & button.delete {
-            vertical-align: middle;
-        }
-    }
-
-    & fieldset {
-
-        & button.add {
-            display: inline;
-            margin: 0;
-        }
-    }
 }
 
 .field-row {
@@ -4503,10 +4396,6 @@ ul.super-product-attributes {
         .progress-text {
             float: right;
             font-weight: bold;
-        }
-
-        .delete-button {
-            float: right;
         }
     }
 
@@ -4813,10 +4702,6 @@ ul.super-product-attributes {
         border-bottom: 1px solid #cddddd;
         border-bottom: 1px solid #c8c8c8;
 
-        & button {
-            float: right;
-        }
-
         & label {
             font-weight: bold;
             line-height: 21px;
@@ -4957,10 +4842,6 @@ dialog {
 }
 
 #catalog-wysiwyg-editor {
-
-    .buttons-set {
-        margin-top: 10px;
-    }
 
     .magento_content {
         height: auto !important;
