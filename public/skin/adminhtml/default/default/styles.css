@@ -376,6 +376,7 @@ strong, b {
 
     #page\:left {
         width: 256px;
+        flex-shrink: 0;
         .container-collapsed & {
             display: none;
         }
@@ -2814,6 +2815,10 @@ ul.item-options {
         display: none;
     }
 }
+
+
+/* === PayPal Config === */
+
 
 .pp-general-uk > .config-heading .heading strong, .pp-method-payflow > .config-heading .heading strong, .pp-method-express > .config-heading .heading strong, .pp-method-general > .config-heading .heading strong {
     padding-left: 56px;
