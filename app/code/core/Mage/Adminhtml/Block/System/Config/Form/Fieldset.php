@@ -48,24 +48,30 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
     protected function _getHeaderHtml($element)
     {
         $id = $element->getId();
-        $openAttr = (int) $this->_getCollapseState($element) ? ' open' : '';
+        $isOpen = (int) $this->_getCollapseState($element) ? ' open' : '';
+
+        $columns = [
+            '<colgroup class="label" />',
+            '<colgroup class="value" />',
+            '<colgroup class="scope-label" />',
+            '<colgroup class="" />',
+        ];
+        if ($this->getRequest()->getParam('website') || $this->getRequest()->getParam('store')) {
+            array_splice($columns, 2, 0, '<colgroup class="use-default" />');
+        }
+        $columns = implode('', $columns);
 
         $html = <<<HTML
-            <details class="{$this->_getFrontendClass($element)}"{$openAttr}>
+            <details class="{$this->_getFrontendClass($element)}"{$isOpen}>
                 {$this->_getHeaderTitleHtml($element)}
                 <input id="{$id}-state" name="config_state[{$id}]" type="hidden" value="{$this->_getCollapseState($element)}">
                 <fieldset id="{$id}" class="{$this->_getFieldsetCss($element)}">
                     <legend>{$element->getLegend()}</legend>
                     {$this->_getHeaderCommentHtml($element)}
                     <table cellspacing="0" class="form-list">
-                        <colgroup class="label" /><colgroup class="value" />
+                        {$columns}
+                        <tbody>
         HTML;
-
-        // field label column
-        if ($this->getRequest()->getParam('website') || $this->getRequest()->getParam('store')) {
-            $html .= '<colgroup class="use-default" />';
-        }
-        $html .= '<colgroup class="scope-label" /><colgroup class="" /><tbody>';
 
         if ($element->getIsNested()) {
             $html = '<tr class="nested"><td colspan="4">' . $html;
