@@ -689,8 +689,16 @@ strong, b {
             flex-direction: column;
             gap: 2px;
 
-            .range-line .label {
-                display: none;
+            .range-line {
+                .label {
+                    display: none;
+                }
+                input {
+                    min-width: 48px;
+                    &[type=number] {
+                        min-width: 64px;
+                    }
+                }
             }
         }
     }
@@ -734,13 +742,13 @@ strong, b {
 .grid-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
     margin: 8px 0;
 
     .actions {
         display: flex;
         align-items: center;
-        padding: 16px;
+        padding: 12px;
         background: #fff;
         border: 1px solid lightgrey;
         border-radius: 4px;
@@ -783,6 +791,10 @@ strong, b {
         align-items: center;
         justify-content: space-between;
         gap: 4px;
+        padding: 12px;
+        background: #fff;
+        border: 1px solid lightgrey;
+        border-radius: 4px;
 
         & > * {
             display: flex;
@@ -824,16 +836,6 @@ strong, b {
 
 .not-available {
     color: #800;
-}
-
-
-.entry-edit-head {
-    .icon-copy {
-        width: 11px;
-        height: 11px;
-        margin: 0 0 0 5px;
-        filter: hue-rotate(0) brightness(0) contrast(1) saturate(0) invert(1);
-    }
 }
 
 
