@@ -32,38 +32,35 @@
 </head>
 
 <body id="html-body"<?= $this->getBodyClass() ? ' class="' . $this->getBodyClass() . '"' : '' ?>>
-<?= $this->getChildHtml('notification_window') ?>
-<div class="wrapper">
-    <?= $this->getChildHtml('global_notices') ?>
-    <header class="header">
-        <?= $this->getChildHtml('header') ?>
-        <?= $this->getChildHtml('menu') ?>
-    </header>
-    <?= $this->getChildHtml('notifications') ?>
-    <div class="middle" id="anchor-content">
-        <div id="page:main-container">
-        <?php if($this->getChildHtml('left')): ?>
-            <div class="columns <?= $this->getContainerCssClass() ?>">
-                <aside class="side-col" id="page:left">
-                    <?= $this->getChildHtml('left') ?>
-                </aside>
-                <main class="main-col" id="content">
-                    <div class="main-col-inner">
+    <?= $this->getChildHtml('notification_window') ?>
+
+    <div class="wrapper">
+        <?= $this->getChildHtml('global_notices') ?>
+        <header class="header">
+            <?= $this->getChildHtml('header') ?>
+            <?= $this->getChildHtml('menu') ?>
+        </header>
+        <?= $this->getChildHtml('notifications') ?>
+        <div id="anchor-content" class="middle">
+            <div id="page:main-container">
+                <div id="page:container" class="columns <?php echo $this->getContainerCssClass() ?>">
+                <?php if($this->getChildHtml('left')): ?>
+                    <aside id="page:left" class="side-col">
+                        <?= $this->getChildHtml('left') ?>
+                    </aside>
+                <?php endif ?>
+                    <main id="content" class="main-col">
                         <div id="messages"><?= $this->getMessagesBlock()->toHtml() ?></div>
                         <?= $this->getChildHtml('content') ?>
-                    </div>
-                </main>
+                    </main>
+                </div>
             </div>
-        <?php else: ?>
-            <div id="messages"><?= $this->getMessagesBlock()->toHtml() ?></div>
-            <?= $this->getChildHtml('content') ?>
-        <?php endif ?>
         </div>
+        <footer class="footer">
+            <?= $this->getChildHtml('footer') ?>
+        </footer>
     </div>
-    <footer class="footer">
-        <?= $this->getChildHtml('footer') ?>
-    </footer>
-</div>
+
     <?= $this->getChildHtml('js') ?>
     <?= $this->getChildHtml('profiler') ?>
 <div id="loading-mask" style="display:none">

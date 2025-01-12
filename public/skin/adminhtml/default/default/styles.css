@@ -356,43 +356,23 @@ strong, b {
     }
 }
 
-.container-collapsed {
-    padding: 1.8em 2.2em 1.8em 2em;
-    padding-top: 0;
+#page\:container {
+    display: flex;
+    gap: 24px;
+
+    #page\:left {
+        width: 220px;
+        .container-collapsed & {
+            display: none;
+        }
+    }
+
+    #content {
+        flex-grow: 1;
+    }
 }
 
-.columns {
-    background: none;
-}
-
-div.side-col {
-    float: left;
-    width: 220px;
-    margin-right: -220px;
-    padding-bottom: 25px;
-}
-
-div.main-col {
-    margin-left: 220px;
-    min-height: 450px;
-    padding: 0 0 25px 25px;
-}
-
-div.main-col-inner {
-    float: left;
-    width: 100%;
-}
-
-
-
-
-
-
-
-
-
-
-#nav {
+#nav, #usermenu {
     display: flex;
     height: 40px;
 
@@ -5847,10 +5827,6 @@ dialog {
 }
 
 #widget-chooser {
-
-    .columns {
-        background-image: none;
-    }
 
     .magento_message {
         padding: 10px 18px;

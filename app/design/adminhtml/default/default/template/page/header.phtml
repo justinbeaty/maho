@@ -11,23 +11,21 @@
  */
 
 /** @var Mage_Adminhtml_Block_Page_Header $this */
-
-$globalSearchEnabled = Mage::getStoreConfigFlag('admin/global_search/enable') && Mage::getSingleton('admin/session')->isAllowed('admin/global_search');
 ?>
 <div class="header-top">
     <a href="<?= $this->getHomeLink() ?>" class="logo" title="Maho <?= Mage::getMahoVersion() ?>">
         <svg viewBox="0 0 242 237" xmlns="http://www.w3.org/2000/svg"><path d="M199 34c4 0 8 4 8 8v77c0 46-38 84-85 84H43c-4 0-8-4-8-8v-82c0-43 36-79 80-79h84zm-79 29c-30 0-54 25-54 55a54 54 0 0 0 109 0c0-30-25-55-55-55z" fill="#d7df22"/></svg>
 	</a>
     <ul id="usermenu">
-    	<li onmouseover="this.classList.add('over')" onmouseout="this.classList.remove('over')" class="parent level0 usermenulabel">
+    	<li class="parent level0 usermenulabel">
     		<a href="#" onclick="return false" title="<?= $this->__('User Menu') ?>">
                 <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" id="burger">
                     <path fill="#FFFFFF" d="M31,21H9v-2h22V21z M31,17H9v-2h22V17z M31,25H9v-2h22V25z"></path>
                 </svg>
             </a>
 		    <ul>
-            <?php if ($globalSearchEnabled): ?>
-                <li><a href="#" onclick="openGlobalSearch(); return false;"><span><?= $this->__('Global Record Search') ?></span></a></li>
+            <?php if ($this->displayGlobalSearch()): ?>
+                <li><a href="#" onclick="return openGlobalSearch()"><span><?= $this->__('Global Record Search') ?></span></a></li>
             <?php endif ?>
                 <li><a href="<?= Mage::helper('adminhtml')->getUrl('adminhtml/system_account') ?>"><span><?= $this->__('Logged in as %s', $this->escapeHtml($this->getUser()->getUsername())) ?></span></a></li>
 		    	<li><a href="<?= Mage::getBaseUrl() ?>" target="_blank"><span><?= $this->__('View') . ': ' . $this->escapeHtml(Mage::app()->getStore()->getFrontendName()) ?></span></a></li>
@@ -35,7 +33,7 @@ $globalSearchEnabled = Mage::getStoreConfigFlag('admin/global_search/enable') &&
 	        </ul>
 	    </li>
 	</ul>
-    <?php if ($globalSearchEnabled): ?>
+    <?php if ($this->displayGlobalSearch()): ?>
         <?= $this->getChildHtml('globalsearch') ?>
     <?php endif ?>
 </div>
