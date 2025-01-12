@@ -498,26 +498,14 @@ div.autocomplete {
 }
 
 #nav {
-    padding-left: 0;
+    display: flex;
 
     li {
         position: relative;
-        text-align: left;
-        float: left;
 
-        &.active {
-            margin-left: -1px;
+        &.active a {
             color: #fff;
             font-weight: bold;
-
-            & em {
-                display: block;
-                position: absolute;
-                top: 0;
-                right: -1px;
-                width: 3px;
-                height: 27px;
-            }
 
             & li {
                 font-weight: normal;
