@@ -15,6 +15,7 @@
  *
  * @var Mage_Adminhtml_Block_Widget_Grid $this
  */
+$jsObjectName = $this->getJsObjectName();
 $numColumns = count($this->getColumns());
 ?>
 <?php if($this->getCollection()): ?>
@@ -44,15 +45,15 @@ $numColumns = count($this->getColumns());
             <?php $lastPage = $this->getCollection()->getLastPageNumber() ?>
 
         <?php if ($curPage > 1): ?>
-            <a href="#" title="<?= Mage::helper('core')->quoteEscape($this->__('Previous page')) ?>" onclick="<?= $this->getJsObjectName() ?>.setPage('<?= ($curPage-1) ?>');return false;" class="icon-prev"></a>
+            <a href="#" title="<?= Mage::helper('core')->quoteEscape($this->__('Previous page')) ?>" onclick="<?= $jsObjectName ?>.setPage('<?= $curPage-1 ?>');return false;" class="icon-prev"></a>
         <?php else: ?>
             <span alt="<?= Mage::helper('core')->quoteEscape($this->__('Previous page')) ?>" class="icon-prev"></span>
         <?php endif ?>
 
-            <input type="text" name="<?= $this->getVarNamePage() ?>" value="<?= $curPage ?>" class="input-text page" onkeypress="<?= $this->getJsObjectName() ?>.inputPage(event, '<?= $lastPage ?>')"/>
+            <input type="text" name="<?= $this->getVarNamePage() ?>" value="<?= $curPage ?>" class="input-text page" onkeypress="<?= $jsObjectName ?>.inputPage(event, '<?= $lastPage ?>')"/>
 
         <?php if ($curPage < $lastPage): ?>
-            <a href="#" title="<?= Mage::helper('core')->quoteEscape($this->__('Next page')) ?>" onclick="<?= $this->getJsObjectName() ?>.setPage('<?= ($curPage+1) ?>');return false;" class="icon-next"></a>
+            <a href="#" title="<?= Mage::helper('core')->quoteEscape($this->__('Next page')) ?>" onclick="<?= $jsObjectName ?>.setPage('<?= $curPage+1 ?>');return false;" class="icon-next"></a>
         <?php else: ?>
             <span alt="<?= Mage::helper('core')->quoteEscape($this->__('Next page')) ?>" class="icon-next"></span>
         <?php endif ?>
@@ -62,7 +63,7 @@ $numColumns = count($this->getColumns());
             <span class="separator">|</span>
 
             <?= $this->__('View') ?>
-            <select name="<?= $this->getVarNameLimit() ?>" onchange="<?= $this->getJsObjectName() ?>.loadByElement(this)">
+            <select name="<?= $this->getVarNameLimit() ?>" onchange="<?= $jsObjectName ?>.loadByElement(this)">
             <?php foreach ($this->getLimitOptions() as $pageSize): ?>
                 <?php $selected = $this->getCollection()->getPageSize() == $pageSize; ?>
                 <option value="<?= $pageSize ?>"<?= $selected ? ' selected="selected"' : ''?>><?= $pageSize ?></option>
@@ -197,25 +198,23 @@ $numColumns = count($this->getColumns());
 </div>
 <?php if($this->canDisplayContainer()): ?>
 </div>
-<script type="text/javascript">
-//<![CDATA[
-    <?= $this->getJsObjectName() ?> = new varienGrid('<?= $this->getId() ?>', '<?= $this->getGridUrl() ?>', '<?= $this->getVarNamePage() ?>', '<?= $this->getVarNameSort() ?>', '<?= $this->getVarNameDir() ?>', '<?= $this->getVarNameFilter() ?>');
-    <?= $this->getJsObjectName() ?>.useAjax = '<?= $this->getUseAjax() ?>';
+<script>
+    const <?= $jsObjectName ?> = new varienGrid('<?= $this->getId() ?>', '<?= $this->getGridUrl() ?>', '<?= $this->getVarNamePage() ?>', '<?= $this->getVarNameSort() ?>', '<?= $this->getVarNameDir() ?>', '<?= $this->getVarNameFilter() ?>');
+    <?= $jsObjectName ?>.useAjax = '<?= $this->getUseAjax() ?>';
     <?php if($this->getRowClickCallback()): ?>
-        <?= $this->getJsObjectName() ?>.rowClickCallback = <?= $this->getRowClickCallback() ?>;
+        <?= $jsObjectName ?>.rowClickCallback = <?= $this->getRowClickCallback() ?>;
     <?php endif ?>
     <?php if($this->getCheckboxCheckCallback()): ?>
-        <?= $this->getJsObjectName() ?>.checkboxCheckCallback = <?= $this->getCheckboxCheckCallback() ?>;
+        <?= $jsObjectName ?>.checkboxCheckCallback = <?= $this->getCheckboxCheckCallback() ?>;
     <?php endif ?>
     <?php if($this->getRowInitCallback()): ?>
-        <?= $this->getJsObjectName() ?>.initRowCallback = <?= $this->getRowInitCallback() ?>;
-        <?= $this->getJsObjectName() ?>.initGridRows();
+        <?= $jsObjectName ?>.initRowCallback = <?= $this->getRowInitCallback() ?>;
+        <?= $jsObjectName ?>.initGridRows();
     <?php endif ?>
     <?php if($this->getMassactionBlock()->isAvailable()): ?>
     <?= $this->getMassactionBlock()->getJavaScript() ?>
     <?php endif ?>
     <?= $this->getAdditionalJavaScript() ?>
-//]]>
 </script>
 <?php endif ?>
 <?php endif ?>
