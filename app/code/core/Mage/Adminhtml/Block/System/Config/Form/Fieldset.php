@@ -47,27 +47,29 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
      */
     protected function _getHeaderHtml($element)
     {
-        if ($element->getIsNested()) {
-            $html = '<tr class="nested"><td colspan="4"><div class="' . $this->_getFrontendClass($element) . '">';
-        } else {
-            $html = '<div class="' . $this->_getFrontendClass($element) . '">';
-        }
+        $id = $element->getId();
+        $openAttr = (int) $this->_getCollapseState($element) ? ' open' : '';
 
-        $html .= $this->_getHeaderTitleHtml($element);
-
-        $html .= '<input id="' . $element->getHtmlId() . '-state" name="config_state[' . $element->getId()
-            . ']" type="hidden" value="' . (int) $this->_getCollapseState($element) . '" />';
-        $html .= '<fieldset class="' . $this->_getFieldsetCss($element) . '" id="' . $element->getHtmlId() . '">';
-        $html .= '<legend>' . $element->getLegend() . '</legend>';
-
-        $html .= $this->_getHeaderCommentHtml($element);
+        $html = <<<HTML
+            <details class="{$this->_getFrontendClass($element)}"{$openAttr}>
+                {$this->_getHeaderTitleHtml($element)}
+                <input id="{$id}-state" name="config_state[{$id}]" type="hidden" value="{$this->_getCollapseState($element)}">
+                <fieldset id="{$id}" class="{$this->_getFieldsetCss($element)}">
+                    <legend>{$element->getLegend()}</legend>
+                    {$this->_getHeaderCommentHtml($element)}
+                    <table cellspacing="0" class="form-list">
+                        <colgroup class="label" /><colgroup class="value" />
+        HTML;
 
         // field label column
-        $html .= '<table cellspacing="0" class="form-list"><colgroup class="label" /><colgroup class="value" />';
         if ($this->getRequest()->getParam('website') || $this->getRequest()->getParam('store')) {
             $html .= '<colgroup class="use-default" />';
         }
         $html .= '<colgroup class="scope-label" /><colgroup class="" /><tbody>';
+
+        if ($element->getIsNested()) {
+            $html = '<tr class="nested"><td colspan="4">' . $html;
+        }
 
         return $html;
     }
@@ -110,9 +112,12 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
      */
     protected function _getHeaderTitleHtml($element)
     {
-        return '<div class="entry-edit-head collapseable" ><a id="' . $element->getHtmlId()
-            . '-head" href="#" onclick="Fieldset.toggleCollapse(\'' . $element->getHtmlId() . '\', \''
-            . $this->getUrl('*/*/state') . '\'); return false;">' . $element->getLegend() . '</a></div>';
+        $onClick = "Fieldset.toggleCollapse('{$element->getHtmlId()}', '{$this->getUrl('*/*/state')}'); return false;";
+        return <<<HTML
+            <summary class="entry-edit-head">
+                <a id="{$element->getHtmlId()}-head" href="#" onclick="{$onClick}">{$element->getLegend()}</a>
+            </summary>
+        HTML;
     }
 
     /**
@@ -123,9 +128,10 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
      */
     protected function _getHeaderCommentHtml($element)
     {
-        return $element->getComment()
-            ? '<div class="comment">' . $element->getComment() . '</div>'
-            : '';
+        if ($element->getComment()) {
+            return '<div class="comment">' . $element->getComment() . '</div>';
+        }
+        return '';
     }
 
     /**
@@ -137,7 +143,7 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
     protected function _getFieldsetCss($element = null)
     {
         $configCss = (string) $this->getGroup($element)->fieldset_css;
-        return 'config collapseable' . ($configCss ? ' ' . $configCss : '');
+        return 'config' . ($configCss ? " $configCss" : '');
     }
 
     /**
@@ -149,16 +155,12 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
      */
     protected function _getFooterHtml($element)
     {
-        $tooltipsExist = false;
-        $html = '</tbody></table>';
-        $html .= '</fieldset>' . $this->_getExtraJs($element, $tooltipsExist);
-
+        $html = '</tbody></table></fieldset></details>';
         if ($element->getIsNested()) {
-            $html .= '</div></td></tr>';
-        } else {
-            $html .= '</div>';
+            $html .= '</td></tr>';
         }
-        return $html;
+
+        return $html . $this->_getExtraJs($element, $tooltipsExist = false);
     }
 
     /**
@@ -172,9 +174,8 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
      */
     protected function _getExtraJs($element, $tooltipsExist = false)
     {
-        $id = $element->getHtmlId();
-        $js = "Fieldset.applyCollapse('{$id}');";
-        return Mage::helper('adminhtml/js')->getScript($js);
+        return Mage::helper('adminhtml/js')
+            ->getScript("Fieldset.applyCollapse('{$element->getHtmlId()}');");
     }
 
     /**

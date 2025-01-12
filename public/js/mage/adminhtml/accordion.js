@@ -129,3 +129,63 @@ class varienAccordion {
         });
     }
 }
+
+
+const Fieldset = {
+    applyCollapse(containerId) {
+        if ($(containerId + '-state')) {
+            collapsed = $(containerId + '-state').value == 1 ? 0 : 1;
+        } else {
+            collapsed = $(containerId + '-head').collapsed;
+        }
+        if (collapsed==1 || collapsed===undefined) {
+           $(containerId + '-head').removeClassName('open');
+           if($(containerId + '-head').up('.section-config')) {
+                $(containerId + '-head').up('.section-config').removeClassName('active');
+           }
+           $(containerId).hide();
+        } else {
+           $(containerId + '-head').addClassName('open');
+           if($(containerId + '-head').up('.section-config')) {
+                $(containerId + '-head').up('.section-config').addClassName('active');
+           }
+           $(containerId).show();
+        }
+    },
+
+    toggleCollapse(containerId, saveThroughAjax) {
+        if ($(containerId + '-state')) {
+            collapsed = $(containerId + '-state').value == 1 ? 0 : 1;
+        } else {
+            collapsed = $(containerId + '-head').collapsed;
+        }
+        if(collapsed==1 || collapsed===undefined) {
+            if ($(containerId + '-state')) {
+                $(containerId + '-state').value = 1;
+            }
+            $(containerId + '-head').collapsed = 0;
+        } else {
+            if ($(containerId + '-state')) {
+                $(containerId + '-state').value = 0;
+            }
+            $(containerId + '-head').collapsed = 1;
+        }
+
+        this.applyCollapse(containerId);
+        if (typeof saveThroughAjax != "undefined") {
+            this.saveState(saveThroughAjax, {container: containerId, value: $(containerId + '-state').value});
+        }
+    },
+
+    /** @deprecated */
+    addToPrefix (value) {
+    },
+
+    saveState(url, parameters) {
+        new Ajax.Request(url, {
+            method: 'get',
+            parameters: Object.toQueryString(parameters),
+            loaderArea: false
+        });
+    },
+};
