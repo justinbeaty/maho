@@ -245,6 +245,9 @@ strong, b {
 .flex-col {
     flex-direction: column;
 }
+.flex-space {
+    flex-grow: 1;
+}
 
 .nowrap, .nobr {
     white-space: nowrap;

@@ -98,7 +98,7 @@ class Mage_Paypal_Block_Adminhtml_System_Config_Fieldset_Payment extends Mage_Ad
             $html .= '<span class="heading-intro">' . $element->getComment() . '</span>';
         }
 
-        $html .= '</div>';
+        $html .= '</div><span class="flex-space"></span>';
 
         $html .= '<div class="button-container"><button type="button"'
             . ($this->_isPaymentEnabled($element) ? '' : ' disabled="disabled"') . ' class="button'
