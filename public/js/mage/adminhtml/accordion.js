@@ -134,6 +134,12 @@ class varienAccordion {
 const Fieldset = {
     saveUrl: null,
 
+    applyAllCollapse(formId) {
+        document.querySelectorAll(`#${formId} details > fieldset`).forEach((container) => {
+            Fieldset.applyCollapse(container.id);
+        });
+    },
+
     applyCollapse(containerId) {
         const detailsEl = document.getElementById(containerId).closest('details');
         const stateInputEl = document.getElementById(`${containerId}-state`);

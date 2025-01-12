@@ -29,6 +29,8 @@
 </form>
 <script type="text/javascript">
 //<![CDATA[
+    Fieldset.applyAllCollapse('config_edit_form');
+
     var configForm = new varienForm('config_edit_form');
     configForm.validator.options.onFormValidate = function(result, form) {
         if (result) {

@@ -821,14 +821,16 @@ strong, b {
 
 .entry-edit {
 
-    &:not(:has(>details)), & > details {
+    &:not(:has(details, .entry-edit)) {
         background: #fff;
         border: 1px solid lightgrey;
         border-radius: 4px;
         margin-bottom: 16px;
 
         & > * {
-            padding: 8px 16px;
+            &:not(:first-child) {
+                padding: 16px;
+            }
             &:not(:last-child) {
                 border-bottom: 1px solid lightgrey;
             }
@@ -837,20 +839,52 @@ strong, b {
     }
 
     .entry-edit-head {
-
         display: flex;
         align-items: center;
         gap: 4px;
-
+        padding: 8px 16px;
         h4 {
             flex-grow: 1;
             margin: 0;
         }
     }
-
 }
 
+details.accordion {
+    background: #fff;
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+    margin-bottom: 16px;
 
+
+    &[open] {
+        & > *:not(:first-child) {
+            padding: 16px;
+        }
+        & > *:not(:last-child) {
+            border-bottom: 1px solid lightgrey;
+        }
+    }
+
+    summary {
+        user-select: none;
+        cursor: pointer;
+
+        &:after {
+            content: "";
+            display: block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 8px 6px 0 6px;
+            border-color: #aaa transparent transparent transparent;
+        }
+        details[open] > &:after {
+            border-width: 0 6px 8px 6px;
+            border-color: transparent transparent #aaa transparent;
+        }
+    }
+}
 
 dl.accordion {
 
@@ -884,13 +918,6 @@ dl.accordion dt {
         }
 
         &:before {
-            content: "";
-            display: block;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 8px 6px 0 6px;
-            border-color: #aaa transparent transparent transparent;
         }
     }
 
@@ -2790,6 +2817,13 @@ ul.item-options {
         & label {
             width: 121px;
         }
+    }
+}
+
+
+.adminhtml-system-config-edit {
+    #page\:left > h3 {
+        display: none;
     }
 }
 

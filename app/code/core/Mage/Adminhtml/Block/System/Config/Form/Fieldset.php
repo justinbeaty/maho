@@ -62,7 +62,7 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
         $columns = implode('', $columns);
 
         $html = <<<HTML
-            <details class="{$this->_getFrontendClass($element)}"{$isOpen}>
+            <details class="{$this->_getFrontendClass($element)} accordion"{$isOpen}>
                 {$this->_getHeaderTitleHtml($element)}
                 <input id="{$id}-state" name="config_state[{$id}]" type="hidden">
                 <fieldset id="{$id}" class="{$this->_getFieldsetCss($element)}">
@@ -118,7 +118,7 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
      */
     protected function _getHeaderTitleHtml($element)
     {
-        return '<summary class="entry-edit-head">' . $element->getLegend() . '</summary>';
+        return '<summary class="entry-edit-head"><h4>' . $element->getLegend() . '</h4></summary>';
     }
 
     /**
@@ -149,7 +149,6 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
 
     /**
      * Return footer html for fieldset
-     * Add extra tooltip comments to elements
      *
      * @param Varien_Data_Form_Element_Abstract $element
      * @return string
@@ -165,18 +164,16 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
     }
 
     /**
-     * Return js code for fieldset:
-     * - observe fieldset rows;
-     * - apply collapse;
+     * Return js code for fieldset
      *
      * @param Varien_Data_Form_Element_Abstract $element
      * @param bool $tooltipsExist Init tooltips observer or not
      * @return string
+     * @deprecated
      */
     protected function _getExtraJs($element, $tooltipsExist = false)
     {
-        return Mage::helper('adminhtml/js')
-            ->getScript("Fieldset.applyCollapse('{$element->getHtmlId()}');");
+        return '';
     }
 
     /**
