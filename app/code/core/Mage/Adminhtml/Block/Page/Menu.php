@@ -289,13 +289,13 @@ class Mage_Adminhtml_Block_Page_Menu extends Mage_Adminhtml_Block_Template
 
             // Build <a> attributes
             $attrs = new Varien_Object([ 'href' => $item['url'] ]);
-            if (isset($item['title'])) {
+            if (!empty($item['title'])) {
                 $attrs['title'] = $item['title'];
             }
-            if (isset($item['click'])) {
+            if (!empty($item['click'])) {
                 $attrs['onclick'] = $item['click'];
             }
-            if (isset($item['active'])) {
+            if (!empty($item['active'])) {
                 $attrs['class'] = 'active';
             }
 

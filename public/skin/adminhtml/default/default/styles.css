@@ -499,33 +499,43 @@ div.autocomplete {
 
 #nav {
     display: flex;
+    height: 40px;
 
-    li {
-        position: relative;
-    }
-
-    li.level0 {
-        & > a {
-            color: #fff;
-            height: 38px;
-            line-height: 38px;
-
-        }
-        &:hover > a {
-            color: #fff;
-            background: #2c3878;
-        }
-        &.active > a {
-            font-weight: bold;
-        }
+    a {
+        display: block;
+        padding: 0 12px;
     }
 
     li.parent {
         & > a {
             cursor: default;
         }
+
+        /* Draw nested menu on hover */
+        position: relative;
+
+        ul {
+            display: none;
+            box-shadow: rgba(0, 0, 0, 0.180392) 1px 3px 4px;
+        }
+
+        &:hover {
+            z-index: 999;
+            & > ul {
+                display: block;
+                position: absolute;
+                top: 13px;
+                left: 120px;
+                width: 200px;
+                li.level0 > & {
+                    top: 40px;
+                    left: 0px;
+                }
+            }
+        }
+
+        /* Draw triangle */
         &:not(.level0) > a:after {
-            /* Draw triangle */
             content: "";
             position: absolute;
             right: 12px;
@@ -538,163 +548,37 @@ div.autocomplete {
         }
     }
 
+    li.level0 {
+        & > a {
+            color: #fff;
+            height: 40px;
+            line-height: 40px;
+            &.active {
+                font-weight: bold;
+                background: color-mix(in oklab, #2c3878, black 20%);
+            }
+        }
+        &:hover > a {
+            color: #fff;
+            background: color-mix(in oklab, #2c3878, black 10%);
+        }
+    }
+
+    li.level0 li {
+        & > a {
+            padding: 9px 12px;
+            color: var(--text-color);
+            background: #fff;
+        }
+        &:hover > a {
+            background: #eee;
+        }
+    }
 }
 
 #nav {
 
 
-    & li:hover {
-        z-index: 999;
-
-        & a {
-            color: #d6e2e5;
-        }
-
-        & ul {
-            left: 0;
-
-            & ul {
-                left: -10000px;
-            }
-
-            & a {
-                color: #202856;
-                font-size: 12px;
-            }
-
-            & li:hover {
-
-                & ul {
-                    left: 100px;
-
-                    & ul {
-                        left: -10000px;
-                    }
-
-                    & li:hover {
-
-                        & ul {
-                            left: 100px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    & a {
-        display: block;
-        text-decoration: none;
-        float: left;
-        padding: 0 12px;
-        color: #fff;
-        cursor: pointer;
-    }
-
-    & a:hover {
-        display: block;
-        text-decoration: none;
-    }
-
-    & ul {
-        position: absolute;
-        width: 189px;
-        top: 38px;
-        left: -10000px;
-        box-shadow: rgba(0, 0, 0, 0.180392) 1px 3px 4px;
-
-        & li {
-            float: none;
-            padding: 0;
-
-            &.active {
-
-                & a {
-                    color: #202856;
-                    font-size: 12px;
-                }
-            }
-
-            & a {
-                background: #fff;
-                padding: 9px 12px;
-                color: #202856;
-                font-size: 12px;
-
-                &.active {
-                    text-decoration: underline;
-                }
-            }
-
-            & a:hover {
-                background: #202856;
-                color: #fff;
-            }
-
-            &.parent {
-
-                & a {
-                    background-position: 100% 100%;
-                    background-repeat: no-repeat;
-                }
-
-                & li.parent {
-
-                    & a {
-                        background-position: 100% 100%;
-                        background-repeat: no-repeat;
-                    }
-
-                    & li {
-
-                        & a {
-                            background-image: none;
-                        }
-                    }
-                }
-
-                & li {
-
-                    & a {
-                        background-image: none;
-                    }
-                }
-            }
-        }
-
-        & li:hover {
-
-            & a {
-                font-weight: normal;
-            }
-
-            & a:hover {
-                font-weight: normal;
-            }
-        }
-
-        & a {
-            float: none;
-            line-height: 1.3em;
-            font-weight: normal;
-        }
-
-        & a:hover {
-            float: none;
-            line-height: 1.3em;
-        }
-
-        & ul {
-            border-top: 0;
-            padding-top: 2px;
-            left: 100px;
-            top: 13px;
-
-            & ul {
-                left: -10000px;
-            }
-        }
-    }
 
     .level0 > a:after {
         content: "";
