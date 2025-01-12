@@ -384,7 +384,7 @@ strong, b {
     a {
         display: block;
         padding: 0 12px;
-        &:hover {
+        &:hover, &:focus {
             text-decoration: none;
         }
     }
@@ -407,7 +407,7 @@ strong, b {
             & > ul {
                 display: block;
                 position: absolute;
-                top: 13px;
+                top: 16px;
                 left: 120px;
                 width: 200px;
                 li.level0 > & {
@@ -441,7 +441,7 @@ strong, b {
             height: 40px;
             line-height: 40px;
             &.active {
-                font-weight: bold;
+                font-weight: 600;
                 background: color-mix(in oklab, #2c3878, black 20%);
             }
         }
@@ -457,6 +457,7 @@ strong, b {
             color: var(--text-color);
             background: #fff;
             &.active {
+                font-weight: 600;
                 background: #f6f6f6;
             }
         }
@@ -811,7 +812,7 @@ strong, b {
 
 
 
-/* === Accordion === */
+/* === Accordion & Tabs === */
 
 dl.accordion {
 
@@ -905,7 +906,7 @@ ul.tabs, ul.tabs-horiz {
         border-radius: 4px;
         color: var(--text-color);
 
-        &:hover {
+        &:hover, &:focus {
             background: lightgrey;
             text-decoration: none;
         }
@@ -943,16 +944,14 @@ ul.tabs, ul.tabs-horiz {
 }
 
 
-
-
 #grid_tab_content {
     background: #fff;
     padding: 15px;
 }
 
-/*==== excluded from nesting ===*/
 
-/* 05 messages */
+/* === Messages === */
+
 .warning-msg, .success-msg, .error-msg, .notice-msg {
     border-radius: 5px;
     margin: 20px 0;
