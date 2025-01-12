@@ -44,7 +44,8 @@ a {
 
     &:hover, &:focus, &:active {
         color: var(--link-hover-color);
-        text-decoration: none;
+        text-decoration: underline;
+        text-decoration-skip-ink: auto;
     }
 
     img {
@@ -383,6 +384,9 @@ strong, b {
     a {
         display: block;
         padding: 0 12px;
+        &:hover {
+            text-decoration: none;
+        }
     }
 
     li.parent {
@@ -452,6 +456,9 @@ strong, b {
             padding: 9px 12px;
             color: var(--text-color);
             background: #fff;
+            &.active {
+                background: #f6f6f6;
+            }
         }
         &:hover > a {
             background: #eee;
@@ -754,37 +761,20 @@ strong, b {
     select.select-export-filter, .grid select.multiselect-export-filter {
         width: 278px;
     }
-
-
 }
-
-
 
 
 
 .dynamic-grid {
-
-    & th {
-        padding: 2px;
-        width: 100px;
+    th, td {
+        padding: 2px 10px 2px 0;
+        width: auto;
     }
-
-    & td {
-        padding: 2px;
-    }
-}
-
-tr.dynamic-grid td, tr.dynamic-grid th {
-    padding: 2px 10px 2px 0;
-    width: auto;
-}
-
-tr.dynamic-grid {
-
-    & input.input-text {
+    tr input.input-text {
         width: 154px;
     }
 }
+
 
 .available {
     color: #080;
@@ -807,7 +797,6 @@ tr.dynamic-grid {
 }
 
 .entry-edit-head {
-
     .icon-copy {
         width: 11px;
         height: 11px;
@@ -822,8 +811,8 @@ tr.dynamic-grid {
 
 
 
-/*==== excluded from nesting ===*/
-/* 03 -accordion */
+/* === Accordion === */
+
 dl.accordion {
 
     .grid {

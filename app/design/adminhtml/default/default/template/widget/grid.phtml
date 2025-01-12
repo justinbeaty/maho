@@ -108,96 +108,113 @@ $numColumns = count($this->getColumns());
 <div class="grid">
     <div class="hor-scroll">
     <table cellspacing="0" class="data" id="<?= $this->getId() ?>_table">
-        <?php foreach ($this->getColumns() as $column): ?>
+    <?php foreach ($this->getColumns() as $column): ?>
         <col <?= $column->getHtmlProperty() ?> />
-        <?php endforeach ?>
-        <?php if ($this->getHeadersVisibility() || $this->getFilterVisibility()): ?>
-            <thead>
-                <?php if ($this->getHeadersVisibility()): ?>
-                    <tr class="headings">
-                    <?php foreach ($this->getColumns() as $column): ?>
-                        <th<?= $column->getHeaderHtmlProperty() ?> data-column-id="<?= $column->getId() ?>"><?= $column->getHeaderHtml() ?></th>
-                    <?php endforeach ?>
-                    </tr>
-                <?php endif ?>
-                <?php if ($this->getFilterVisibility()): ?>
-                    <tr class="filter">
-                    <?php $i=0;foreach ($this->getColumns() as $column): ?>
-                        <th<?= $column->getHeaderHtmlProperty() ?>><?= $column->getFilterHtml() ?></th>
-                    <?php endforeach ?>
-                    </tr>
-                <?php endif ?>
-            </thead>
-        <?php endif ?>
-        <?php if ($this->getCountTotals()): ?>
-            <tfoot>
-                <tr class="totals">
-                <?php foreach ($this->getColumns() as $column): ?>
-                    <th class="<?= $column->getCssProperty() ?>">
-                        <?php if (($column->getType() != 'action') && ($column->getType() != 'massaction')): ?>
-                            <?= $column->hasTotalsLabel() ? $column->getTotalsLabel() : $column->getRowField($column->getGrid()->getTotals()) ?>&nbsp;
-                        <?php endif ?>
-                    </th>
-                <?php endforeach ?>
-                </tr>
-            </tfoot>
-        <?php endif ?>
-
-        <tbody>
-        <?php if (($this->getCollection()->getSize()>0) && (!$this->getIsCollapsed())): ?>
-        <?php foreach ($this->getCollection() as $index=>$item): ?>
-            <tr title="<?= $this->getRowUrl($item) ?>"<?php if ($class = $this->getRowClass($item)):?> class="<?= $class ?>"<?php endif ?> >
-            <?php $i=0;foreach ($this->getColumns() as $column): ?>
-
-                <?php if ($this->shouldRenderCell($item, $column)):?>
-                    <?php $rowspan = $this->getRowspan($item, $column);?>
-                    <td <?= ($rowspan ? 'rowspan="' . $rowspan . '" ' : '') ?>class="<?= $column->getCssProperty() ?> <?= ++$i==$numColumns?'last':'' ?>">
-                        <?= (($html = $column->getRowField($item)) != '' ? $html : '&nbsp;') ?>
-                    </td>
-                    <?php if ($this->shouldRenderEmptyCell($item, $column)):?>
-                        <td colspan="<?= $this->getEmptyCellColspan($item) ?>" class="last"><?= $this->getEmptyCellLabel() ?></td>
-                    <?php endif ?>
-                <?php endif ?>
-
+    <?php endforeach ?>
+    <?php if ($this->getHeadersVisibility() || $this->getFilterVisibility()): ?>
+        <thead>
+        <?php if ($this->getHeadersVisibility()): ?>
+            <tr class="headings">
+            <?php foreach ($this->getColumns() as $column): ?>
+                <th<?= $column->getHeaderHtmlProperty() ?> data-column-id="<?= $column->getId() ?>">
+                    <?= $column->getHeaderHtml() ?>
+                </th>
             <?php endforeach ?>
             </tr>
-            <?php if ($multipleRows = $this->getMultipleRows($item)):?>
-                <?php foreach ($multipleRows as $i):?>
-                <tr>
-                    <?php $i=0;foreach ($this->getMultipleRowColumns($i) as $column): ?>
-                        <td class="<?= $column->getCssProperty() ?> <?= ++$i==$numColumns-1?'last':'' ?>">
-                            <?= (($html = $column->getRowField($i)) != '' ? $html : '&nbsp;') ?>
-                        </td>
-                    <?php endforeach ?>
-                </tr>
-                <?php endforeach ?>
-            <?php endif ?>
-
-            <?php if ($this->shouldRenderSubTotal($item)): ?>
-                <tr class="subtotals">
-                    <?php $i = 0; foreach ($this->getSubTotalColumns() as $column): ?>
-                        <td class="<?= $column->getCssProperty() ?> <?= ++$i == $numColumns ? 'last' : '' ?>">
-                            <?php echo ($column->hasSubtotalsLabel() ? $column->getSubtotalsLabel() :
-                                $column->getRowField($this->getSubTotalItem($item))
-                            );
-                            ?>
-                        </td>
-                    <?php endforeach ?>
-                </tr>
-            <?php endif ?>
-        <?php endforeach ?>
-        <?php elseif ($this->getEmptyText()): ?>
-            <tr>
-                <td class="empty-text <?= $this->getEmptyTextClass() ?>" colspan="<?= $numColumns ?>"><?= $this->getEmptyText() ?></td>
+        <?php endif ?>
+        <?php if ($this->getFilterVisibility()): ?>
+            <tr class="filter">
+            <?php $i=0;foreach ($this->getColumns() as $column): ?>
+                <th<?= $column->getHeaderHtmlProperty() ?>>
+                    <?= $column->getFilterHtml() ?>
+                </th>
+            <?php endforeach ?>
             </tr>
         <?php endif ?>
-        </tbody>
+        </thead>
+    <?php endif ?>
+    <?php if ($this->getCountTotals()): ?>
+        <tfoot>
+            <tr class="totals">
+            <?php foreach ($this->getColumns() as $column): ?>
+                <th class="<?= $column->getCssProperty() ?>">
+                <?php if ($column->getType() !== 'action' && $column->getType() !== 'massaction'): ?>
+                    <?php if ($column->hasTotalsLabel()): ?>
+                    <?= $column->getTotalsLabel() ?>
+                    <?php else: ?>
+                    <?= $column->getRowField($column->getGrid()->getTotals()) ?>
+                    <?php endif ?>
+                <?php endif ?>
+                </th>
+            <?php endforeach ?>
+            </tr>
+        </tfoot>
+    <?php endif ?>
+
+    <tbody>
+    <?php if ($this->getCollection()->getSize() > 0 && !$this->getIsCollapsed()): ?>
+    <?php foreach ($this->getCollection() as $index => $item): ?>
+        <?php $class = $this->getRowClass($item) ?>
+        <tr title="<?= $this->getRowUrl($item) ?>"<?= $class ? " class=\"$class\"" : '' ?>>
+        <?php $i = 0; foreach ($this->getColumns() as $column): ?>
+            <?php if ($this->shouldRenderCell($item, $column)): ?>
+                <?php $rowspan = $this->getRowspan($item, $column) ?>
+                <?php $last = ++$i == $numColumns ?>
+                <td <?= $rowspan?" rowspan=\"$rowspan\"":'' ?> class="<?= $column->getCssProperty() ?><?= $last?' last':'' ?>">
+                    <?= ($html = $column->getRowField($item)) != '' ? $html : '' ?>
+                </td>
+                <?php if ($this->shouldRenderEmptyCell($item, $column)): ?>
+                <td colspan="<?= $this->getEmptyCellColspan($item) ?>" class="last">
+                    <?= $this->getEmptyCellLabel() ?>
+                </td>
+                <?php endif ?>
+            <?php endif ?>
+        <?php endforeach ?>
+        </tr>
+
+        <?php if ($multipleRows = $this->getMultipleRows($item)): ?>
+        <?php foreach ($multipleRows as $i): ?>
+        <tr>
+        <?php $i = 0; foreach ($this->getMultipleRowColumns($i) as $column): ?>
+            <td class="<?= $column->getCssProperty() ?> <?= ++$i==$numColumns-1?'last':'' ?>">
+                <?= ($html = $column->getRowField($i)) != '' ? $html : '' ?>
+            </td>
+        <?php endforeach ?>
+        </tr>
+
+    <?php endforeach ?>
+    <?php endif ?>
+
+    <?php if ($this->shouldRenderSubTotal($item)): ?>
+        <tr class="subtotals">
+        <?php $i = 0; foreach ($this->getSubTotalColumns() as $column): ?>
+            <td class="<?= $column->getCssProperty() ?> <?= ++$i == $numColumns ? 'last' : '' ?>">
+                <?php if ($column->hasSubtotalsLabel()): ?>
+                <?= $column->getSubtotalsLabel() ?>
+                <?php else: ?>
+                <?= $column->getRowField($this->getSubTotalItem($item)) ?>
+                <?php endif ?>
+            </td>
+        <?php endforeach ?>
+        </tr>
+    <?php endif ?>
+
+    <?php endforeach ?>
+    <?php elseif ($this->getEmptyText()): ?>
+        <tr>
+            <td class="empty-text <?= $this->getEmptyTextClass() ?>" colspan="<?= $numColumns ?>">
+                <?= $this->getEmptyText() ?>
+            </td>
+        </tr>
+    <?php endif ?>
+    </tbody>
 
     </table>
     </div>
 </div>
 <?php if($this->canDisplayContainer()): ?>
 </div>
+
 <script>
     const <?= $jsObjectName ?> = new varienGrid('<?= $this->getId() ?>', '<?= $this->getGridUrl() ?>', '<?= $this->getVarNamePage() ?>', '<?= $this->getVarNameSort() ?>', '<?= $this->getVarNameDir() ?>', '<?= $this->getVarNameFilter() ?>');
     <?= $jsObjectName ?>.useAjax = '<?= $this->getUseAjax() ?>';
