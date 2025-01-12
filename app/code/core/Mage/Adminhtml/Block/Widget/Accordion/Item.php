@@ -49,10 +49,10 @@ class Mage_Adminhtml_Block_Widget_Accordion_Item extends Mage_Adminhtml_Block_Wi
     {
         $attrs = new Varien_Object();
         if ($this->getContentUrl()) {
-            $attrs['url'] = $this->getContentUrl();
+            $attrs['data-url'] = $this->getContentUrl();
         }
         if ($this->getTarget()) {
-            $attrs['target'] = $this->getTarget();
+            $attrs['data-target'] = $this->getTarget();
         }
         if ($this->getOpen()) {
             $attrs['open'] = '';

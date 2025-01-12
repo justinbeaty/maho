@@ -716,6 +716,12 @@ strong, b {
         }
     }
 
+    .entry-edit > &, .accordion details > *:has(&), details.accordion > & {
+        padding: 0 !important;
+        table {
+            border: 0;
+        }
+    }
 
 }
 
@@ -858,7 +864,12 @@ strong, b {
     margin-bottom: 16px;
 
 
-    &[open] {
+    &[data-url] {
+        & > *:not(:first-child) {
+            display: none;
+        }
+    }
+    &[open]:not([data-url]) {
         & > *:not(:first-child) {
             padding: 16px;
         }
@@ -892,6 +903,15 @@ strong, b {
         details[open] > &:after {
             border-width: 0 6px 8px 6px;
             border-color: transparent transparent #aaa transparent;
+        }
+        details.loading > &:after {
+            width: 16px;
+            height: 16px;
+            border: 0;
+            flex-shrink: 0;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-image: url(images/loading.svg);
         }
     }
 }

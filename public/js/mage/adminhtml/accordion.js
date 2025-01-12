@@ -7,24 +7,20 @@
  * @copyright   Copyright (c) 2022 The OpenMage Contributors (https://openmage.org)
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
+
 class varienAccordion {
     constructor(containerId, activeOnlyOne) {
         this.containerId = containerId;
-        this.activeOnlyOne = activeOnlyOne || false;
         this.container = document.getElementById(this.containerId);
-        this.items = Array.from(document.querySelectorAll(`#${this.containerId} dt`));
+        this.activeOnlyOne = activeOnlyOne || false;
         this.loader = new varienLoader(true);
 
-        let links = Array.from(document.querySelectorAll(`#${this.containerId} dt a`));
-        links.forEach((link, index) => {
-            if (link.href) {
-                link.addEventListener('click', this.clickItem.bind(this));
-                this.items[index].dd = this.items[index].nextElementSibling;
-                this.items[index].link = link;
-            }
+        this.items = this.container.querySelectorAll(':scope > details');
+        this.items.forEach((el) => {
+            el.addEventListener('toggle', this.onToggle.bind(this));
         });
 
-        this.initFromCookie();
+        //this.initFromCookie();
     }
 
     initFromCookie() {
@@ -62,8 +58,10 @@ class varienAccordion {
         return result;
     }
 
-    clickItem(event) {
-        let item = event.target.closest('dt');
+    onToggle(event) {
+        const item = event.target;
+
+        /*
         if (this.activeOnlyOne) {
             this.hideAllItems();
             this.showItem(item);
@@ -77,56 +75,54 @@ class varienAccordion {
                 Cookie.write(this.cookiePrefix() + item.id, 1, 30 * 24 * 60 * 60);
             }
         }
-        event.stopPropagation();
-        event.preventDefault();
+        */
+
+        if (item.dataset.url) {
+            if (item.dataset.target === 'ajax') {
+                this.loadContent(item);
+            } else {
+                setLocation(item.dataset.url);
+            }
+        }
+
     }
 
     showItem(item) {
-        if (item && item.link) {
-            if (item.link.href) {
-                this.loadContent(item);
-            }
-
-            item.classList.add('open');
-            item.dd.classList.add('open');
-        }
+        item.open = true;
     }
 
     hideItem(item) {
-        item.classList.remove('open');
-        item.dd.classList.remove('open');
+        item.open = false;
     }
 
     isItemVisible(item) {
-        return item.classList.contains('open');
-    }
-
-    loadContent(item) {
-        if (item.link.href.endsWith('#')) {
-            return;
-        }
-        if (item.link.classList.contains('ajax')) {
-            this.loadingItem = item;
-            this.loader.load(item.link.href, {updaterId: this.loadingItem.dd.id}, this.setItemContent.bind(this));
-            return;
-        }
-        location.href = item.link.href;
-    }
-
-    setItemContent(content) {
-        if (content.isJSON) {
-            return;
-        }
-        this.loadingItem.dd.innerHTML = content;
+        return item.open;
     }
 
     hideAllItems() {
-        this.items.forEach((item) => {
-            if (item.id) {
-                item.classList.remove('open');
-                item.dd.classList.remove('open');
-            }
-        });
+        this.items.forEach((item) => item.open = false);
+    }
+
+    async loadContent(item) {
+        item.classList.add('loading');
+        try {
+
+            await new Promise(resolve => setTimeout(resolve, 1000))
+
+            const contentsEl = item.querySelector('div[id|=dd]');
+            const html = await mahoFetch(item.dataset.url, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    updaterId: contentsEl.id,
+                }),
+            });
+            contentsEl.innerHTML = html;
+            item.removeAttribute('data-url');
+        } catch (error) {
+            console.log(error)
+            item.open = false;
+        }
+        item.classList.remove('loading');
     }
 }
 
