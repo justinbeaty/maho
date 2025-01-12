@@ -818,6 +818,40 @@ strong, b {
 
 /* === Accordion & Tabs === */
 
+
+.entry-edit {
+
+    &:not(:has(>details)), & > details {
+        background: #fff;
+        border: 1px solid lightgrey;
+        border-radius: 4px;
+        margin-bottom: 16px;
+
+        & > * {
+            padding: 8px 16px;
+            &:not(:last-child) {
+                border-bottom: 1px solid lightgrey;
+            }
+        }
+
+    }
+
+    .entry-edit-head {
+
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        h4 {
+            flex-grow: 1;
+            margin: 0;
+        }
+    }
+
+}
+
+
+
 dl.accordion {
 
     .grid {
@@ -1140,49 +1174,6 @@ div.disabled {
         background-image: url(images/entry_edit_head_arrow_down2.gif) !important;
         color: #f6f6f6 !important;
     }
-}
-
-/* ================= myentry  */
-
-.entry-edit {
-
-    background: #fff;
-    border: 1px solid lightgrey;
-    border-radius: 4px;
-    margin-bottom: 16px;
-
-    & > * {
-        padding: 8px 16px;
-        &:not(:last-child) {
-            border-bottom: 1px solid lightgrey;
-        }
-    }
-
-    .entry-edit-head {
-
-        display: flex;
-        align-items: center;
-        gap: 4px;
-
-        h4 {
-            flex-grow: 1;
-            margin: 0;
-        }
-    }
-
-    #config_edit_form & {
-        background: unset;
-        border: unset;
-
-        .section-config {
-            background: #fff;
-            border: 1px solid lightgrey;
-            border-radius: 4px;
-            margin-bottom: 16px;
-
-        }
-    }
-
 }
 
 
