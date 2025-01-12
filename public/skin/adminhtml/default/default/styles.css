@@ -839,7 +839,7 @@ dl.accordion {
 
 }
 
-dl.accordion dt, div.collapseable {
+dl.accordion dt {
 
     a {
         color: var(--text-color);

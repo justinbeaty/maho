@@ -64,7 +64,7 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
         $html = <<<HTML
             <details class="{$this->_getFrontendClass($element)}"{$isOpen}>
                 {$this->_getHeaderTitleHtml($element)}
-                <input id="{$id}-state" name="config_state[{$id}]" type="hidden" value="{$this->_getCollapseState($element)}">
+                <input id="{$id}-state" name="config_state[{$id}]" type="hidden">
                 <fieldset id="{$id}" class="{$this->_getFieldsetCss($element)}">
                     <legend>{$element->getLegend()}</legend>
                     {$this->_getHeaderCommentHtml($element)}
@@ -118,12 +118,7 @@ class Mage_Adminhtml_Block_System_Config_Form_Fieldset extends Mage_Adminhtml_Bl
      */
     protected function _getHeaderTitleHtml($element)
     {
-        $onClick = "Fieldset.toggleCollapse('{$element->getHtmlId()}', '{$this->getUrl('*/*/state')}'); return false;";
-        return <<<HTML
-            <summary class="entry-edit-head">
-                <a id="{$element->getHtmlId()}-head" href="#" onclick="{$onClick}">{$element->getLegend()}</a>
-            </summary>
-        HTML;
+        return '<summary class="entry-edit-head">' . $element->getLegend() . '</summary>';
     }
 
     /**

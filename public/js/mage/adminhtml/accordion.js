@@ -132,49 +132,27 @@ class varienAccordion {
 
 
 const Fieldset = {
+    saveUrl: null,
+
     applyCollapse(containerId) {
-        if ($(containerId + '-state')) {
-            collapsed = $(containerId + '-state').value == 1 ? 0 : 1;
-        } else {
-            collapsed = $(containerId + '-head').collapsed;
+        const detailsEl = document.getElementById(containerId).closest('details');
+        const stateInputEl = document.getElementById(`${containerId}-state`);
+        if (!detailsEl || !stateInputEl) {
+            return;
         }
-        if (collapsed==1 || collapsed===undefined) {
-           $(containerId + '-head').removeClassName('open');
-           if($(containerId + '-head').up('.section-config')) {
-                $(containerId + '-head').up('.section-config').removeClassName('active');
-           }
-           $(containerId).hide();
-        } else {
-           $(containerId + '-head').addClassName('open');
-           if($(containerId + '-head').up('.section-config')) {
-                $(containerId + '-head').up('.section-config').addClassName('active');
-           }
-           $(containerId).show();
-        }
+        detailsEl.addEventListener('toggle', () => {
+            stateInputEl.value = +detailsEl.open;
+            Fieldset.saveState(null, { container: containerId, value: stateInputEl.value });
+        });
+        stateInputEl.value = +detailsEl.open;
     },
 
-    toggleCollapse(containerId, saveThroughAjax) {
-        if ($(containerId + '-state')) {
-            collapsed = $(containerId + '-state').value == 1 ? 0 : 1;
-        } else {
-            collapsed = $(containerId + '-head').collapsed;
+    toggleCollapse(containerId) {
+        const detailsEl = document.getElementById(containerId).closest('details');
+        if (!detailsEl) {
+            return;
         }
-        if(collapsed==1 || collapsed===undefined) {
-            if ($(containerId + '-state')) {
-                $(containerId + '-state').value = 1;
-            }
-            $(containerId + '-head').collapsed = 0;
-        } else {
-            if ($(containerId + '-state')) {
-                $(containerId + '-state').value = 0;
-            }
-            $(containerId + '-head').collapsed = 1;
-        }
-
-        this.applyCollapse(containerId);
-        if (typeof saveThroughAjax != "undefined") {
-            this.saveState(saveThroughAjax, {container: containerId, value: $(containerId + '-state').value});
-        }
+        detailsEl.open = !detailsEl.open;
     },
 
     /** @deprecated */
@@ -182,10 +160,13 @@ const Fieldset = {
     },
 
     saveState(url, parameters) {
-        new Ajax.Request(url, {
-            method: 'get',
-            parameters: Object.toQueryString(parameters),
-            loaderArea: false
-        });
+        url ??= Fieldset.saveUrl;
+        if (url) {
+            new Ajax.Request(url, {
+                method: 'get',
+                parameters: Object.toQueryString(parameters),
+                loaderArea: false
+            });
+        }
     },
 };
