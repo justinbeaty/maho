@@ -823,23 +823,20 @@ strong, b {
 /* === Accordion & Tabs === */
 
 
-.entry-edit {
+.entry-edit:not(:has(details, .entry-edit)) {
 
-    &:not(:has(details, .entry-edit)) {
-        background: #fff;
-        border: 1px solid lightgrey;
-        border-radius: 4px;
-        margin-bottom: 16px;
+    background: #fff;
+    border: 1px solid lightgrey;
+    border-radius: 4px;
+    margin-bottom: 16px;
 
-        & > * {
-            &:not(:first-child) {
-                padding: 16px;
-            }
-            &:not(:last-child) {
-                border-bottom: 1px solid lightgrey;
-            }
+    & > * {
+        &:not(:first-child) {
+            padding: 16px;
         }
-
+        &:not(:last-child) {
+            border-bottom: 1px solid lightgrey;
+        }
     }
 
     .entry-edit-head {
@@ -854,7 +851,7 @@ strong, b {
     }
 }
 
-details.accordion {
+.accordion details, details.accordion {
     background: #fff;
     border: 1px solid lightgrey;
     border-radius: 4px;
@@ -871,8 +868,17 @@ details.accordion {
     }
 
     summary {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 16px;
         user-select: none;
         cursor: pointer;
+
+        h4 {
+            flex-grow: 1;
+            margin: 0;
+        }
 
         &:after {
             content: "";
@@ -887,47 +893,6 @@ details.accordion {
             border-width: 0 6px 8px 6px;
             border-color: transparent transparent #aaa transparent;
         }
-    }
-}
-
-dl.accordion {
-
-    .grid {
-        margin-bottom: 0;
-    }
-
-    dt {
-        padding: 4px 16px;
-        border: 1px solid lightgrey;
-        color: #2f2f2f;
-        background: #fefefe;
-    }
-    dd {
-        display: none;
-        &.open {
-            display: block;
-        }
-    }
-
-}
-
-dl.accordion dt {
-
-    a {
-        color: var(--text-color);
-
-        &:hover, &:active, &:focus {
-            color: var(--text-color);
-            text-decoration: none;
-        }
-
-        &:before {
-        }
-    }
-
-    &.open:before, a.open:before {
-        border-width: 0 6px 8px 6px;
-        border-color: transparent transparent #aaa transparent;
     }
 }
 
