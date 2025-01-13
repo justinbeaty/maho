@@ -17,12 +17,8 @@
         <?= $this->getChildHtml() ?>
     </form>
 </template>
-<div id="giftoptions_tooltip_window" class="gift-options-tooltip" style="display:none;">
-    <div id="giftoptions_tooltip_window_content">&nbsp;</div>
-</div>
 
 <script>
-    window.giftOptionsPopup = new GiftOptionsPopup();
-//giftOptionsTooltip.setTooltipWindow('giftoptions_tooltip_window','giftoptions_tooltip_window_content');
+    new GiftOptionsPopup();
 </script>
 <?php endif ?>

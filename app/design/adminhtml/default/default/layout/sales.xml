@@ -60,7 +60,6 @@
     <adminhtml_sales_order_view>
         <reference name="head">
             <action method="addJs"><file>mage/adminhtml/giftmessage.js</file></action>
-            <action method="addJs"><file>mage/adminhtml/giftoptions/tooltip.js</file></action>
         </reference>
         <reference name="content">
             <block type="adminhtml/sales_order_view" name="sales_order_edit"></block>

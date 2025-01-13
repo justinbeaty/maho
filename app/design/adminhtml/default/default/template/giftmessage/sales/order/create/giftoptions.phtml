@@ -14,27 +14,28 @@
 ?>
 
 <?php if ($item = $this->getItem()): ?>
-    <?php if ($childHtml = trim($this->getChildHtml('', false))): ?>
-        <tr class="border">
-            <td class="first">
-                <div>
-                    <strong>
-                        <a id="gift_options_link_<?= $item->getId() ?>" href="#">
-                            <?= Mage::helper('sales')->__('Gift Options') ?>
-                        </a>
-                    </strong>
-                </div>
-                <div id="gift_options_data_<?= $item->getId() ?>">
-                    <?= $childHtml ?>
-                </div>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td class="last"></td>
-        </tr>
-    <?php endif ?>
+<?php if ($childHtml = trim($this->getChildHtml('', false))): ?>
+<tr class="border">
+    <td class="first">
+        <div>
+            <strong>
+                <?php $tooltip = $this->getMessageText() ? $this->__('Gift Message') . ': ' . $this->getMessageText() : '' ?>
+                <a id="gift_options_link_<?= $item->getId() ?>" href="#" title="<?= $tooltip ?>">
+                    <?= Mage::helper('sales')->__('Gift Options') ?>
+                </a>
+            </strong>
+        </div>
+        <div id="gift_options_data_<?= $item->getId() ?>">
+            <?= $childHtml ?>
+        </div>
+    </td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td class="last"></td>
+</tr>
+<?php endif ?>
 <?php endif ?>

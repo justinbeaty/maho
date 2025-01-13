@@ -19,7 +19,7 @@
 class Mage_GiftMessage_Block_Adminhtml_Sales_Order_Create_Items extends Mage_Adminhtml_Block_Template
 {
     /**
-     * Get order item
+     * Get quote item object from parent block
      *
      * @return Mage_Sales_Model_Quote_Item
      */
@@ -31,7 +31,6 @@ class Mage_GiftMessage_Block_Adminhtml_Sales_Order_Create_Items extends Mage_Adm
     /**
      * Indicates that block can display gift messages form
      *
-     * TODO set return type
      * @return bool
      */
     public function canDisplayGiftMessage()
@@ -51,10 +50,10 @@ class Mage_GiftMessage_Block_Adminhtml_Sales_Order_Create_Items extends Mage_Adm
     }
 
     /**
-      * Return form html
-      *
-      * @return string
-      */
+     * Return form html
+     *
+     * @return string
+     */
     public function getFormHtml()
     {
         return $this->getLayout()->createBlock('adminhtml/sales_order_create_giftmessage_form')

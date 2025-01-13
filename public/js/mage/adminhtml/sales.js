@@ -1029,6 +1029,9 @@ AdminOrder.prototype = {
     },
 
     prepareParams : function(params){
+        if (params instanceof Hash) {
+            params = params.toObject();
+        }
         if (!params) {
             params = {};
         }
