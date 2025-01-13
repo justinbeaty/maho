@@ -8,7 +8,7 @@
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-var giftMessagesController = {
+const giftMessagesController = {
     toogleRequired: function(source, objects)
     {
         if(!$(source).value.blank()) {
@@ -124,121 +124,97 @@ function findFieldLabel(field) {
 
 
 /********************* GIFT OPTIONS POPUP ***********************/
-var GiftOptionsPopup = Class.create();
-GiftOptionsPopup.prototype = {
-    giftOptionsWindowMask: null,
-    giftOptionsWindow: null,
+class GiftOptionsPopup {
 
-    initialize: function() {
-        $$('.action-link').each(function (el) {
-            Event.observe(el, 'click', this.showItemGiftOptions.bind(this));
-        }, this);
+    giftOptionsWindowMask = null;
+    giftOptionsWindow = null;
 
-        // Move giftcard popup to start of body, because soon it will contain FORM tag that can break DOM layout if within other FORM
-        var oldPopupContainer = $('gift_options_configure');
-        if (oldPopupContainer) {
-            oldPopupContainer.remove();
-        }
+    constructor() {
+        this.initialize();
+    }
 
-        var newPopupContainer = $('gift_options_configure_new');
-        $(document.body).insert({top: newPopupContainer});
-        newPopupContainer.id = 'gift_options_configure';
-
-        // Put controls container inside a FORM tag so we can use Validator
-        var form = new Element('form', {action: '#', id: 'gift_options_configuration_form', method: 'post'});
-        var formContents = $('gift_options_form_contents');
-        if (formContents) {
-            formContents.parentNode.appendChild(form);
-            form.appendChild(formContents);
-        }
-    },
-
-    showItemGiftOptions : function(event) {
-        var element = Event.element(event).id;
-        var itemId = element.sub('gift_options_link_','');
-
-        this.giftOptionsWindowMask = $('gift_options_window_mask');
-        this.giftOptionsWindow = $('gift_options_configure');
-        this.giftOptionsWindow.select('select').each(function(el){
-            el.style.visibility = 'visible';
+    initialize() {
+        document.querySelectorAll('a[id^=gift_options_link_]').forEach((el) => {
+            el.addEventListener('click', this.showItemGiftOptions.bind(this));
         });
+    }
 
-        this.giftOptionsWindowMask.setStyle({'height': $('html-body').getHeight() + 'px'}).show();
-        this.giftOptionsWindow.setStyle({'marginTop': -this.giftOptionsWindow.getHeight()/2 + 'px', 'display': 'block'});
-        this.setTitle(itemId);
+    showItemGiftOptions(event) {
+        console.log(event)
 
-        Event.observe($('gift_options_cancel_button'), 'click', this.onCloseButton.bind(this));
-        Event.observe($('gift_options_ok_button'), 'click', this.onOkButton.bind(this));
-        Event.stop(event);
-    },
+        const itemId = event.target.id.replace('gift_options_link_', '');
 
-    setTitle : function (itemId) {
-        var productTitleElement = $('order_item_' + itemId + '_title');
-        var productTitle = '';
-        if (productTitleElement) {
-            productTitle = productTitleElement.innerHTML;
-        }
-        $('gift_options_configure_title').update(productTitle);
-    },
 
-    onOkButton : function() {
-        var giftOptionsForm = new varienForm('gift_options_configuration_form');
+        const productTitleEl = document.getElementById(`order_item_${itemId}_title`);
+        const title = productTitleEl
+              ? Translator.translate('Gift Options for') + ' ' + productTitleEl.textContent
+              : Translator.translate('Gift Options');
+
+        const template = document.getElementById('gift_options_configure').innerHTML;
+
+        this.giftOptionsWindow = Dialog.info(template, {
+            title,
+            width: 600,
+            height: 400,
+            ok: this.onOkButton.bind(this),
+            cancel: true,
+        });
+    }
+
+    onOkButton() {
+        const giftOptionsForm = new varienForm('gift_options_configuration_form');
         giftOptionsForm.canShowError = true;
         if (!giftOptionsForm.validate()) {
             return false;
         }
         giftOptionsForm.validator.reset();
-        this.closeWindow();
         return true;
-    },
-
-    onCloseButton : function() {
-        this.closeWindow();
-    },
-
-    closeWindow : function() {
-        this.giftOptionsWindowMask.style.display = 'none';
-        this.giftOptionsWindow.style.display = 'none';
     }
 };
 
 
 /********************* GIFT OPTIONS SET ***********************/
-GiftMessageSet = Class.create();
-GiftMessageSet.prototype = {
-    destPrefix: 'current_item_giftmessage_',
-    sourcePrefix: 'giftmessage_',
-    fields: ['sender', 'recipient', 'message'],
-    isObserved: false,
+class GiftMessageSet {
 
-    initialize: function() {
-        $$('.action-link').each(function (el) {
-            Event.observe(el, 'click', this.setData.bind(this));
-        }, this);
-    },
+    destPrefix = 'current_item_giftmessage_';
+    sourcePrefix = 'giftmessage_';
+    fields = ['sender', 'recipient', 'message'];
+    isObserved = false;
 
-    setData: function(event) {
-        var element = Event.element(event).id;
-        this.id = element.sub('gift_options_link_','');
+    constructor() {
+        this.initialize();
+    }
 
-        if ($('gift-message-form-data-' + this.id)) {
-            this.fields.each(function(el) {
-                if ($(this.sourcePrefix + this.id + '_' + el) && $(this.destPrefix + el)) {
-                    $(this.destPrefix + el).value = $(this.sourcePrefix + this.id + '_' + el).value;
+    initialize() {
+        document.querySelectorAll('.action-link').forEach((el) => {
+            el.addEventListener('click', this.setData.bind(this));
+        });
+    }
+
+    setData(event) {
+        this.id = event.target.id.replace('gift_options_link_', '');
+        const formData = document.getElementById(`gift-message-form-data-${this.id}`);
+
+        if (formData) {
+            for (const field of this.fields) {
+                const sourceEl = document.getElementById(`${this.sourcePrefix}${this.id}_${field}`);
+                const destEl = document.getElementById(`${this.destPrefix}${field}`);
+                if (sourceEl && destEl) {
+                    destEl.value = sourceEl.value;
                 }
-            }, this);
-            $('gift_options_giftmessage').show();
+            }
+            toggleVis('gift_options_giftmessage', true);
         } else {
-            $('gift_options_giftmessage').hide();
+            toggleVis('gift_options_giftmessage', false);
         }
 
         if (!this.isObserved) {
             Event.observe('gift_options_ok_button', 'click', this.saveData.bind(this));
             this.isObserved = true;
         }
-    },
+    }
 
-    saveData: function(event){
+    saveData(event){
         this.fields.each(function(el) {
             if ($(this.sourcePrefix + this.id + '_' + el) && $(this.destPrefix + el)) {
                 $(this.sourcePrefix + this.id + '_' + el).value = $(this.destPrefix + el).value;
