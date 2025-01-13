@@ -359,6 +359,7 @@ strong, b {
 
     & > .middle {
         display: flex;
+        flex-direction: column;
         flex-grow: 1;
         padding: 0;
     }
@@ -378,15 +379,13 @@ strong, b {
 
 #page\:main-container {
     display: flex;
-    flex-grow: 1;
+    flex-direction: column;
 
     #page\:container {
         display: flex;
-        flex-grow: 1;
 
         #page\:left {
-            flex-shrink: 0;
-            width: 256px;
+            flex: 0 0 256px;
             padding: 24px 16px;
             background: var(--side-col-bg-color);
             border-right: 1px solid lightgrey;
@@ -396,8 +395,9 @@ strong, b {
         }
 
         #content {
-            flex-grow: 1;
+            flex: 1 0 0;
             padding: 24px 24px 24px 32px;
+            overflow: auto;
         }
     }
 }
