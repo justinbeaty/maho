@@ -9,10 +9,14 @@
  */
 
 class varienAccordion {
+
+    cookieName = 'accordion';
+    cookieLifetime = 30 * 24 * 60 * 60;
+
     constructor(containerId, activeOnlyOne) {
         this.containerId = containerId;
         this.container = document.getElementById(this.containerId);
-        this.activeOnlyOne = activeOnlyOne || false;
+        this.activeOnlyOne = activeOnlyOne || true;
         this.loader = new varienLoader(true);
 
         this.items = this.container.querySelectorAll(':scope > details');
@@ -20,62 +24,53 @@ class varienAccordion {
             el.addEventListener('toggle', this.onToggle.bind(this));
         });
 
-        //this.initFromCookie();
+        document.addEventListener('DOMContentLoaded', this.initFromCookie.bind(this));
     }
 
     initFromCookie() {
-        let activeItemId, visibility;
-        if (this.activeOnlyOne && (activeItemId = Cookie.read(this.cookiePrefix() + 'active-item')) !== null) {
-            this.hideAllItems();
-            this.showItem(this.getItemById(activeItemId));
-        } else if (!this.activeOnlyOne) {
-            this.items.forEach((item) => {
-                if ((visibility = Cookie.read(this.cookiePrefix() + item.id)) !== null) {
-                    if (visibility == 0) {
-                        this.hideItem(item);
-                    } else {
-                        this.showItem(item);
-                    }
+        try {
+            const value = JSON.parse(Cookie.read(this.cookieName) ?? '{}');
+            for (const id of value[this.containerId]?.visible ?? []) {
+                const item = this.getItemById(id);
+                if (item) {
+                    this.showItem(item);
                 }
-            });
+            }
+        } catch (error) {
+            console.error('Failed to read accordion cookie:', error);
         }
     }
 
-    cookiePrefix() {
-        return `accordion-${this.containerId}-`;
-    }
+    updateCookie() {
+        try {
+            const value = JSON.parse(Cookie.read(this.cookieName) ?? '{}');
 
-    getItemById(itemId) {
-        let result = null;
+            value[this.containerId] ??= {};
+            value[this.containerId].visible = Array.from(this.items).reduce((acc, cur) => {
+                if (this.isItemVisible(cur)) {
+                    acc.push(cur.id);
+                }
+                return acc;
+            }, []);
 
-        this.items.forEach((item) => {
-            if (item.id == itemId) {
-                result = item;
-                throw $break;
-            }
-        });
-
-        return result;
+            Cookie.write(this.cookieName, JSON.stringify(value), this.cookieLifetime);
+        } catch (error) {
+            console.error('Failed to write accordion cookie:', error);
+        }
     }
 
     onToggle(event) {
         const item = event.target;
 
-        /*
-        if (this.activeOnlyOne) {
-            this.hideAllItems();
-            this.showItem(item);
-            Cookie.write(this.cookiePrefix() + 'active-item', item.id, 30 * 24 * 60 * 60);
-        } else {
-            if (this.isItemVisible(item)) {
-                this.hideItem(item);
-                Cookie.write(this.cookiePrefix() + item.id, 0, 30 * 24 * 60 * 60);
-            } else {
-                this.showItem(item);
-                Cookie.write(this.cookiePrefix() + item.id, 1, 30 * 24 * 60 * 60);
-            }
+        if (this.isItemVisible(item) && this.activeOnlyOne) {
+            this.items.forEach((otherItem) => {
+                if (item !== otherItem) {
+                    this.hideItem(otherItem);
+                }
+            });
         }
-        */
+
+        this.updateCookie();
 
         if (item.dataset.url) {
             if (item.dataset.target === 'ajax') {
@@ -84,7 +79,10 @@ class varienAccordion {
                 setLocation(item.dataset.url);
             }
         }
+    }
 
+    getItemById(itemId) {
+        return Array.from(this.items).find((item) => item.id === itemId);
     }
 
     showItem(item) {
@@ -104,11 +102,8 @@ class varienAccordion {
     }
 
     async loadContent(item) {
-        item.classList.add('loading');
+        const timeoutID = setTimeout(() => item.classList.add('loading'), LOADING_TIMEOUT);
         try {
-
-            await new Promise(resolve => setTimeout(resolve, 1000))
-
             const contentsEl = item.querySelector('div[id|=dd]');
             const html = await mahoFetch(item.dataset.url, {
                 method: 'POST',
@@ -122,11 +117,14 @@ class varienAccordion {
             console.log(error)
             item.open = false;
         }
+        clearTimeout(timeoutID);
         item.classList.remove('loading');
     }
 }
 
-
+/**
+ * System > Configuration
+ */
 const Fieldset = {
     saveUrl: null,
 

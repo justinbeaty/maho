@@ -47,7 +47,9 @@ class Mage_Adminhtml_Block_Widget_Accordion_Item extends Mage_Adminhtml_Block_Wi
     #[\Override]
     protected function _toHtml()
     {
-        $attrs = new Varien_Object();
+        $attrs = new Varien_Object([
+            'id' => $this->getHtmlId(),
+        ]);
         if ($this->getContentUrl()) {
             $attrs['data-url'] = $this->getContentUrl();
         }
