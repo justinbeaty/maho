@@ -13,18 +13,14 @@
 /** @var Mage_Adminhtml_Block_Sales_Order_Abstract $this */
 ?>
 <?php $_order = $this->getOrder() ?>
-<div>
-    <div id="order-messages">
+<div class="order-grid">
+    <div id="order-messages" class="box-order-messages">
         <?= $this->getChildHtml('order_messages') ?>
     </div>
     <?= $this->getChildHtml('order_info') ?>
     <input type="hidden" name="order_id" value="<?= $_order->getId() ?>"/>
-    <?php if ($_order->getIsVirtual()): ?>
-    <div class="box-right">
-    <?php else: ?>
-    <div class="box-left">
-    <?php endif ?>
-        <!--Payment Method-->
+
+    <div class="box-payment-method">
         <div class="entry-edit">
             <div class="entry-edit-head">
                 <h4><?= Mage::helper('sales')->__('Payment Information') ?></h4>
@@ -38,9 +34,9 @@
             </fieldset>
         </div>
     </div>
+
     <?php if (!$_order->getIsVirtual()): ?>
-    <div class="box-right">
-        <!--Shipping Method-->
+    <div class="box-shipping-method">
         <div class="entry-edit">
             <div class="entry-edit-head">
                 <h4><?= Mage::helper('sales')->__('Shipping &amp; Handling Information') ?></h4>
@@ -78,18 +74,17 @@
         </div>
     </div>
     <?php endif ?>
-    <div class="clear"></div>
+
     <?= $this->getGiftOptionsHtml() ?>
-    <div class="clear"></div>
-    <div class="entry-edit">
+
+    <div class="entry-edit box-items-ordered">
         <div class="entry-edit-head">
             <h4><?= Mage::helper('sales')->__('Items Ordered') ?></h4>
         </div>
+        <?= $this->getItemsHtml() ?>
     </div>
-    <?= $this->getItemsHtml() ?>
-    <div class="clear"></div>
 
-    <div class="box-left">
+    <div class="box-comments-history">
         <div class="entry-edit">
             <div class="entry-edit-head">
                 <h4><?= Mage::helper('sales')->__('Comments History') ?></h4>
@@ -97,11 +92,13 @@
             <fieldset><?= $this->getChildHtml('order_history') ?></fieldset>
         </div>
     </div>
-    <div class="box-right entry-edit">
-        <div class="entry-edit-head"><h4><?= Mage::helper('sales')->__('Order Totals') ?></h4></div>
+
+    <div class="entry-edit box-order-totals">
+        <div class="entry-edit-head">
+            <h4><?= Mage::helper('sales')->__('Order Totals') ?></h4>
+        </div>
         <div class="order-totals"><?= $this->getChildHtml('order_totals') ?></div>
     </div>
-    <div class="clear"></div>
 </div>
 
 <?= $this->getChildHtml('popup_window') ?>
