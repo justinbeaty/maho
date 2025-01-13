@@ -380,9 +380,11 @@ strong, b {
 #page\:main-container {
     display: flex;
     flex-direction: column;
+    flex-grow: 1;
 
     #page\:container {
         display: flex;
+        flex-grow: 1;
 
         #page\:left {
             flex: 0 0 256px;
@@ -1470,6 +1472,19 @@ table.form-list {
                 }
             }
 
+            .next-toinput {
+                display: inline-block;
+                width: 100px;
+                margin-right: 5px;
+                vertical-align: top;
+            }
+
+            .next-toselect {
+                display: inline-block;
+                width: 220px;
+                vertical-align: top;
+            }
+
             & p.note {
                 display: flex;
                 gap: 4px;
@@ -1504,68 +1519,6 @@ table.form-list {
     }
 }
 
-
-
-
-.columns {
-
-    .form-list {
-        width: auto;
-
-        & td.value {
-            width: 300px;
-
-            .next-toinput {
-                width: 75px;
-                display: inline;
-                margin-right: 5px;
-            }
-
-            .next-toselect {
-
-                & input.input-text {
-                    width: 195px!important;
-                    display: inline;
-                }
-            }
-
-            & input[type="checkbox"][id*="use_"] {
-                margin: 4px 10px 0 0;
-                vertical-align: top;
-            }
-
-            & input[type="checkbox"][id*="use_"] + label {
-                display: inline-block;
-                vertical-align: top;
-                margin: 2px 0 0 -7px;
-            }
-        }
-    }
-}
-
-.fieldset-wide {
-
-    .form-list {
-        width: 100% !important;
-
-        & td.value {
-            width: auto !important;
-        }
-
-        & td.scope-label {
-            white-space: nowrap;
-            width: 1px;
-        }
-
-        & td.note {
-            width: 120px;
-        }
-    }
-}
-
-.fieldset-wide .form-list td.value p.note, .fieldset-wide .form-list td.value input.input-text, .fieldset-wide .form-list td.value textarea {
-    width: 98% !important;
-}
 
 .multi-input {
     margin-bottom: 8px;
