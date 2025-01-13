@@ -111,7 +111,7 @@ class varienAccordion {
                     updaterId: contentsEl.id,
                 }),
             });
-            contentsEl.innerHTML = html;
+            updateElementHtmlAndExecuteScripts(contentsEl, html);
             item.removeAttribute('data-url');
         } catch (error) {
             console.log(error)
