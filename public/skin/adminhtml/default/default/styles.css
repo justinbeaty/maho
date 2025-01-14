@@ -957,6 +957,15 @@ button, .form-button {
 
 /* === Accordion & Tabs === */
 
+div.disabled {
+    background: #c6cbc9 !important;
+
+    & a {
+        background-image: url(images/entry_edit_head_arrow_down2.gif) !important;
+        color: #f6f6f6 !important;
+    }
+}
+
 
 .entry-edit:not(:has(details, .entry-edit)) {
 
@@ -1256,8 +1265,8 @@ input.validation-failed, textarea.validation-failed {
     color: #fa4545 !important;
 }
 
-/*==== excluded from nesting ===*/
-/* 07 forms */
+/* === Forms === */
+
 form {
     display: inline;
 }
@@ -1266,6 +1275,11 @@ fieldset {
     border: 0;
 }
 
+legend {
+    font-size: 1rem;
+    margin-bottom: 16px;
+}
+/*
 legend {
     display: block !important;
     height: 0;
@@ -1276,146 +1290,67 @@ legend {
     width: 0;
     visibility: hidden;
 }
+*/
 
 label {
-    color: #333;
-
     &.inline {
         float: none !important;
         width: auto !important;
     }
 }
 
-input, select {
-    vertical-align: middle;
-}
-
-textarea {
-    overflow: auto;
-    margin: 0;
-
-    &.disabled {
-        background: #f6f6f6;
-    }
-}
-
-select.countries {
-
-    & option {
-        background-repeat: no-repeat;
-    }
-}
-
-table.form-edit {
-    width: 100%;
-}
-
-
-
-div.disabled {
-    background: #c6cbc9 !important;
-
-    & a {
-        background-image: url(images/entry_edit_head_arrow_down2.gif) !important;
-        color: #f6f6f6 !important;
-    }
-}
-
-
-
-
-
-
-
-
-#coupon_container {
-
-    .entry-edit {
-        min-width: 310px;
-    }
-}
-
-input.input-text, input.input-color, textarea, select {
-    border-width: 1px;
-    border-style: solid;
-    border-color: #aaa #c8c8c8 #c8c8c8 #aaa;
-    background: #fff;
-    font-size: 12px;
-}
-
-select {
-    min-height: 17px;
-    height: 26px;
+select,
+textarea,
+input[type=text],
+input[type=email],
+input[type=search],
+input[type=tel],
+input[type=url],
+input[type=number],
+input[type^=date]
+input[type=time]
+input[type=month]
+input[type=week] {
+    display: inline-block;
+    font: 0.875rem var(--font-sans);
+    padding: 4px 8px;
     border: 1px solid #c8c8c8;
-    text-transform: none;
-    margin: 0;
+    border-radius: 4px;
+    min-height: 33px;
 
-    & optgroup {
-        font-style: normal;
-        font-weight: 600;
-
-        & option {
-            padding-left: 10px;
-
-            &.even {
-                background: #f6f6f6;
-            }
-        }
+    &.large {
+        font-size: 1.125rem;
+        padding: 8px 16px;
     }
 
-    &.multiselect {
-
-        & option {
-            padding: 3px 4px;
-            border-bottom: 1px solid #ddd;
-        }
+    &.disabled, &:disabled {
+        background: #eeeeee;
     }
-
-    &.disabled {
-        background: #f6f6f6;
-    }
-
-    &[multiple] {
-        height: auto;
-    }
-
-    &[size] {
-        height: auto;
-    }
-}
-
-input.input-text, textarea {
-    padding: 2px;
 }
 
 input.input-color {
-    padding: 2px;
-    width: 222px !important;
+    width: 220px;
 }
 
 input.input-color-html5 {
-    width: 48px !important;
+    width: 48px;
 }
 
 input.qty {
-    width: 40px !important;
+    width: 48px;
 }
 
 input.item-qty {
-    width: 22px !important;
+    width: 24px;
 }
 
 input.price {
-    width: 50px !important;
+    width: 64px;
     text-align: right;
 }
 
-input[type=text].disabled {
-    background: #eee;
-}
 
 .checkboxes {
-
     & li {
         margin: 0 0 5px !important;
     }
@@ -1424,7 +1359,6 @@ input[type=text].disabled {
 /** Form List **/
 
 .fieldset, fieldset, .form-list {
-
     .field-row {
         display: flex;
         margin: 4px 0;
@@ -1437,12 +1371,19 @@ input[type=text].disabled {
     }
 }
 
+
+table.form-edit {
+    width: 100%;
+}
+
 table.form-list {
     width: auto;
-    border: 0;
+
+    .fieldset-wide & {
+        width: 100%;
+    }
 
     td {
-        border: 0;
         padding: 8px;
 
         &.hidden {
@@ -1450,25 +1391,31 @@ table.form-list {
         }
 
         &.label {
-            width: 200px;
+            width: 220px;
             label {
                 display: block;
             }
         }
 
         &.value {
-            textarea {
-                width: 330px;
+            width: 330px;
+            .fieldset-wide & {
+                width: auto;
             }
 
             input.input-text {
-                width: 330px;
+                width: 100%;
+            }
+
+            textarea {
+                width: 100%;
+                height: 15rem;
             }
 
             select {
                 width: 330px;
                 &.select-date {
-                    width: 87px;
+                    width: 120px;
                 }
             }
 
@@ -1485,10 +1432,9 @@ table.form-list {
                 vertical-align: top;
             }
 
-            & p.note {
+            .note {
                 display: flex;
                 gap: 4px;
-                width: 330px;
                 margin-bottom: 0;
                 font-size: 0.6875rem;
 
@@ -1505,6 +1451,8 @@ table.form-list {
         }
 
         &.use-default {
+            width: 1px;
+            white-space: nowrap;
             label {
                 display: inline-block;
                 vertical-align: middle;
@@ -1513,6 +1461,8 @@ table.form-list {
         }
 
         &.scope-label {
+            width: 1px;
+            white-space: nowrap;
             font-size: 0.6875rem;
             padding-top: 12px;
         }
@@ -1520,28 +1470,11 @@ table.form-list {
 }
 
 
+
 .multi-input {
     margin-bottom: 8px;
 }
 
-.grid {
-
-    & tr {
-
-        .form-list {
-            margin: 8px 0;
-
-            & tr {
-                background: #fff !important;
-            }
-        }
-    }
-}
-
-.field-row {
-    display: block;
-    margin-bottom: 5px;
-}
 
 span.delete-image, span.delete-file {
     display: block;
@@ -1553,46 +1486,6 @@ span.delete-file {
     padding: 0;
 }
 
-
-
-
-input.input-text, textarea, select {
-    font: 400 0.75rem ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    display: inline-block;
-    padding: 1px 3px;
-    margin: 0;
-    background-color: #fff;
-    height: 26px;
-    color: #202856;
-    border: 1px solid #c8c8c8;
-}
-
-
-input {
-    vertical-align: middle;
-
-    &[type=text].disabled {
-        background: #f6f6f6;
-    }
-
-    &[type=text]:disabled {
-        background: #f6f6f6;
-    }
-}
-
-textarea:disabled {
-    background: #f6f6f6;
-}
-
-select:disabled {
-    background: #f6f6f6;
-}
-
-
-.input-text.large {
-    padding: 12px 12px 14px;
-    font-size: 18px;
-}
 
 /*==== excluded from nesting ===*/
 
@@ -1641,6 +1534,12 @@ td.divider {
 
 /*==== excluded from nesting ===*/
 
+#coupon_container {
+    .entry-edit {
+        min-width: 310px;
+    }
+}
+
 
 .switcher {
     margin-bottom: 10px;
@@ -1682,7 +1581,6 @@ td.divider {
     margin: 0 0 1px;
     width: 16px;
     height: 16px;
-    background: url(images/i_question-mark.png) 0 0 no-repeat;
     text-decoration: none !important;
     text-indent: -999em;
     overflow: hidden;
