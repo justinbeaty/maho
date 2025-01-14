@@ -1323,7 +1323,9 @@ label {
 
 select,
 textarea,
+input:not([type]),
 input[type=text],
+input[type=password],
 input[type=email],
 input[type=search],
 input[type=tel],
