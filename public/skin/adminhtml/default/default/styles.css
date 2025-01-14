@@ -789,7 +789,6 @@ button, .form-button {
 
         .sort-title {
             display: flex;
-            align-items: baseline;
             justify-content: space-between;
             gap: 8px;
             white-space: nowrap;
@@ -797,20 +796,19 @@ button, .form-button {
             &:after {
                 content: "";
                 display: block;
-                width: 0;
-                height: 0;
+                width: 16px;
+                height: 16px;
+                margin-top: 2px;
             }
 
             .sort-arrow-asc &:after {
-                border-style: solid;
-                border-width: 0 5px 6px 5px;
-                border-color: transparent transparent currentcolor transparent;
+                background: #c8c8c8;
+                clip-path: polygon(10% 75%, 80% 75%, 50% 25%);
             }
 
             .sort-arrow-desc &:after {
-                border-style: solid;
-                border-width: 6px 5px 0 5px;
-                border-color: currentcolor transparent transparent transparent;
+                background: #c8c8c8;
+                clip-path: polygon(10% 25%, 80% 25%, 50% 75%);
             }
         }
     }
@@ -821,7 +819,7 @@ button, .form-button {
         }
         .head-massaction {
             select {
-                min-width: 56px;
+                min-width: 64px;
             }
         }
         .range {
@@ -1029,21 +1027,17 @@ div.disabled {
         &:after {
             content: "";
             display: block;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 8px 6px 0 6px;
-            border-color: #aaa transparent transparent transparent;
-        }
-        details[open] > &:after {
-            border-width: 0 6px 8px 6px;
-            border-color: transparent transparent #aaa transparent;
-        }
-        details.loading > &:after {
             width: 16px;
             height: 16px;
-            border: 0;
             flex-shrink: 0;
+            background: #aaa;
+            clip-path: polygon(10% 25%, 80% 25%, 50% 75%);
+        }
+        details[open] > &:after {
+            clip-path: polygon(10% 75%, 80% 75%, 50% 25%);
+        }
+        details.loading > &:after {
+            clip-path: unset;
             background-size: contain;
             background-repeat: no-repeat;
             background-image: url(images/loading.svg);
@@ -1236,21 +1230,8 @@ fieldset {
 }
 
 legend {
-    font-size: 1rem;
-    margin-bottom: 16px;
+    display: none;
 }
-/*
-legend {
-    display: block !important;
-    height: 0;
-    line-height: 0;
-    margin: 0;
-    overflow: hidden;
-    padding: 0;
-    width: 0;
-    visibility: hidden;
-}
-*/
 
 label {
     &.inline {
@@ -1411,12 +1392,12 @@ table.form-list {
 
                 &:before {
                     content: "";
-                    width: 0;
-                    height: 0;
-                    padding-top: 6px;
-                    border-style: solid;
-                    border-width: 0 5px 6px 5px;
-                    border-color: transparent transparent lightgrey transparent;
+                    width: 12px;
+                    height: 12px;
+                    margin-top: 2px;
+                    background: currentcolor;
+                    clip-path: polygon(10% 75%, 80% 75%, 50% 25%);
+                    opacity: 0.5;
                 }
             }
         }
