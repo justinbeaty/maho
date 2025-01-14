@@ -19,20 +19,15 @@
 
 
 
-
-
 .validation-advice {
     clear: both;
-    min-height: 15px;
-    margin: 3px 0 0 9px;
-    background: url(images/validation_advice_bg.gif) no-repeat 2px 1px;
-    padding-left: 16px;
-    font-size: .95em;
-    font-weight: bold;
-    line-height: 1.25em;
-    color: #fa4545 !important;
-    font-size: 12px;
-    font-weight: 600 !important;
+    color: #fa4545;
+    font-size: 0.6875rem;
+    font-weight: 600;
+
+    &:before {
+        content: "↑";
+    }
 }
 
 

@@ -416,7 +416,7 @@ strong, b {
         }
 
         &:hover {
-            z-index: 999;
+            z-index: 1000;
             & > ul {
                 display: block;
                 position: absolute;
@@ -440,8 +440,9 @@ strong, b {
             flex-shrink: 0;
             width: 8px;
             height: 8px;
-            background: #c8c8c8;
+            background: currentcolor;
             clip-path: polygon(0 0, 100% 50%, 0 100%);
+            opacity: 0.5;
         }
     }
 
@@ -563,6 +564,7 @@ button, .form-button {
     border-radius: 4px;
     background-color: #fff;
     cursor: pointer;
+    white-space: nowrap;
 
     &:hover, &:focus, &:active {
         background: color-mix(in oklab, #fff, black 15%);
@@ -796,19 +798,22 @@ button, .form-button {
             &:after {
                 content: "";
                 display: block;
+                flex-shrink: 0;
                 width: 16px;
                 height: 16px;
-                margin-top: 2px;
+                padding: 6px 2px 2px 2px;
             }
 
-            .sort-arrow-asc &:after {
-                background: #c8c8c8;
-                clip-path: polygon(10% 75%, 80% 75%, 50% 25%);
+            .sort-arrow-asc &::after {
+                background: var(--text-color);
+                clip-path: fill-box polygon(0% 100%, 100% 100%, 50% 0%);
+                opacity: 0.5;
             }
 
-            .sort-arrow-desc &:after {
-                background: #c8c8c8;
-                clip-path: polygon(10% 25%, 80% 25%, 50% 75%);
+            .sort-arrow-desc &::after {
+                background: var(--text-color);
+                clip-path: fill-box polygon(0% 0%, 100% 0%, 50% 100%);
+                opacity: 0.5;
             }
         }
     }
@@ -1027,17 +1032,20 @@ div.disabled {
         &:after {
             content: "";
             display: block;
+            flex-shrink: 0;
             width: 16px;
             height: 16px;
-            flex-shrink: 0;
-            background: #aaa;
-            clip-path: polygon(10% 25%, 80% 25%, 50% 75%);
+            padding: 6px 2px 2px 2px;
+            background: currentcolor;
+            clip-path: fill-box polygon(0% 0%, 100% 0%, 50% 100%);
+            opacity: 0.5;
         }
         details[open] > &:after {
-            clip-path: polygon(10% 75%, 80% 75%, 50% 25%);
+            clip-path: fill-box polygon(0% 100%, 100% 100%, 50% 0%);
         }
         details.loading > &:after {
             clip-path: unset;
+            opacity: 1;
             background-size: contain;
             background-repeat: no-repeat;
             background-image: url(images/loading.svg);
@@ -1392,11 +1400,11 @@ table.form-list {
 
                 &:before {
                     content: "";
-                    width: 12px;
-                    height: 12px;
-                    margin-top: 2px;
+                    width: 16px;
+                    height: 16px;
+                    padding: 4px 4px;
                     background: currentcolor;
-                    clip-path: polygon(10% 75%, 80% 75%, 50% 25%);
+                    clip-path: fill-box polygon(0% 100%, 100% 100%, 50% 0%);
                     opacity: 0.5;
                 }
             }
@@ -1459,7 +1467,7 @@ table.form-list {
     top: 0;
     left: 0;
     right: 0;
-    z-index: 100;
+    z-index: 1001;
     padding: 8px 16px;
     background: rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
