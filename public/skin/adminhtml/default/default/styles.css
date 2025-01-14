@@ -332,10 +332,11 @@ strong, b {
         .header-top {
             & > * {
                 position: absolute;
-                height: 40px;
+                height: 44px;
             }
 
             .logo {
+                top: 4px;
                 left: 16px;
                 svg {
                     height: 100%;
@@ -344,16 +345,13 @@ strong, b {
             }
 
             #usermenu {
+                top: 4px;
                 right: 16px;
-                svg {
-                    height: 100%;
-                    width: auto;
-                }
             }
         }
 
         .nav-bar {
-            padding: 0 64px;
+            padding: 4px 64px;
         }
     }
 
@@ -397,33 +395,39 @@ strong, b {
         }
 
         #content {
+            display: flex;
+            flex-direction: column;
             flex: 1 0 0;
+            gap: 16px;
             padding: 24px 24px 24px 32px;
             overflow: auto;
         }
     }
 }
 
-
 #nav, #usermenu {
     display: flex;
-    height: 40px;
 
     a {
         display: block;
-        padding: 0 12px;
         &:hover, &:focus {
             text-decoration: none;
         }
     }
 
     li.parent {
-        & > a {
-            cursor: default;
-        }
-
         /* Draw nested menu on hover */
         position: relative;
+
+        & > a {
+            display: flex;
+            cursor: default;
+            align-items: center;
+
+            span {
+                flex-grow: 1;
+            }
+        }
 
         ul {
             display: none;
@@ -442,11 +446,11 @@ strong, b {
                 width: 200px;
                 li.level0 > & {
                     top: 40px;
-                    left: 0px;
+                    left: 4px;
                 }
                 #usermenu & {
                     left: unset;
-                    right: 0;
+                    right: 4px;
                 }
             }
         }
@@ -454,37 +458,37 @@ strong, b {
         /* Draw triangle */
         &:not(.level0) > a:after {
             content: "";
-            position: absolute;
-            right: 12px;
-            bottom: 9px;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 5px 0 5px 6px;
-            border-color: transparent transparent transparent #c8c8c8;
+            flex-shrink: 0;
+            width: 8px;
+            height: 8px;
+            background: #c8c8c8;
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
         }
     }
 
     li.level0 {
+        padding: 4px;
+        height: 44px;
         & > a {
             color: #fff;
-            height: 40px;
-            line-height: 40px;
+            padding: 8px 12px;
+            border-radius: 4px;
             &.active {
+                color: var(--text-color);
+                background: #fefefe;
                 font-weight: 600;
-                background: color-mix(in oklab, #2c3878, black 20%);
             }
         }
         &:hover > a {
-            color: #fff;
-            background: color-mix(in oklab, #2c3878, black 10%);
+            color: var(--text-color);
+            background: #fefefe;
         }
     }
 
     li.level0 li {
         & > a {
-            padding: 9px 12px;
             color: var(--text-color);
+            padding: 8px 12px;
             background: #fff;
             &.active {
                 font-weight: 600;
@@ -493,6 +497,22 @@ strong, b {
         }
         &:hover > a {
             background: #eee;
+        }
+    }
+
+    li.usermenulabel > a {
+        padding: 8px;
+        &:after {
+            content: "";
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: currentcolor;
+            clip-path: polygon(
+                0% 15%, 100% 15%, 100% 25%, 0% 25%, 0% 15%,
+                0% 45%, 100% 45%, 100% 55%, 0% 55%, 0% 45%,
+                0% 75%, 100% 75%, 100% 85%, 0% 85%, 0% 75%
+            );
         }
     }
 }
@@ -858,7 +878,6 @@ button, .form-button {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin: 8px 0;
 
     .actions {
         display: flex;
@@ -1136,6 +1155,9 @@ ul.tabs, ul.tabs-horiz {
 
 /* === Messages === */
 
+#messages:empty {
+    display: none;
+}
 
 .messages {
     display: flex;
@@ -1325,6 +1347,15 @@ input[type=week] {
 
     &.disabled, &:disabled {
         background: #eeeeee;
+    }
+}
+
+textarea {
+    &:not([cols]) {
+        width: 220px;
+    }
+    &:not([rows]) {
+        width: 100px;
     }
 }
 
@@ -1575,6 +1606,12 @@ td.divider {
     }
 }
 
+.left-col-block {
+    width: 200px;
+}
+
+
+
 .link-store-scope {
     display: inline-block;
     vertical-align: middle;
@@ -1714,122 +1751,49 @@ td.divider {
 
 /* 11 headings */
 
-
 .content-header {
 
-    .content-buttons-placeholder {
-        display: inline !important;
-    }
+    display: flex;
+    align-items: center;
 
-}
-
-.content-header {
-    margin-bottom: 18px;
-    border-bottom: 4px solid #dfdfdf;
-    padding-bottom: .25em;
-    margin-bottom: 0;
-    padding-bottom: 0;
-
-    & table {
+    table {
         width: 100%;
-    }
-
-    & h3 {
-        float: left;
-        margin: .3em .5em 0 0;
-        color: #eb5e00;
-        font-size: 1.25em;
-        line-height: 1.2em;
-        margin: 0 0 0.3em;
-        line-height: 32px;
-    }
-
-    .head {
-
-        & h3 {
-            float: none;
+        tr {
+            display: flex;
+            align-items: center;
+            & > td:first-child {
+                flex-grow: 1;
+            }
         }
     }
 
-
-    & td.content-buttons {
-        width: 13%;
-        white-space: nowrap!important;
+    h3 {
+        flex-grow: 1;
         margin: 0;
     }
-}
 
-
-.side-col {
-
-    .content-header {
-        border-bottom: 0;
-        margin-right: 12px;
-        margin-bottom: .6em;
+    p.form-buttons {
+        margin: 0;
     }
-}
 
-.left-col-block {
-    width: 200px;
+    .content-buttons-placeholder {
+        display: inline;
+    }
 }
 
 .content-header-floating {
     display: none;
     position: fixed;
-    left: 0;
     top: 0;
-    width: 100%;
-    border-bottom: solid 1px #988753;
+    left: 0;
+    right: 0;
     z-index: 100;
-    background: #fdfaa4;
-    opacity: .85;
-    opacity: 0.9;
-    border-bottom: solid 1px #c8c8c8;
-
-    .content-header {
-        padding: 6px 8px 4px 8px;
-        margin-bottom: 0;
-        border: 0;
-    }
-
-    & td {
-        padding-right: 20px;
-        padding-right: 0;
-    }
-
-    & h3 {
-        margin-left: 20px;
-        display: inline;
-        font-size: 18px;
-    }
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid lightgrey;
 }
-
-
-.box-head {
-    margin-bottom: .6em;
-    text-align: right;
-
-    & h4 {
-        float: left;
-        margin-bottom: 0;
-    }
-}
-
-.content-header-floating .content-header, .footer-content, .header-top {
-    padding-left: 15px;
-    padding-right: 15px;
-    width: 100%;
-}
-
-.content-header h3, .content-header {
-    border: 0;
-    color: #2f2f2f;
-    font-size: 24px;
-    font-weight: 400;
-}
-
-
-
 
 
 /* 14 sales */
@@ -2761,7 +2725,7 @@ ul.item-options {
         }
     }
 
-    & td:has(input.swatch-option) {
+    td:has(input.swatch-option) {
         display: flex;
         gap: 2px;
 
@@ -2783,7 +2747,7 @@ ul.item-options {
         }
     }
 
-    & td:has(input.swatch-disabled) {
+    td:has(input.swatch-disabled) {
         background-image: url('data:image/svg+xml,<svg id="e5490f2e-3f54-4acd-9496-57eed667c240" data-name="Livello 1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 28.41093 28.29249"><title>placeholder</title><rect x="1.20546" y="1.08375" width="26" height="26" fill="%23fff" stroke="%23ccc" stroke-miterlimit="10"/><line x1="0.70546" y1="27.58375" x2="27.70546" y2="0.70875" fill="none" stroke="%23ff003a" stroke-miterlimit="10" stroke-width="2"/></svg>');
         background-repeat: no-repeat;
         outline: 1px solid #c8c8c8;
@@ -4022,12 +3986,12 @@ ul.super-product-attributes {
 /*==== excluded from nesting ===*/
 /* 19 widget */
 .breadcrumbs {
-    margin: 0 0 10px;
+    margin: 0 0 16px;
 
-    & li {
+    li {
         display: inline;
 
-        & span {
+        span {
             margin: 0 2px;
         }
     }
