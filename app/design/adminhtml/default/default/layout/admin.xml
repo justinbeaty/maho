@@ -91,7 +91,7 @@
     </adminhtml_system_config_edit>
     <adminhtml_dashboard_index>
         <reference name="head">
-            <action method="addJs"><name>chart.umd.js</name></action>
+            <action method="addJs"><name>chartjs/chart.umd.js</name></action>
             <action method="addJs"><name>mage/adminhtml/dashboard.js</name></action>
         </reference>
         <reference name="content">
