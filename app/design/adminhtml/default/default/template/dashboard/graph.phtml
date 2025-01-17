@@ -16,9 +16,7 @@
 ?>
 
 <?php $chartRandomId = rand(100,999) ?>
-<?php $containerStyle = "width: {$this->getWidth()}px; height:{$this->getHeight()}px;" ?>
 
-<div style="<?= $containerStyle?>">
 <?php if ($this->getCount()): ?>
     <?php $this->processData() ?>
     <canvas id="chart<?= $chartRandomId ?>"></canvas>
@@ -32,4 +30,3 @@
 <?php else: ?>
     <?= $this->__('No Data Found') ?>
 <?php endif ?>
-</div>

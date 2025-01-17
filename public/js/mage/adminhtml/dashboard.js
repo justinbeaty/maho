@@ -34,10 +34,11 @@ class MahoDashboard
 
         const html = await mahoFetch(setRouteParams(this.config.diagrams.ajaxUrl, {
             block: 'totals',
+            period: periodSwitcherEl.value,
         }));
 
-        const tabContentEl = document.getElementById('dashboard_diagram_totals');
-        updateElementHtmlAndExecuteScripts(tabContentEl, html);
+        const totalsEl = document.getElementById('dashboard_diagram_totals');
+        totalsEl.outerHTML = html;
     }
 
     drawChart(canvasId, datasets, labels) {
@@ -49,8 +50,8 @@ class MahoDashboard
         const ctx = canvas.getContext('2d');
 
         const borderColor = '#adb41a';
-        const backgroundColor = ctx.createLinearGradient(0, 0, 0, 293);
-        backgroundColor.addColorStop(0, `${borderColor}aa`);
+        const backgroundColor = ctx.createLinearGradient(0, 0, 0, 400);
+        backgroundColor.addColorStop(0, `${borderColor}77`);
         backgroundColor.addColorStop(1, `${borderColor}00`);
 
         const config = {
@@ -75,8 +76,8 @@ class MahoDashboard
                 },
                 scales: {
                     y: {
-                        suggestedMin: 0,
-                        suggestedMax: 10,
+                        min: 0,
+                        //suggestedMax: 10,
                     },
                 },
             },
@@ -86,6 +87,7 @@ class MahoDashboard
 
 
     initializeChartJs() {
+        Chart.defaults.maintainAspectRatio = false;
         Chart.defaults.animation.duration = 0;
         Chart.defaults.plugins.tooltip.animation = false;
         Chart.defaults.plugins.legend.display = false;

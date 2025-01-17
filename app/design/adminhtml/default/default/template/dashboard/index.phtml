@@ -48,27 +48,36 @@
     </div>
 
     <div>
-        <div id="diagram_tabs">
-            <?= $this->getChildHtml('diagrams') ?>
 
-            <div>
-                <?= $this->__('Select Range') ?>:
-                <select name="period" id="order_<?= $this->getHtmlId() ?>_period">
-                <?php $selected = $this->getRequest()->getParam('period') ?>
-                <?php foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $value => $label): ?>
-                    <?php if (in_array($value, ['custom'])) continue ?>
-                    <option value="<?= $value ?>"<?= $selected === $value ? ' selected="selected"' : '' ?>><?= $label ?></option>
-                <?php endforeach ?>
-                </select>
-           </div>
+    <?php if (is_array($this->getChild('diagrams')->getTabsIds())) : ?>
+        <div>
+            <div id="diagram_tabs">
+                <?= $this->getChildHtml('diagrams') ?>
+                <div>
+                    <?= $this->__('Select Range') ?>:
+                    <select name="period" id="order_<?= $this->getHtmlId() ?>_period">
+                    <?php $selected = $this->getRequest()->getParam('period') ?>
+                    <?php foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $value => $label): ?>
+                        <?php if (in_array($value, ['custom'])) continue ?>
+                        <option value="<?= $value ?>"<?= $selected === $value ? ' selected="selected"' : '' ?>>
+                            <?= $label ?>
+                        </option>
+                    <?php endforeach ?>
+                    </select>
+               </div>
+            </div>
+            <div id="diagram_tab_content" class="box"></div>
         </div>
-
-        <div id="diagram_tab_content" class="box"></div>
+    <?php else: ?>
+        <?= $this->getChildHtml('diagrams') ?>
+    <?php endif ?>
 
         <?= $this->getChildHtml('totals') ?>
 
-        <?= $this->getChildHtml('grids') ?>
-        <div id="grid_tab_content"></div>
+        <div>
+            <?= $this->getChildHtml('grids') ?>
+            <div id="grid_tab_content"></div>
+        </div>
 
     </div>
 </div>

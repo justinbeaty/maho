@@ -34,6 +34,11 @@ body {
     background: var(--body-bg-color);
 }
 
+::selection {
+    background-color: lightblue;
+}
+
+
 a {
     color: var(--link-color);
     text-decoration: none;
@@ -1029,6 +1034,7 @@ div.disabled {
 
 ul.tabs-horiz {
     gap: 8px;
+    margin-bottom: 8px;
 }
 
 ul.tabs {
@@ -1099,11 +1105,6 @@ ul.tabs, ul.tabs-horiz {
     }
 }
 
-
-#grid_tab_content {
-    background: #fff;
-    padding: 15px;
-}
 
 
 /* === Messages === */
@@ -1493,11 +1494,18 @@ table.form-list {
     display: flex;
     gap: 32px;
 
+    & > div {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
     & > div:first-child {
         flex: 0 1 35%;
     }
     & > div:last-child {
         flex: 1 1 65%;
+        min-width: 0;
     }
 
     #diagram_tabs {
@@ -1507,9 +1515,17 @@ table.form-list {
             flex-grow: 1;
         }
     }
-    #diagram_tab_content > div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    #diagram_tab_content {
+        height: 432px;
+        & > div {
+            position: relative;
+            height: 400px;
+        }
     }
+
+    #dashboard_diagram_totals > div {
+            display: flex;
+            justify-content: space-around;
+    }
+
 }

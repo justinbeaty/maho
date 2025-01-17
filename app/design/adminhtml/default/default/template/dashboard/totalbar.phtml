@@ -13,18 +13,14 @@
 /** @var Mage_Adminhtml_Block_Dashboard_Totals $this */
 ?>
 <?php if(count($this->getTotals()) > 0): ?>
-<div class="box" id="dashboard_diagram_totals">
-    <div class="entry-edit">
-        <table cellspacing="0" width="100%">
-            <tr>
-            <?php foreach( $this->getTotals() as $_total ): ?>
-                <td class="a-center bold">
-                    <span><?= $_total['label'] ?></span><br />
-                    <span class="nowrap" style="font-size:18px; color:#EA7601;"><?= $_total['value'] ?></span>
-                </td>
-            <?php endforeach ?>
-            </tr>
-        </table>
+<div id="dashboard_diagram_totals">
+    <div class="box">
+    <?php foreach( $this->getTotals() as $total ): ?>
+        <div class="a-center bold">
+            <span><?= $total['label'] ?></span><br />
+            <span class="emph large"><?= $total['value'] ?></span>
+        </div>
+    <?php endforeach ?>
     </div>
 </div>
 <?php endif ?>
