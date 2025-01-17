@@ -48,7 +48,7 @@
     </div>
 
     <div>
-        <div class="flex-row">
+        <div id="diagram_tabs">
             <?= $this->getChildHtml('diagrams') ?>
 
             <div>
@@ -63,7 +63,7 @@
            </div>
         </div>
 
-        <div id="diagram_tab_content"></div>
+        <div id="diagram_tab_content" class="box"></div>
 
         <?= $this->getChildHtml('totals') ?>
 

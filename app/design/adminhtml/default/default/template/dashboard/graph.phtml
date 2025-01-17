@@ -17,20 +17,19 @@
 
 <?php $chartRandomId = rand(100,999) ?>
 <?php $containerStyle = "width: {$this->getWidth()}px; height:{$this->getHeight()}px;" ?>
-<div>
-    <div style="<?= $containerStyle?>">
-    <?php if ($this->getCount()): ?>
-        <?php $this->processData() ?>
-        <canvas id="chart<?= $chartRandomId ?>"></canvas>
-        <script>
-            dashboard.drawChart(
-                <?= var_export("chart{$chartRandomId}") ?>,
-                <?= json_encode($this->getAllSeries()) ?>,
-                <?= json_encode($this->getAxisLabels('x')) ?>,
-            );
-        </script>
-    <?php else: ?>
-        <?= $this->__('No Data Found') ?>
-    <?php endif ?>
-    </div>
+
+<div style="<?= $containerStyle?>">
+<?php if ($this->getCount()): ?>
+    <?php $this->processData() ?>
+    <canvas id="chart<?= $chartRandomId ?>"></canvas>
+    <script>
+        dashboard.drawChart(
+            <?= var_export("chart{$chartRandomId}") ?>,
+            <?= json_encode($this->getAllSeries()) ?>,
+            <?= json_encode($this->getAxisLabels('x')) ?>,
+        );
+    </script>
+<?php else: ?>
+    <?= $this->__('No Data Found') ?>
+<?php endif ?>
 </div>
