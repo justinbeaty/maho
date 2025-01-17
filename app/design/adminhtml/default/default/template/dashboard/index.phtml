@@ -69,53 +69,43 @@ function changeDiagramsPeriod(periodObj) {
     });
 }
 
-function toggleCal(id) {
-    $('dashboard_'+id+'_cal_div').toggle();
-    $('dashboard_'+id+'_range_div').toggle();
-}
 //]]>
 </script>
 <?php endif ?>
 <div class="content-header">
-    <table cellspacing="0">
-        <tr>
-            <td><h3 class="head-dashboard"><?= $this->__('Dashboard') ?></h3></td>
-        </tr>
-    </table>
+    <h3 class="head-dashboard"><?= $this->__('Dashboard') ?></h3>
 </div>
+
+<?= $this->getChildHtml('store_switcher') ?>
+
 <div class="dashboard-container">
-    <?= $this->getChildHtml('store_switcher') ?>
-    <table cellspacing="25" width="100%">
-        <tr>
-            <td><?= $this->getChildHtml('sales') ?>
-                <div class="entry-edit">
-                    <div class="entry-edit-head"><h4><?= $this->__('Last 5 Orders') ?></h4></div>
-                    <fieldset class="np"><?= $this->getChildHtml('lastOrders') ?></fieldset>
-                </div>
-                <div class="entry-edit">
-                    <div class="entry-edit-head"><h4><?= $this->__('Last 5 Search Terms') ?></h4></div>
-                    <fieldset class="np"><?= $this->getChildHtml('lastSearches') ?></fieldset>
-                </div>
-                <div class="entry-edit">
-                    <div class="entry-edit-head"><h4><?= $this->__('Top 5 Search Terms') ?></h4></div>
-                    <fieldset class="np"><?= $this->getChildHtml('topSearches') ?></fieldset>
-                </div>
-            </td>
-            <td>
-                <div class="entry-edit" style="border:1px solid #ccc;">
-                    <?= $this->getChildHtml('diagrams') ?>
-                    <?php if (is_array($this->getChild('diagrams')->getTabsIds())) : ?>
-                        <div id="diagram_tab_content"></div>
-                    <?php endif ?>
-                    <div style="margin:20px;">
-                        <?= $this->getChildHtml('totals') ?>
-                    </div>
-                    <div style="margin:20px;">
-                        <?= $this->getChildHtml('grids') ?>
-                        <div id="grid_tab_content"></div>
-                    </div>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div>
+        <?= $this->getChildHtml('sales') ?>
+        <div class="entry-edit">
+            <div class="entry-edit-head"><h4><?= $this->__('Last 5 Orders') ?></h4></div>
+            <fieldset class="np"><?= $this->getChildHtml('lastOrders') ?></fieldset>
+        </div>
+        <div class="entry-edit">
+            <div class="entry-edit-head"><h4><?= $this->__('Last 5 Search Terms') ?></h4></div>
+            <fieldset class="np"><?= $this->getChildHtml('lastSearches') ?></fieldset>
+        </div>
+        <div class="entry-edit">
+            <div class="entry-edit-head"><h4><?= $this->__('Top 5 Search Terms') ?></h4></div>
+            <fieldset class="np"><?= $this->getChildHtml('topSearches') ?></fieldset>
+        </div>
+    </div>
+
+    <div>
+            <?= $this->getChildHtml('diagrams') ?>
+            <?php if (is_array($this->getChild('diagrams')->getTabsIds())): ?>
+            <div id="diagram_tab_content"></div>
+            <?php endif ?>
+
+                <?= $this->getChildHtml('totals') ?>
+
+
+                <?= $this->getChildHtml('grids') ?>
+                <div id="grid_tab_content"></div>
+
+    </div>
 </div>
