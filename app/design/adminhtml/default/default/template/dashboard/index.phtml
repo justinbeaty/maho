@@ -19,6 +19,17 @@
 
 <?= $this->getChildHtml('store_switcher') ?>
 
+<script>
+    const dashboard = new MahoDashboard({
+        diagrams: {
+            htmlId: <?= var_export($this->getChild('diagrams')->getId()) ?>,
+            tabs: <?= json_encode($this->getChild('diagrams')->getTabsIds()) ?>,
+            switcherId: <?= var_export("order_{$this->getHtmlId()}_period") ?>,
+            ajaxUrl: <?= var_export($this->getUrl('*/*/ajaxBlock')) ?>,
+        },
+    });
+</script>
+
 <div class="dashboard-container">
     <div>
         <?= $this->getChildHtml('sales') ?>
