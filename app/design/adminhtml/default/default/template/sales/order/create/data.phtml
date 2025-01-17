@@ -24,14 +24,7 @@
     <script type="text/javascript">
         order.setCurrencySymbol('<?= Mage::helper('core')->jsQuoteEscape($this->getCurrencySymbol($this->getCurrentCurrencyCode())) ?>')
     </script>
-<table cellspacing="0" width="100%">
-<tr>
-    <?php if($this->getCustomerId()): ?>
-    <td class="side-col" style="background:none; padding:0;">
-        <div id="order-sidebar"><?= $this->getChildHtml('sidebar') ?></div>
-    </td>
-    <?php endif ?>
-    <td <?php if($this->getCustomerId()): ?>class="main-col"<?php endif ?>>
+
        <div id="order-additional_area" style="display:none" class="order-additional-area"><?= $this->getChildHtml('additional_area') ?></div>
        <div id="order-search" style="display:none" class="order-search-items"><?= $this->getChildHtml('search') ?></div>
         <div id="order-items"><?= $this->getChildHtml('items') ?></div>
@@ -68,6 +61,5 @@
         </div>
         <div class="clear"></div>
     </td>
-</tr>
-</table>
+
 </div>

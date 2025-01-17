@@ -53,4 +53,13 @@ class Mage_Adminhtml_Block_Page extends Mage_Adminhtml_Block_Template
         $this->setBodyClass($this->getBodyClass() . ' ' . $className);
         return $this;
     }
+
+    public function getContainerCssClass(): string
+    {
+        $blockLeft = $this->getLayout()->getBlock('left');
+        if ($blockLeft->getIsCollapsed() || $blockLeft->countChildren() === 0) {
+            return 'container-collapsed';
+        }
+        return 'container';
+    }
 }

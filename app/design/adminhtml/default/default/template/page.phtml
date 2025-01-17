@@ -44,11 +44,9 @@
         <div id="anchor-content" class="middle">
             <div id="page:main-container">
                 <div id="page:container" class="columns <?php echo $this->getContainerCssClass() ?>">
-                <?php if($this->getChildHtml('left')): ?>
                     <aside id="page:left" class="side-col">
                         <?= $this->getChildHtml('left') ?>
                     </aside>
-                <?php endif ?>
                     <main id="content" class="main-col">
                         <div id="messages"><?= $this->getMessagesBlock()->toHtml() ?></div>
                         <?= $this->getChildHtml('content') ?>
