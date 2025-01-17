@@ -13,65 +13,6 @@
 /** @var Mage_Adminhtml_Block_Dashboard $this */
 ?>
 
-<?php if (is_array($this->getChild('diagrams')->getTabsIds())) : ?>
-<script type="text/javascript">
-//<![CDATA[
-function changeDiagramsPeriod(periodObj) {
-    periodParam = periodObj.value ? 'period/' + periodObj.value + '/' : '';
-<?php foreach ($this->getChild('diagrams')->getTabsIds() as $tabId): ?>
-    ajaxBlockParam = 'block/tab_<?= $tabId ?>/';
-    ajaxBlockUrl = '<?= $this->getUrl('*/*/ajaxBlock', ['_current' => true, 'block' => '', 'period' => '']) ?>' + ajaxBlockParam + periodParam;
-    new Ajax.Request(ajaxBlockUrl, {
-        parameters: {isAjax: 'true', form_key: FORM_KEY},
-        onSuccess: function(transport) {
-            tabContentElementId = '<?= $this->getChild('diagrams')->getId() ?>_<?= $tabId ?>_content';
-            try {
-                if (transport.responseText.isJSON()) {
-                    var response = transport.responseText.evalJSON()
-                    if (response.error) {
-                        alert(response.message);
-                    }
-                    if(response.ajaxExpired && response.ajaxRedirect) {
-                        setLocation(response.ajaxRedirect);
-                    }
-                } else {
-                    $(tabContentElementId).update(transport.responseText);
-                }
-            }
-            catch (e) {
-                $(tabContentElementId).update(transport.responseText);
-            }
-        }
-    });
-<?php endforeach ?>
-    ajaxBlockUrl = '<?= $this->getUrl('*/*/ajaxBlock', ['_current' => true, 'block' => 'totals', 'period' => '']) ?>' + periodParam;
-    new Ajax.Request(ajaxBlockUrl, {
-        parameters: {isAjax: 'true', form_key: FORM_KEY},
-        onSuccess: function(transport) {
-            tabContentElementId = 'dashboard_diagram_totals';
-            try {
-                if (transport.responseText.isJSON()) {
-                    var response = transport.responseText.evalJSON()
-                    if (response.error) {
-                        alert(response.message);
-                    }
-                    if(response.ajaxExpired && response.ajaxRedirect) {
-                        setLocation(response.ajaxRedirect);
-                    }
-                } else {
-                    $(tabContentElementId).replace(transport.responseText);
-                }
-            }
-            catch (e) {
-                $(tabContentElementId).replace(transport.responseText);
-            }
-        }
-    });
-}
-
-//]]>
-</script>
-<?php endif ?>
 <div class="content-header">
     <h3 class="head-dashboard"><?= $this->__('Dashboard') ?></h3>
 </div>
@@ -83,29 +24,40 @@ function changeDiagramsPeriod(periodObj) {
         <?= $this->getChildHtml('sales') ?>
         <div class="entry-edit">
             <div class="entry-edit-head"><h4><?= $this->__('Last 5 Orders') ?></h4></div>
-            <fieldset class="np"><?= $this->getChildHtml('lastOrders') ?></fieldset>
+            <fieldset><?= $this->getChildHtml('lastOrders') ?></fieldset>
         </div>
         <div class="entry-edit">
             <div class="entry-edit-head"><h4><?= $this->__('Last 5 Search Terms') ?></h4></div>
-            <fieldset class="np"><?= $this->getChildHtml('lastSearches') ?></fieldset>
+            <fieldset><?= $this->getChildHtml('lastSearches') ?></fieldset>
         </div>
         <div class="entry-edit">
             <div class="entry-edit-head"><h4><?= $this->__('Top 5 Search Terms') ?></h4></div>
-            <fieldset class="np"><?= $this->getChildHtml('topSearches') ?></fieldset>
+            <fieldset><?= $this->getChildHtml('topSearches') ?></fieldset>
         </div>
     </div>
 
     <div>
+        <div class="flex-row">
             <?= $this->getChildHtml('diagrams') ?>
-            <?php if (is_array($this->getChild('diagrams')->getTabsIds())): ?>
-            <div id="diagram_tab_content"></div>
-            <?php endif ?>
 
-                <?= $this->getChildHtml('totals') ?>
+            <div>
+                <?= $this->__('Select Range') ?>:
+                <select name="period" id="order_<?= $this->getHtmlId() ?>_period">
+                <?php $selected = $this->getRequest()->getParam('period') ?>
+                <?php foreach ($this->helper('adminhtml/dashboard_data')->getDatePeriods() as $value => $label): ?>
+                    <?php if (in_array($value, ['custom'])) continue ?>
+                    <option value="<?= $value ?>"<?= $selected === $value ? ' selected="selected"' : '' ?>><?= $label ?></option>
+                <?php endforeach ?>
+                </select>
+           </div>
+        </div>
 
+        <div id="diagram_tab_content"></div>
 
-                <?= $this->getChildHtml('grids') ?>
-                <div id="grid_tab_content"></div>
+        <?= $this->getChildHtml('totals') ?>
+
+        <?= $this->getChildHtml('grids') ?>
+        <div id="grid_tab_content"></div>
 
     </div>
 </div>
