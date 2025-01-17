@@ -105,12 +105,8 @@ td.divider {
 
 .switcher {
     margin-bottom: 10px;
-    border: 1px solid #cddddd;
-    background: #e7efef;
-    padding: 10px;
     background: none;
     padding: 0 0 10px;
-    border: none;
 }
 
 .side-col {
@@ -284,9 +280,17 @@ td.divider {
         height: 100%;
     }
 
-    .box-order-messages, .box-items-ordered {
+    .switcher, .box-order-messages, .box-items-ordered {
         grid-column: span 2;
     }
+
+    /*.order-additional-area, .order-search-items*/
+
+    #order-additional_area, #order-search, #order-items, #order-errors, #order-form_account {
+        grid-column: span 2;
+
+    }
+
 }
 
 /** endnew */
