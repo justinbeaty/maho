@@ -51,6 +51,33 @@ class MahoDashboard
         backgroundColor.addColorStop(1, `${borderColor}00`);
 
 
+        const plugin = {
+            afterInit: (chart, args, opts) => {
+                chart.hoverState = { x: 0, draw: false };
+            },
+            afterEvent: (chart, args) => {
+                chart.hoverState = { x: args.event.x, draw: args.inChartArea}
+                chart.draw()
+            },
+            beforeDatasetsDraw: (chart, args, opts) => {
+                if (!chart.hoverState.draw) {
+                    return;
+                }
+
+                const ctx = chart.ctx;
+                ctx.save()
+                ctx.beginPath()
+                ctx.lineWidth = 0.25;
+                ctx.strokeStyle = 'black';
+                ctx.moveTo(chart.hoverState.x, chart.chartArea.bottom)
+                ctx.lineTo(chart.hoverState.x, chart.chartArea.top)
+                ctx.stroke()
+                ctx.restore()
+            }
+        }
+
+        Chart.Tooltip.positioners.cursor = (_, coordinates) => coordinates;
+
         const config = {
             type: 'line',
             data: {
@@ -66,14 +93,22 @@ class MahoDashboard
                     borderColor,
                     fill: true,
                     backgroundColor,
-                    //pointRadius: 0,
+                    pointRadius: 0,
                     tension: 0.2,
                 })),
             },
             options: {
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                    position: 'cursor',
+                },
                 scales: {
                     x: {
                         //type: 'time',
+                        grid: {
+                            //display : false,
+                        },
                     },
                     y: {
                         suggestedMin: 0,
@@ -81,7 +116,7 @@ class MahoDashboard
                         ticks: {
                             // Include a dollar sign in the ticks
                             callback: function(value, index, ticks) {
-                                console.log(value, index, ticks)
+                                //console.log(value, index, ticks)
                                 return '$' + value;
                             }
                         },
@@ -92,10 +127,14 @@ class MahoDashboard
                 },
                 plugins: {
                     legend: {
-                        display: false
-                    }
-                }
-            }
+                        display: false,
+                    },
+                    tooltip: {
+                        animation: false,
+                    },
+                },
+            },
+            plugins: [plugin],
         };
         new Chart(canvasId, config);
     }
