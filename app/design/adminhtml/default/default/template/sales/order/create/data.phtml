@@ -55,14 +55,14 @@
 
     <?= $this->getChildHtml('gift_options') ?>
 
-    <div class="entry-edit">
+    <div id="order-history" class="entry-edit">
         <div class="entry-edit-head"><h4><?= Mage::helper('sales')->__('Order History') ?></h4></div>
         <fieldset id="order-comment"><?= $this->getChildHtml('comment') ?></fieldset>
     </div>
 
-    <div class="entry-edit">
+    <div id="order-totals" class="entry-edit">
         <div class="entry-edit-head"><h4><?= Mage::helper('sales')->__('Order Totals') ?></h4></div>
-        <div id="order-totals" class="order-totals"><?= $this->getChildHtml('totals') ?></div>
+        <div id="order-totals2" class="order-totals"><?= $this->getChildHtml('totals') ?></div>
     </div>
 
 </div>
