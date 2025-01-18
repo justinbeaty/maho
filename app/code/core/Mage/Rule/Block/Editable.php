@@ -36,7 +36,7 @@ class Mage_Rule_Block_Editable extends Mage_Core_Block_Abstract implements Varie
                 . $element->getHtmlId()
                 . '" name="' . $element->getName()
                 . '" value="' . $element->getValue() . '"/> '
-                . htmlspecialchars($valueName) . '&nbsp;';
+                . htmlspecialchars($valueName);
         } else {
             $html = ' <span class="rule-param"'
                 . ($element->getParamId() ? ' id="' . $element->getParamId() . '"' : '') . '>'
@@ -51,16 +51,11 @@ class Mage_Rule_Block_Editable extends Mage_Core_Block_Abstract implements Varie
             $html .= '</a><span class="element"> ' . $element->getElementHtml();
 
             if ($element->getExplicitApply()) {
-                $html .= ' <a href="javascript:void(0)" class="rule-param-apply"><img src="'
-                    . $this->getSkinUrl('images/rule_component_apply.gif')
-                    . '" class="v-middle" alt="'
-                    . Mage::helper('core')->quoteEscape($this->__('Apply'))
-                    . '" title="'
-                    . Mage::helper('core')->quoteEscape($this->__('Apply'))
-                    . '" /></a> ';
+                $title = Mage::helper('core')->quoteEscape($this->__('Apply'));
+                $html .= ' <a href="javascript:void(0)" class="rule-param-apply icon-check" title="' . $title . '"></a>';
             }
 
-            $html .= '</span></span>&nbsp;';
+            $html .= '</span></span>';
         }
 
         return $html;
