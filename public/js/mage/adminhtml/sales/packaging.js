@@ -309,13 +309,15 @@ class Packaging
     newPackage() {
         const template = document.getElementById('packaging_package_template');
 
-        this.packagesContent.insertAdjacentHTML('beforeend', template.innerHTML);
-        const packageBlock = this.packagesContent.lastElementChild;
-
+        const packageBlock = document.createElement('div');
+        packageBlock.innerHTML = template.innerHTML;
+        packageBlock.classList.add('package-block');
         packageBlock.dataset.id = ++this.packageIncrement;
         packageBlock.id = `package_block_${this.packageIncrement}`;
         packageBlock.querySelector('.package-number span').textContent = this.packageIncrement;
         packageBlock.select('.AddSelectedBtn')[0].hide();
+
+        this.packagesContent.appendChild(packageBlock);
     }
 
     deletePackage(obj) {
@@ -329,17 +331,20 @@ class Packaging
     }
 
     deleteItem(obj) {
-        var item = $(obj).up('tr');
-        var itemId = item.select('[type="checkbox"]')[0].value;
-        var pack = $(obj).up('div[id^="package_block"]');
-        var packItems = pack.select('.package_items')[0];
-        var packageId = pack.id.match(/\d$/)[0];
+        const item = obj.closest('tr');
+        const itemId = item.querySelector('[type=checkbox]').value;
+
+        const packageBlock = obj.closest('[id^=package_block]');
+        const packageItems = packageBlock.querySelector('.package_items');
+        const packageId = packageBlock.dataset.id;
 
         delete this.packages[packageId]['items'][itemId];
-        if (item.offsetParent.rows.length <= 2) { /* head + this last row */
-            $(packItems).hide();
-        }
         item.remove();
+
+        if (item.parentElement.rows.length === 0) {
+            toggleVis(packageItems, false);
+        }
+
         this.clearMessage();
         this._recalcContainerWeightAndCustomsValue(packItems);
         this._setAllItemsPackedState();
@@ -356,29 +361,37 @@ class Packaging
         }
     }
 
-    getItemsForPack(obj) {
-        if (this.itemsGridUrl) {
-            var parameters = $H({'shipment_id': this.shipmentId});
-            var packageBlock = $(obj).up('[id^="package_block"]');
-            var packagePrapare = packageBlock.select('.package_prapare')[0];
-            var packagePrapareGrid = packagePrapare.select('.grid_prepare')[0];
-            new Ajax.Request(this.itemsGridUrl, {
-                parameters: parameters,
-                onSuccess: (transport) => {
-                    var response = transport.responseText;
-                    if (response) {
-                        packagePrapareGrid.update(response);
-                        this._processPackagePrapare(packagePrapareGrid);
-                        if (packagePrapareGrid.select('.grid tbody tr').length) {
-                            packageBlock.select('.AddItemsBtn')[0].hide();
-                            packageBlock.select('.AddSelectedBtn')[0].show();
-                            packagePrapare.show();
-                        } else {
-                            packagePrapareGrid.update();
-                        }
-                    }
-                }
-            });
+    async getItemsForPack(obj) {
+        if (!this.itemsGridUrl) {
+            return;
+        }
+
+        const packageBlock = obj.closest('[id^=package_block]');
+        const packagePrepare = packageBlock.querySelector('.package_prepare, .package_prepare');
+        const productGrid = packagePrepare.querySelector('.grid_prepare');
+
+        try {
+            const html = await mahoFetch(this.itemsGridUrl, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    //shipment_id: this.shipmentId,
+                }),
+            })
+
+            updateElementHtmlAndExecuteScripts(productGrid, html);
+            this._processPackagePrepare(productGrid);
+
+            if (productGrid.select('.grid tbody tr').length) {
+                packageBlock.select('.AddItemsBtn')[0].hide();
+                packageBlock.select('.AddSelectedBtn')[0].show();
+                packagePrepare.show();
+            } else {
+                productGrid.textContent = '';
+            }
+
+        } catch (error) {
+            console.error(error)
+            productGrid.textContent = '';
         }
     }
 
@@ -409,16 +422,15 @@ class Packaging
     }
 
     packItems(obj) {
-        var anySelected = false;
-        var packageBlock = $(obj).up('[id^="package_block"]');
-        var packageId = packageBlock.id.match(/\d$/)[0];
-        var packagePrepare = packageBlock.select('.package_prapare')[0];
-        var packagePrepareGrid = packagePrepare.select('.grid_prepare')[0];
+        const packageBlock = obj.closest('[id^=package_block]');
+        const packageId = packageBlock.dataset.id;
+        const packagePrepare = packageBlock.querySelector('.package_prepare, .package_prepare');
+        const productGrid = packagePrepare.querySelector('.grid_prepare');
 
         // check for exceeds the total shipped quantity
         var checkExceedsQty = false;
         this.clearMessage();
-        packagePrepareGrid.select('.grid tbody tr').each(function(item) {
+        productGrid.select('.grid tbody tr').each(function(item) {
             var checkbox = item.select('[type="checkbox"]')[0];
             var itemId = checkbox.value;
             var qtyValue  = this._parseQty(item.select('[name="qty"]')[0]);
@@ -437,29 +449,31 @@ class Packaging
         }
 
         // prepare items for packing
-        packagePrepareGrid.select('.grid tbody tr').each(function(item) {
-            var checkbox = item.select('[type="checkbox"]')[0];
+        let anySelected = false;
+        for (const item of productGrid.querySelectorAll('.grid tbody tr')) {
+            const checkbox = item.querySelector('[type=checkbox]');
             if (checkbox.checked) {
-                var qty  = item.select('[name="qty"]')[0];
-                var qtyValue  = this._parseQty(qty);
+                const qty = item.querySelector('[name=qty]');
+                const qtyValue = this._parseQty(qty);
+
                 item.select('[name="qty"]')[0].value = qtyValue;
                 anySelected = true;
                 qty.disabled = 'disabled';
                 checkbox.up('td').hide();
-                packagePrepareGrid.select('.grid th [type="checkbox"]')[0].up('th').hide();
+                productGrid.select('.grid th [type="checkbox"]')[0].up('th').hide();
                 item.select('.delete')[0].show();
             } else {
                 item.remove();
             }
-        }.bind(this));
+        }
 
         // packing items
         if (anySelected) {
             var packItems = packageBlock.select('.package_items')[0];
             if (!packItems) {
                 packagePrepare.insert(new Element('div').addClassName('grid_prepare'));
-                packagePrepare.insert({after: packagePrepareGrid});
-                packItems = packagePrepareGrid.removeClassName('grid_prepare').addClassName('package_items');
+                packagePrepare.insert({after: productGrid});
+                packItems = productGrid.removeClassName('grid_prepare').addClassName('package_items');
                 packItems.select('.grid tbody tr').each(function(item) {
                     var itemId = item.select('[type="checkbox"]')[0].value;
                     var qtyValue  = parseFloat(item.select('[name="qty"]')[0].value);
@@ -476,7 +490,7 @@ class Packaging
                     }
                 }.bind(this));
             } else {
-                packagePrepareGrid.select('.grid tbody tr').each(function(item) {
+                productGrid.select('.grid tbody tr').each(function(item) {
                     var itemId = item.select('[type="checkbox"]')[0].value;
                     var qtyValue  = parseFloat(item.select('[name="qty"]')[0].value);
                     qtyValue = (qtyValue <= 0) ? 1 : qtyValue;
@@ -491,12 +505,12 @@ class Packaging
                         packItem.value = this.packages[packageId]['items'][itemId]['qty'];
                     }
                 }.bind(this));
-                packagePrepareGrid.update();
+                productGrid.update();
             }
             $(packItems).show();
             this._recalcContainerWeightAndCustomsValue(packItems);
         } else {
-            packagePrepareGrid.update();
+            productGrid.update();
         }
 
         // show/hide disable/enable
@@ -708,7 +722,11 @@ class Packaging
         }
     }
 
-    _processPackagePrapare(packagePrapare) {
+    _processPackagePrapare(packagePrepare) {
+        this._processPackagePrepare(packagePrepare);
+    }
+
+    _processPackagePrepare(packagePrapare) {
         var itemsAll = [];
         packagePrapare.select('.grid tbody tr').each(function(item) {
             var qty  = item.select('[name="qty"]')[0];
