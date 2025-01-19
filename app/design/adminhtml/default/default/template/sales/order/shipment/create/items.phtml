@@ -60,7 +60,7 @@
 <div class="box-right entry-edit">
     <div class="order-totals">
         <div class="order-totals-bottom">
-          <?php if ($this->canCreateShippingLabel()): ?>
+          <?php if (1 || $this->canCreateShippingLabel()): ?>
           <p>
               <label class="normal" for="create_shipping_label"><?= Mage::helper('sales')->__('Create Shipping Label') ?></label>
               <input id="create_shipping_label" name="shipment[create_shipping_label]" value="1" type="checkbox"  onclick="toggleCreateLabelCheckbox();" />
@@ -104,7 +104,7 @@ function bindSendEmail() {
 }
 function toggleCreateLabelCheckbox() {
     var checkbox = $('create_shipping_label');
-    var submitButton = checkbox.up('.order-totals').select('.submit-button span')[0];
+    var submitButton = checkbox.up('.order-totals').select('.submit-button')[0];
     if (checkbox.checked) {
         submitButton.innerText += '...';
     } else {

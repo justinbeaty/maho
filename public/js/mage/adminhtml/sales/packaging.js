@@ -14,6 +14,8 @@ Packaging.prototype = {
      * Initialize object
      */
     initialize: function(params) {
+        console.log(params)
+
         this.packageIncrement = 0;
         this.packages = [];
         this.itemsAll = [];
@@ -21,11 +23,15 @@ Packaging.prototype = {
         this.itemsGridUrl = params.itemsGridUrl ? params.itemsGridUrl : null;
         this.errorQtyOverLimit = params.errorQtyOverLimit;
         this.titleDisabledSaveBtn = params.titleDisabledSaveBtn;
+
+        /*
         this.window = $('packaging_window');
         this.windowMask = $('popup-window-mask');
         this.messages = this.window.select('.messages')[0];
         this.packagesContent = $('packages_content');
         this.template = $('package_template');
+        */
+
         this.paramsCreateLabelRequest = {};
         this.validationErrorMsg = params.validationErrorMsg;
 
@@ -65,27 +71,32 @@ Packaging.prototype = {
 //******************** End Setters *******************************//
 
     showWindow: function() {
-        if (this.packagesContent.childElements().length == 0) {
+        const template = document.getElementById('packaging_window_template');
+        if (!template) {
+            return;
+        }
+
+        this.dialogWindow = Dialog.info(template.innerHTML, {
+            title: 'Create Packages', // TODO translate
+            className: 'packaging-window',
+            ok: this.confirmPackaging.bind(this),
+            cancel: this.cancelPackaging.bind(this),
+        });
+
+        this.packagesContent = this.dialogWindow.querySelector('#packages_content');
+        if (this.packagesContent.children.length === 0) {
             this.newPackage();
         }
-        this.window.show().setStyle({
-            'marginLeft': -this.window.getDimensions().width/2 + 'px'
-        });
-        this.windowMask.setStyle({
-            height: $('html-body').getHeight() + 'px'
-        }).show();
     },
 
     cancelPackaging: function() {
-        packaging.window.hide();
-        packaging.windowMask.hide();
-        if (Object.isFunction(this.cancelCallback)) {
+        if (typeof this.cancelCallback === 'function') {
             this.cancelCallback();
         }
     },
 
     confirmPackaging: function(params) {
-        if (Object.isFunction(this.confirmPackagingCallback)) {
+        if (typeof this.confirmPackagingCallback === 'function') {
             this.confirmPackagingCallback();
         }
     },
@@ -297,22 +308,23 @@ Packaging.prototype = {
     },
 
     newPackage: function() {
-        var pack = this.template.cloneNode(true);
-        pack.id = 'package_block_' + ++this.packageIncrement;
-        pack.addClassName('package-block');
-        pack.select('.package-number span')[0].update(this.packageIncrement);
-        this.packagesContent.insert({top: pack});
-        pack.select('.AddSelectedBtn')[0].hide();
-        pack.show();
+        const template = document.getElementById('packaging_package_template');
+
+        this.packagesContent.insertAdjacentHTML('beforeend', template.innerHTML);
+        const packageBlock = this.packagesContent.lastElementChild;
+
+        packageBlock.dataset.id = ++this.packageIncrement;
+        packageBlock.id = `package_block_${this.packageIncrement}`;
+        packageBlock.querySelector('.package-number span').textContent = this.packageIncrement;
+        packageBlock.select('.AddSelectedBtn')[0].hide();
     },
 
     deletePackage: function(obj) {
-        var pack = $(obj).up('div[id^="package_block"]');
-        var packItems = pack.select('.package_items')[0];
-        var packageId = pack.id.match(/\d$/)[0];
+        const packageBlock = obj.closest('div[id^=package_block]');
+        const packageId = packageBlock.dataset.id;
 
         delete this.packages[packageId];
-        pack.remove();
+        packageBlock.remove();
         this.messages.hide().update();
         this._setAllItemsPackedState();
     },
