@@ -11,9 +11,10 @@
  */
 
 /** @var Mage_Adminhtml_Block_Sales_Order_Create_Totals_Tax $this */
+
+$uniqId = uniqid();
+$displayFullSummary = $this->helper('tax')->displayFullSummary();
 ?>
-<?php $uniqId = uniqid() ?>
-<?php $displayFullSummary = $this->helper('tax')->displayFullSummary() ?>
 
 <?php if ($displayFullSummary): ?>
 <tr class="<?= $this->getTotal()->getCode() ?> summary-total" onclick="expandDetails(this, '.summary-details-<?= $uniqId ?>')">
@@ -21,7 +22,7 @@
 <tr class="<?= $this->getTotal()->getCode() ?>">
 <?php endif ?>
     <td style="<?= $this->getTotal()->getStyle() ?>" colspan="<?= $this->getColspan() ?>">
-    <?php if ($this->helper('tax')->displayFullSummary()): ?>
+    <?php if ($displayFullSummary): ?>
         <div class="summary-collapse"><?= $this->getTotal()->getTitle() ?></div>
     <?php else: ?>
         <?= $this->getTotal()->getTitle() ?>
@@ -32,9 +33,9 @@
     </td>
 </tr>
 
-<?php if ($this->helper('tax')->displayFullSummary()): ?>
+<?php if ($displayFullSummary): ?>
     <?php foreach ($this->getTotal()->getFullInfo() as $info): ?>
-        <?php if ($info['hidden'] ?? false) continue; ?>
+        <?php if ($info['hidden'] ?? false) continue ?>
         <?php foreach (array_values($info['rates']) as $i => $rate): ?>
         <tr class="summary-details-<?= $uniqId ?> summary-details no-display">
             <td style="<?= $this->getTotal()->getStyle() ?>" colspan="<?= $this->getColspan() ?>">

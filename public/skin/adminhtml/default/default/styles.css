@@ -1683,13 +1683,13 @@ table.form-list {
     .summary-total {
         cursor: pointer;
         .summary-collapse {
-            display: inline-flex;
-            align-items: baseline;
-            gap: 4px;
             &::before {
                 content: '';
-                flex: 0 0 10px;
+                display: inline-block;
+                width: 10px;
                 height: 10px;
+                user-select: none;
+                margin-right: 4px;
                 background: currentcolor;
                 mask: url('data:image/svg+xml,<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><rect style="fill:none;stroke:%23000000" width="9" height="9" x=".5" y=".5" rx="2" ry="2"/><path style="fill:%23000000" d="M4.5 2v2.5H2v1h2.5V8h1V5.5H8v-1H5.5V2h-1z"/></svg>');
             }
