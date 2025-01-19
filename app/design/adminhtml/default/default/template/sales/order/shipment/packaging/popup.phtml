@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <?= Mage::helper('sales')->__('Add Package') ?>
     </button>
     <div class="packaging-content">
-        <div class="messages" style="display:none;"></div>
+        <div class="messages no-display"></div>
         <div id="packages_content"></div>
     </div>
 </div>
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <template id="packaging_package_template">
     <div class="package-block">
-        <div class="package-number"><?= Mage::helper('sales')->__('Package') ?><span></span></div>
+        <div class="package-number"><?= Mage::helper('sales')->__('Package') ?> <span></span></div>
         <table class="package-options" cellspacing="0">
             <thead>
                 <th><?= Mage::helper('sales')->__('Type') ?></th>
@@ -55,9 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <th><?= Mage::helper('sales')->__('Girth') ?></th>
                     <th>&nbsp;</th>
                 <?php endif ?>
-                <th <?= $this->displayCustomsValue() ? '' : 'style="display: none;"' ?>>
-                    <?= Mage::helper('sales')->__('Customs Value') ?>
-                </th>
+                <?php if ($this->displayCustomsValue()): ?>
+                    <th><?= Mage::helper('sales')->__('Customs Value') ?></th>
+                <?php endif ?>
                 <th><?= Mage::helper('sales')->__('Total Weight') ?></th>
                 <th><?= Mage::helper('sales')->__('Length') ?></th>
                 <th><?= Mage::helper('sales')->__('Width') ?></th>
@@ -83,41 +83,34 @@ document.addEventListener('DOMContentLoaded', () => {
                         <?php endforeach ?>
                     </select>
                 </td>
-                <?php if ($girthEnabled == 1): ?>
-                    <td>
-                        <select name="package_size" onchange="packaging.checkSizeAndGirthParameter(this, <?=  $girthEnabled ?>);">
-                            <?php foreach ($sizeSource as $key => $value): ?>
-                            <option value="<?= $sizeSource[$key]['value'] ?>">
-                                <?= $sizeSource[$key]['label'] ?>
-                            </option>
-                            <?php endforeach ?>
-                        </select>
-                    </td>
-                    <td><input type="text" class="input-text validate-greater-than-zero" name="container_girth" /></td>
-                    <td>
-                        <select name="container_girth_dimension_units" class="options-units-dimensions measures" onchange="packaging.changeMeasures(this);">
-                            <option value="<?= Zend_Measure_Length::INCH ?>" selected="selected" ><?= Mage::helper('sales')->__('in') ?></option>
-                            <option value="<?= Zend_Measure_Length::CENTIMETER ?>" ><?= Mage::helper('sales')->__('cm') ?></option>
-                        </select>
-                    </td>
-                <?php endif ?>
-                <?php
-                    if ($this->displayCustomsValue()) {
-                        $customsValueDisplay = '';
-                        $customsValueValidation = ' validate-zero-or-greater ';
-                    } else {
-                        $customsValueDisplay = ' style="display: none;" ';
-                        $customsValueValidation = '';
-                    }
-                ?>
-                <td <?= $customsValueDisplay ?>>
-                    <input type="text" class="customs-value input-text <?= $customsValueValidation ?>" name="package_customs_value" />
+            <?php if ($girthEnabled == 1): ?>
+                <td>
+                    <select name="package_size" onchange="packaging.checkSizeAndGirthParameter(this, <?=  $girthEnabled ?>);">
+                        <?php foreach ($sizeSource as $key => $value): ?>
+                        <option value="<?= $sizeSource[$key]['value'] ?>">
+                            <?= $sizeSource[$key]['label'] ?>
+                        </option>
+                        <?php endforeach ?>
+                    </select>
+                </td>
+                <td><input type="text" class="input-text validate-greater-than-zero" name="container_girth" /></td>
+                <td>
+                    <select name="container_girth_dimension_units" class="options-units-dimensions measures" onchange="packaging.changeMeasures(this);">
+                        <option value="<?= Zend_Measure_Length::INCH ?>" selected="selected" ><?= Mage::helper('sales')->__('in') ?></option>
+                        <option value="<?= Zend_Measure_Length::CENTIMETER ?>" ><?= Mage::helper('sales')->__('cm') ?></option>
+                    </select>
+                </td>
+            <?php endif ?>
+            <?php if ($this->displayCustomsValue()): ?>
+                <td>
+                    <input type="text" class="customs-value input-text validate-zero-or-greater" name="package_customs_value" />
                     <span class="customs-value-currency">[<?= $this->getCustomValueCurrencyCode() ?>]</span>
                 </td>
+            <?php endif ?>
                 <td>
                     <input type="text" class="options-weight input-text required-entry validate-greater-than-zero" name="container_weight" />
                     <select name="container_weight_units" class="options-units-weight measures" onchange="packaging.changeMeasures(this);">
-                        <option value="<?= Zend_Measure_Weight::POUND ?>" selected="selected"  ><?= Mage::helper('sales')->__('lb') ?></option>
+                        <option value="<?= Zend_Measure_Weight::POUND ?>" selected="selected"><?= Mage::helper('sales')->__('lb') ?></option>
                         <option value="<?= Zend_Measure_Weight::KILOGRAM ?>" ><?= Mage::helper('sales')->__('kg') ?></option>
                     </select>
                 </td>

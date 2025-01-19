@@ -150,7 +150,6 @@ class Packaging
             const length = parseFloat(packageBlock.querySelector('input[name=container_length]').value);
             const width  = parseFloat(packageBlock.querySelector('input[name=container_width]').value);
             const height = parseFloat(packageBlock.querySelector('input[name=container_height]').value);
-            const customsValue = parseFloat(packageBlock.querySelector('input[name=package_customs_value]').value);
 
             packagesParams[packageId] = {
                 container:       packageBlock.querySelector('select[name=package_container]').value,
@@ -160,8 +159,14 @@ class Packaging
                 length:          isNaN(length) ? '' : length,
                 width:           isNaN(width)  ? '' : width,
                 height:          isNaN(height) ? '' : height,
-                customs_value:   isNaN(customsValue) ? 0 : customsValue,
             };
+
+            const customsValue = packageBlock.querySelector('input[name=package_customs_value]');
+            if (parseFloat(customsValue?.value)) {
+                packagesParams[packageId]['customs_value'] = parseFloat(customsValue.value);
+            } else {
+                packagesParams[packageId]['customs_value'] = 0;
+            }
 
             const packageSize = packageBlock.querySelector('select[name=package_size]');
             if (packageSize?.value) {
