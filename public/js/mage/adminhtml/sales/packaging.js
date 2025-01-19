@@ -414,9 +414,12 @@ class Packaging
     }
 
     _parseQty(obj) {
-        var qty = $(obj).hasClassName('qty-decimal') ? parseFloat(obj.value) : parseInt(obj.value);
+        const qty = obj.classList.contains('qty-decimal')
+            ? parseFloat(obj.value)
+            : parseInt(obj.value);
+
         if (isNaN(qty) || qty <= 0) {
-            qty = 1;
+            return 1;
         }
         return qty;
     }
@@ -427,20 +430,29 @@ class Packaging
         const packagePrepare = packageBlock.querySelector('.package_prepare, .package_prepare');
         const productGrid = packagePrepare.querySelector('.grid_prepare');
 
-        // check for exceeds the total shipped quantity
-        var checkExceedsQty = false;
         this.clearMessage();
-        productGrid.select('.grid tbody tr').each(function(item) {
-            var checkbox = item.select('[type="checkbox"]')[0];
-            var itemId = checkbox.value;
-            var qtyValue  = this._parseQty(item.select('[name="qty"]')[0]);
-            item.select('[name="qty"]')[0].value = qtyValue;
-            if (checkbox.checked && this._checkExceedsQty(itemId, qtyValue)) {
-                this.updateMessage(this.errorQtyOverLimit);
-                checkExceedsQty = true;
+
+        // Parse qty inputs
+        for (const item of productGrid.querySelectorAll('.grid tbody tr')) {
+            const qtyInput = item.querySelector('[name=qty]');
+            qtyInput.value = this._parseQty(qtyInput);
+        }
+
+        // Check if qty exceeds the total shipped quantity
+        let validateQty = true;
+        for (const item of productGrid.querySelectorAll('.grid tbody tr')) {
+            const checkbox = item.querySelector('[type=checkbox]');
+            const qtyInput = item.querySelector('[name=qty]');
+            if (checkbox.checked && this._checkExceedsQty(checkbox.value, qtyInput.value)) {
+                qtyInput.classList.add('validation-failed');
+                validateQty = false;
+            } else {
+                qtyInput.classList.remove('validation-failed');
             }
-        }.bind(this));
-        if (checkExceedsQty) {
+        }
+
+        if (!validateQty) {
+            this.updateMessage(this.errorQtyOverLimit);
             return;
         }
 
@@ -448,20 +460,17 @@ class Packaging
             return;
         }
 
-        // prepare items for packing
+        // Prepare items for packing and hide unselected rows
         let anySelected = false;
         for (const item of productGrid.querySelectorAll('.grid tbody tr')) {
             const checkbox = item.querySelector('[type=checkbox]');
-            if (checkbox.checked) {
-                const qty = item.querySelector('[name=qty]');
-                const qtyValue = this._parseQty(qty);
+            const qtyInput = item.querySelector('[name=qty]');
 
-                item.select('[name="qty"]')[0].value = qtyValue;
+            if (checkbox.checked) {
                 anySelected = true;
-                qty.disabled = 'disabled';
-                checkbox.up('td').hide();
-                productGrid.select('.grid th [type="checkbox"]')[0].up('th').hide();
-                item.select('.delete')[0].show();
+                qtyInput.disabled = true;
+                toggleVis(checkbox.closest('td'), false);
+                toggleVis(item.querySelector('.delete'), true);
             } else {
                 item.remove();
             }
@@ -469,6 +478,9 @@ class Packaging
 
         // packing items
         if (anySelected) {
+            toggleVis(productGrid.querySelector('.grid th:has([type=checkbox])'), false);
+
+
             var packItems = packageBlock.select('.package_items')[0];
             if (!packItems) {
                 packagePrepare.insert(new Element('div').addClassName('grid_prepare'));
@@ -800,25 +812,42 @@ class Packaging
     }
 
     _recalcContainerWeightAndCustomsValue(container) {
-        var packageBlock = container.up('[id^="package_block"]');
-        var packageId = packageBlock.id.match(/\d$/)[0];
-        var containerWeight = packageBlock.select('[name="container_weight"]')[0];
-        var containerCustomsValue = packageBlock.select('[name="package_customs_value"]')[0];
-        containerWeight.value = 0;
-        containerCustomsValue.value = 0;
-        container.select('.grid tbody tr').each(function(item) {
-            var itemId = item.select('[type="checkbox"]')[0].value;
-            var qtyValue  = parseFloat(item.select('[name="qty"]')[0].value);
-            if (isNaN(qtyValue) || qtyValue <= 0) {
-                qtyValue = 1;
-                item.select('[name="qty"]')[0].value = qtyValue;
+        const packageBlock = container.closest('[id^=package_block]');
+        const packageId = packageBlock.dataset.id;
+
+        let weight = 0, customsValue = 0;
+
+
+
+        const containerWeight = packageBlock.querySelector('[name=container_weight]');
+        if (containerWeight) {
+            containerWeight.value = 0;
+        }
+
+        const containerCustomsValue = packageBlock.querySelector('[name=package_customs_value]');
+        if (containerCustomsValue) {
+            containerCustomsValue.value = 0;
+        }
+
+        for (const item of productGrid.querySelectorAll('.grid tbody tr')) {
+            const itemId = item.querySelector('[type=checkbox]').value;
+            const qtyInput = item.querySelector('[name=qty]');
+            const qtyValue = this._parseQty(qtyInput);
+
+            qtyInput.value = qtyValue;
+
+            const itemWeight = parseFloat(this._getElementText(item.querySelector('.weight')));
+            if (containerWeight) {
+                containerWeight.value = parseFloat(containerWeight.value) + (itemWeight * qtyValue);
             }
-            var itemWeight = parseFloat(this._getElementText(item.select('.weight')[0]));
-            containerWeight.value = parseFloat(containerWeight.value) + (itemWeight * qtyValue);
-            var itemCustomsValue = parseFloat(item.select('[name="customs_value"]')[0].value) || 0;
+
+            const itemCustomsValue = parseFloat(item.select('[name="customs_value"]')[0].value) || 0;
+
+
             containerCustomsValue.value = parseFloat(containerCustomsValue.value) + itemCustomsValue * qtyValue;
             this.packages[packageId]['items'][itemId]['customs_value'] = itemCustomsValue;
         }.bind(this));
+
         containerWeight.value = parseFloat(parseFloat(containerWeight.value).toFixed(4));
         containerCustomsValue.value = parseFloat(containerCustomsValue.value).toFixed(2);
         if (containerCustomsValue.value == 0) {
