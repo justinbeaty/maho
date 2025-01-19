@@ -1643,19 +1643,13 @@ table.form-list {
 .note-list {
     word-break: break-word;
     li {
-        padding: 16px 0;
-        margin-left: 22px;
+        padding-left: 24px;
+        background: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M8.7.5H3.4c-.6 0-1 .5-1 1.2v12.6c0 .7.4 1.2 1 1.2h9.2c.6 0 1-.5 1-1.2V5.6Z" fill="%23edf3f4" stroke="%239aafb7"/><path d="M8.7.5v3.8c0 .7.5 1.2 1.2 1.2h3.7z" fill="%23d7e7ec" stroke="%239aafb7"/></svg>') 0 2px no-repeat;
 
-        list-style-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M8.7.5H3.4c-.6 0-1 .5-1 1.2v12.6c0 .7.4 1.2 1 1.2h9.2c.6 0 1-.5 1-1.2V5.6Z" fill="%23edf3f4" stroke="%239aafb7"/><path d="M8.7.5v3.8c0 .7.5 1.2 1.2 1.2h3.7z" fill="%23d7e7ec" stroke="%239aafb7"/></svg>');
-
-        &:first-child {
-            padding-top: 0;
-        }
-        &:last-child {
-            padding-bottom: 0;
-        }
-        &:not(:last-child) {
-            border-bottom: 1px dotted lightgrey;
+        &:has(+ li) {
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid lightgrey;
         }
     }
 }
