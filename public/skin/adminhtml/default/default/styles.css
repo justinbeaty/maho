@@ -171,8 +171,13 @@ big, .large {
 }
 
 .emph, .accent {
-    color: #0090FF !important;
+    color: #eb5e00;
 }
+
+.subdue {
+    color: #306375;
+}
+
 
 .box {
     padding: 16px;
@@ -266,14 +271,6 @@ big, .large {
 
 .half {
     width: 50%;
-}
-
-.emph, .accent {
-    color: #eb5e00 !important;
-}
-
-.subdue {
-    color: #306375;
 }
 
 
@@ -1024,15 +1021,11 @@ div.disabled {
         }
     }
 
-    .fieldset, fieldset {
+    .entry-edit-head + * {
         background: #fff;
-        border: 1px solid lightgrey;
-        border-radius: 4px;
         padding: 16px;
         margin-bottom: 16px;
-    }
-
-    .entry-edit-head + * {
+        border: 1px solid lightgrey;
         border-top: 0;
         border-radius: 0 0 4px 4px;
     }
@@ -1394,11 +1387,15 @@ ul.checkboxes li, .multi-input {
     .field-row {
         display: flex;
         margin: 4px 0;
+        gap: 4px;
         label {
-            width: 150px;
+            width: 100px;
         }
         .input-box {
             flex-grow: 1;
+            select, textarea, input.input-text {
+                width: 100%;
+            }
         }
     }
 }
@@ -1598,12 +1595,6 @@ table.form-list {
             height: 400px;
         }
     }
-
-    #dashboard_diagram_totals > div {
-            display: flex;
-            justify-content: space-around;
-    }
-
 }
 
 
@@ -1615,9 +1606,9 @@ table.form-list {
     grid-gap: 16px;
 
     .entry-edit {
-        overflow: hidden;
+        .entry-edit-head + * {
         margin-bottom: 0;
-        height: 100%;
+        }
     }
 
     .switcher, .box-order-messages, .box-items-ordered {
@@ -1631,6 +1622,19 @@ table.form-list {
 
     }
 
+    #order-history {
+        grid-column: 1;
+    }
+
+}
+
+
+
+
+.order-history-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 
@@ -1639,6 +1643,82 @@ table.form-list {
     }
 }
 
+.note-list {
+    word-break: break-word;
+    li {
+        padding: 8px 0;
+        margin-left: 22px;
+
+        list-style-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M8.7.5H3.4c-.6 0-1 .5-1 1.2v12.6c0 .7.4 1.2 1 1.2h9.2c.6 0 1-.5 1-1.2V5.6Z" fill="%23edf3f4" stroke="%239aafb7"/><path d="M8.7.5v3.8c0 .7.5 1.2 1.2 1.2h3.7z" fill="%23d7e7ec" stroke="%239aafb7"/></svg>');
+    }
+}
+
+.order-totals {
+    text-align: right;
+    td {
+        padding: 4px 8px;
+        &:first-child {
+            padding-left: 0;
+        }
+        &:last-child {
+            padding-right: 0;
+        }
+    }
+
+    .validation-advice {
+        text-align: right;
+        white-space: nowrap;
+        background-position: 100% 1px;
+        padding-right: 14px;
+        padding-left: 0;
+    }
+
+    .order-totals-bottom {
+        p {
+            margin-bottom: 16px;
+        }
+    }
+
+    /* Display Full Tax Summary Toggle */
+    .summary-total {
+        cursor: pointer;
+        .summary-collapse {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            &::before {
+                content: '';
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                background-image: url('data:image/svg+xml,<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><rect style="fill:%23f6f6f6;stroke:%234a4a4a;stroke-width:1" width="9" height="9" x=".5" y=".5" rx="2" ry="2"/><path style="fill:%234a4a4a" d="M4.5 2v2.5H2v1h2.5V8h1V5.5H8v-1H5.5V2h-1z"/></svg>');
+                background-size: contain;
+            }
+            .show-details &::before {
+                background-image: url('data:image/svg+xml,<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><rect style="fill:%23f6f6f6;stroke:%234a4a4a;stroke-width:1" width="9" height="9" x=".5" y=".5" rx="2" ry="2"/><path style="fill:%234a4a4a" d="M2 4.5h6v1H2z"/></svg>');
+            }
+        }
+    }
+    .summary-details {
+        font-size: 0.75rem;
+    }
+}
+
+.sales-totalbar {
+    display: flex;
+    justify-content: space-around;
+    & > div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.grand-total, .grand_total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #eb5e00;
+}
 
 
 /* === Sales Rules === */
