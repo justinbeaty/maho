@@ -992,16 +992,6 @@ button, .form-button {
 
 /* === Accordion & Tabs === */
 
-div.disabled {
-    background: #c6cbc9 !important;
-
-    & a {
-        background-image: url(images/entry_edit_head_arrow_down2.gif) !important;
-        color: #f6f6f6 !important;
-    }
-}
-
-
 .entry-edit {
 
     .entry-edit-head {
@@ -1021,15 +1011,18 @@ div.disabled {
         }
     }
 
-    .entry-edit-head + * {
+    .entry-edit-head + *, fieldset, .fieldset {
         background: #fff;
         padding: 16px;
         margin-bottom: 16px;
         border: 1px solid lightgrey;
+        border-radius: 4px;
+    }
+
+    .entry-edit-head + * {
         border-top: 0;
         border-radius: 0 0 4px 4px;
     }
-
 }
 
 .accordion details, details.accordion {
@@ -1515,7 +1508,9 @@ table.form-list {
 .content-header {
 
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    gap: 8px;
 
     table {
         width: 100%;
@@ -1530,6 +1525,7 @@ table.form-list {
 
     & > *:first-child {
         flex-grow: 1;
+        min-width: 256px;
     }
 
     h3 {
@@ -1538,6 +1534,7 @@ table.form-list {
 
     p.form-buttons {
         margin: 0;
+        flex-grow: 1;
     }
 
     .content-buttons-placeholder {
@@ -1646,10 +1643,20 @@ table.form-list {
 .note-list {
     word-break: break-word;
     li {
-        padding: 8px 0;
+        padding: 16px 0;
         margin-left: 22px;
 
         list-style-image: url('data:image/svg+xml,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M8.7.5H3.4c-.6 0-1 .5-1 1.2v12.6c0 .7.4 1.2 1 1.2h9.2c.6 0 1-.5 1-1.2V5.6Z" fill="%23edf3f4" stroke="%239aafb7"/><path d="M8.7.5v3.8c0 .7.5 1.2 1.2 1.2h3.7z" fill="%23d7e7ec" stroke="%239aafb7"/></svg>');
+
+        &:first-child {
+            padding-top: 0;
+        }
+        &:last-child {
+            padding-bottom: 0;
+        }
+        &:not(:last-child) {
+            border-bottom: 1px dotted lightgrey;
+        }
     }
 }
 
@@ -1713,8 +1720,25 @@ table.form-list {
     }
 }
 
+.price {
+    white-space: nowrap;
+}
+
+.price-incl-tax, .price-excl-tax {
+    display: block;
+
+    .label {
+        display: block;
+        white-space: nowrap;
+    }
+
+    .price {
+        font-weight: bold;
+    }
+}
+
 .grand-total, .grand_total {
-    font-size: 1.2rem;
+    font-size: 1.2em;
     font-weight: bold;
     color: #eb5e00;
 }

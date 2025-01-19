@@ -210,36 +210,6 @@ td.divider {
 
 
 
-.price {
-    white-space: nowrap !important;
-}
-
-.price-incl-tax {
-    display: block;
-
-    .label {
-        display: block;
-        white-space: nowrap;
-    }
-
-    .price {
-        font-weight: bold;
-    }
-}
-
-.price-excl-tax {
-    display: block;
-
-    .label {
-        display: block;
-        white-space: nowrap;
-    }
-
-    .price {
-        font-weight: bold;
-    }
-}
-
 
 
 
