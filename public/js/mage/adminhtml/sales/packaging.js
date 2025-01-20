@@ -632,7 +632,6 @@ class Packaging
 
     }
 
-//******************** Private functions **********************************//
     _getItemsCount(items) {
         var count = 0;
         items.each(function(itemCount) {
@@ -647,10 +646,9 @@ class Packaging
      * Show/hide disable/enable buttons in case of all items packed state
      */
     _setAllItemsPackedState() {
-        var addPackageBtn = this.window.select('.AddPackageBtn')[0];
-        if (this._getItemsCount(this.itemsAll) > 0
-                && (this._checkExceedsQtyFinal(this._getItemsCount(this.getPackedItemsQty()),this._getItemsCount(this.itemsAll)))
-        ) {
+        const addPackageBtn = this.window.select('.AddPackageBtn')[0];
+
+        if (this._getItemsCount(this.itemsAll) > 0 && this._checkExceedsQtyFinal(this._getItemsCount(this.getPackedItemsQty()), this._getItemsCount(this.itemsAll))) {
             this.packagesContent.select('.AddItemsBtn').each(function(button){
                 button.disabled = 'disabled';
                 button.addClassName('disabled');
