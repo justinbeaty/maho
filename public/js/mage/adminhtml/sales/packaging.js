@@ -77,7 +77,7 @@ class Packaging
             return;
         }
 
-        this.window = Dialog.info(template.innerHTML, {
+        this.window = Dialog.confirm(template.innerHTML, {
             title: 'Create Packages', // TODO translate
             className: 'packaging-window',
             ok: this.confirmPackaging.bind(this),
@@ -131,7 +131,7 @@ class Packaging
         this.clearMessage();
     }
 
-    sendCreateLabelRequest() {
+    async sendCreateLabelRequest() {
         if (!this.validate()) {
             this.updateMessage(this.validationErrorMsg);
             return;
@@ -227,6 +227,7 @@ class Packaging
             }
         }
 
+
         new Ajax.Request(this.createLabelUrl, {
             parameters: this.paramsCreateLabelRequest,
             onSuccess: (transport) => {
@@ -315,7 +316,6 @@ class Packaging
         packageBlock.dataset.id = ++this.packageIncrement;
         packageBlock.id = `package_block_${this.packageIncrement}`;
         packageBlock.querySelector('.package-number span').textContent = this.packageIncrement;
-        packageBlock.select('.AddSelectedBtn')[0].hide();
 
         this.packagesContent.appendChild(packageBlock);
     }
@@ -381,10 +381,9 @@ class Packaging
             updateElementHtmlAndExecuteScripts(productGrid, html);
             this._processPackagePrepare(productGrid);
 
-            if (productGrid.select('.grid tbody tr').length) {
-                packageBlock.select('.AddItemsBtn')[0].hide();
-                packageBlock.select('.AddSelectedBtn')[0].show();
-                packagePrepare.show();
+            if (productGrid.querySelectorAll('.grid tbody tr').length) {
+                setElementDisable(packageBlock.querySelector('.AddItemsBtn'), true);
+                toggleVis(packagePrepare, true);
             } else {
                 productGrid.textContent = '';
             }
@@ -445,7 +444,6 @@ class Packaging
         const productGrid = packagePrepare.querySelector('.grid_prepare');
 
         this.clearMessage();
-
         this._parseAllQty(obj);
 
         // Check if qty exceeds the total shipped quantity
@@ -470,75 +468,45 @@ class Packaging
             return;
         }
 
-        // Prepare items for packing and hide unselected rows
-        let anySelected = false;
-        for (const item of productGrid.querySelectorAll('.grid tbody tr')) {
+        toggleVis(packagePrepare, false);
+        setElementDisable(packageBlock.querySelector('.AddItemsBtn'), true);
+
+        const selectedItems = productGrid.querySelectorAll('.grid tbody tr:has([type=checkbox]:checked)');
+        if (selectedItems.length === 0) {
+            return;
+        }
+
+        // Clone the product grid if not already exist
+        let packageItems = packageBlock.querySelector('.package_items');
+        if (!packageItems) {
+            packageItems = productGrid.cloneNode(true);
+            packageItems.classList.replace('grid_prepare', 'package_items');
+            // packageItems.querySelector('.grid th:has([type=checkbox])').remove();
+            packageItems.querySelector('.grid tbody').textContent = '';
+            packagePrepare.after(packageItems);
+        }
+
+        this.packages[packageId] ??= { items: [], params: {} };
+
+        // Loop through selected items and update or add new row to package_items
+        for (const item of selectedItems) {
             const checkbox = item.querySelector('[type=checkbox]');
             const qtyInput = item.querySelector('[name=qty]');
+            const itemId = checkbox.value;
 
-            if (checkbox.checked) {
-                anySelected = true;
-                qtyInput.disabled = true;
-                toggleVis(checkbox.closest('td'), false);
-                toggleVis(item.querySelector('.delete'), true);
+            this.packages[packageId]['items'][itemId] ??= { qty: 0 };
+            this.packages[packageId]['items'][itemId]['qty'] += +qtyInput.value;
+
+            const existingItem = packageItems.querySelector(`.grid tbody tr:has([type=checkbox][value='${itemId}'])`);
+            if (existingItem) {
+                qtyInput.value = this.packages[packageId]['items'][itemId]['qty'];
+                existingItem.replaceWith(item);
             } else {
-                item.remove();
+                packageItems.querySelector('.grid tbody').append(item);
             }
         }
 
-        // packing items
-        if (anySelected) {
-            toggleVis(productGrid.querySelector('.grid th:has([type=checkbox])'), false);
-
-
-            var packItems = packageBlock.select('.package_items')[0];
-            if (!packItems) {
-                packagePrepare.insert(new Element('div').addClassName('grid_prepare'));
-                packagePrepare.insert({after: productGrid});
-                packItems = productGrid.removeClassName('grid_prepare').addClassName('package_items');
-                packItems.select('.grid tbody tr').each(function(item) {
-                    var itemId = item.select('[type="checkbox"]')[0].value;
-                    var qtyValue  = parseFloat(item.select('[name="qty"]')[0].value);
-                    qtyValue = (qtyValue <= 0) ? 1 : qtyValue;
-
-                    if ('undefined' == typeof this.packages[packageId]) {
-                        this.packages[packageId] = {'items': [], 'params': {}};
-                    }
-                    if ('undefined' == typeof this.packages[packageId]['items'][itemId]) {
-                        this.packages[packageId]['items'][itemId] = {};
-                        this.packages[packageId]['items'][itemId]['qty'] = qtyValue;
-                    } else {
-                        this.packages[packageId]['items'][itemId]['qty'] += qtyValue;
-                    }
-                }.bind(this));
-            } else {
-                productGrid.select('.grid tbody tr').each(function(item) {
-                    var itemId = item.select('[type="checkbox"]')[0].value;
-                    var qtyValue  = parseFloat(item.select('[name="qty"]')[0].value);
-                    qtyValue = (qtyValue <= 0) ? 1 : qtyValue;
-
-                    if ('undefined' == typeof this.packages[packageId]['items'][itemId]) {
-                        this.packages[packageId]['items'][itemId] = {};
-                        this.packages[packageId]['items'][itemId]['qty'] = qtyValue;
-                        packItems.select('.grid tbody')[0].insert(item);
-                    } else {
-                        this.packages[packageId]['items'][itemId]['qty'] += qtyValue;
-                        var packItem = packItems.select('[type="checkbox"][value="'+itemId+'"]')[0].up('tr').select('[name="qty"]')[0];
-                        packItem.value = this.packages[packageId]['items'][itemId]['qty'];
-                    }
-                }.bind(this));
-                productGrid.update();
-            }
-            $(packItems).show();
-            this._recalcContainerWeightAndCustomsValue(packItems);
-        } else {
-            productGrid.update();
-        }
-
-        // show/hide disable/enable
-        packagePrepare.hide();
-        packageBlock.select('.AddSelectedBtn')[0].hide();
-        packageBlock.select('.AddItemsBtn')[0].show();
+        this._recalcContainerWeightAndCustomsValue(packageItems);
         this._setAllItemsPackedState();
     }
 
@@ -798,14 +766,15 @@ class Packaging
     _recalcContainerWeightAndCustomsValue(container) {
         const packageBlock = container.closest('[id^=package_block]');
         const packageId = packageBlock.dataset.id;
-        const packagePrepare = packageBlock.querySelector('.package_prepare, .package_prepare');
-        const productGrid = packagePrepare.querySelector('.grid_prepare');
+        const packageItems = packageBlock.querySelector('.package_items');
 
         let weight = 0, customsValue = 0;
 
         this._parseAllQty(container);
+        console.log(this.packages);
 
-        for (const item of productGrid.querySelectorAll('.grid tbody tr')) {
+
+        for (const item of packageItems.querySelectorAll('.grid tbody tr')) {
             const checkbox = item.querySelector('[type=checkbox]');;
             const qtyInput = item.querySelector('[name=qty]');
 
