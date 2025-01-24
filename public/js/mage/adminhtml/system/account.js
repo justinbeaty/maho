@@ -55,7 +55,7 @@ class MahoAdminhtmlSystemAccountController
 
     removePasskey() {
         document.getElementById('passkey_status').innerHTML = `<em>Passkey Deleted</em>`;
-        document.getElementById('passkey_value').value = '';
+        document.getElementById('passkey_value').value = 'deleted';
         document.getElementById('remove-passkey-btn').classList.add('no-display');
     }
 };

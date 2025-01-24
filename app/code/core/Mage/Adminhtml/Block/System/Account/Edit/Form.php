@@ -173,7 +173,7 @@ class Mage_Adminhtml_Block_System_Account_Edit_Form extends Mage_Adminhtml_Block
             }
             $fieldset->addField('twofa_qr', 'note', [
                 'label' => Mage::helper('adminhtml')->__('QR Code'),
-                'text' => Mage::helper('admin/auth')->getTwofaQRCode($user->getUsername(), $secret),
+                'text' => Mage::helper('admin/auth')->getTwofaQRCode($user->getUsername(), $user->getTwofaSecret()),
                 'note' => Mage::helper('adminhtml')->__('Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)'),
             ]);
             $fieldset->addField('twofa_verification_code', 'text', [
@@ -196,7 +196,7 @@ class Mage_Adminhtml_Block_System_Account_Edit_Form extends Mage_Adminhtml_Block
             'text'  => <<<JS
                 <script>
                     new MahoAdminhtmlSystemAccountController({
-                        passkeyRegisterStartUrl: '{$this->getUrl('*/*/passkeyregisterstart')}',
+                        passkeyRegisterStartUrl: '{$this->getUrl('*/index/passkeyregisterstart')}',
                     });
                 </script>
             JS,

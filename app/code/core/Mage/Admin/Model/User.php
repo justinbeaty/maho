@@ -484,6 +484,24 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Get Passkey CreateArgs object
+     * @throws Mage_Core_Exception
+     */
+    public function getPasskeyCreateArgs(): stdClass
+    {
+        $webAuthn = Mage::helper('admin/auth')->getWebAuthn();
+        $createArgs = $webAuthn->getCreateArgs(
+            decbin($this->getId()), // User ID
+            $this->getUsername(),   // User Name
+            $this->getName(),       // Display Name
+            60000,                  // Timeout
+        );
+        $this->getSession()->setPasskeyChallenge($webAuthn->getChallenge());
+
+        return $createArgs;
+    }
+
+    /**
      * Get Passkey GetArgs object
      * @throws Mage_Core_Exception
      */
@@ -498,28 +516,6 @@ class Mage_Admin_Model_User extends Mage_Core_Model_Abstract
         $this->getSession()->setPasskeyChallenge($webAuthn->getChallenge());
 
         return $getArgs;
-    }
-
-    /**
-     * Get Passkey CreateArgs object
-     * @throws Mage_Core_Exception
-     */
-    public function getPasskeyCreateArgs(): stdClass
-    {
-        if (!$this->getPasskeyCredentialIdHash() || !$this->getPasskeyPublicKey()) {
-            Mage::throwException(Mage::helper('adminhtml')->__('Passkey is not enabled for this account.'));
-        }
-
-        $webAuthn = Mage::helper('admin/auth')->getWebAuthn();
-        $createArgs = $webAuthn->getCreateArgs(
-            decbin($this->getId()), // User ID
-            $this->getUsername(),   // User Name
-            $this->getName(),       // Display Name
-            60000,                  // Timeout
-        );
-        $this->getSession()->setPasskeyChallenge($webAuthn->getChallenge());
-
-        return $createArgs;
     }
 
     /**
