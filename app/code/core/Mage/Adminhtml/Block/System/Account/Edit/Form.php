@@ -90,7 +90,7 @@ class Mage_Adminhtml_Block_System_Account_Edit_Form extends Mage_Adminhtml_Block
         ]);
         $fieldset->addField('password_enabled', 'select', [
             'label' => Mage::helper('adminhtml')->__('Enable Password Authentication'),
-            'name' => 'twofa_enabled',
+            'name' => 'password_enabled',
             'class' => 'validate-login-method-enabled',
             'values' => Mage::getModel('adminhtml/system_config_source_yesno')->toOptionArray(),
         ]);
@@ -125,7 +125,7 @@ class Mage_Adminhtml_Block_System_Account_Edit_Form extends Mage_Adminhtml_Block
         $passkeyEnabled = $user->getPasskeyCredentialIdHash() !== null;
         $fieldset->addField('passkey_enabled', 'select', [
             'label' => Mage::helper('adminhtml')->__('Enable Passkey Authentication'),
-            'name' => 'twofa_enabled',
+            'name' => 'passkey_enabled',
             'class' => 'validate-login-method-enabled',
             'values' => Mage::getModel('adminhtml/system_config_source_yesno')->toOptionArray(),
             'value' => $passkeyEnabled ? 1 : 0,
@@ -167,15 +167,13 @@ class Mage_Adminhtml_Block_System_Account_Edit_Form extends Mage_Adminhtml_Block
         ]);
 
         if (!$user->getTwofaEnabled()) {
-            $twoFactorAuthenticationHelper = Mage::helper('adminhtml/twoFactorAuthentication');
-            $secret = $user->getTwofaSecret();
-            if (!$secret) {
-                $secret = $twoFactorAuthenticationHelper->getSecret();
+            if (!$user->getTwofaSecret()) {
+                $secret = Mage::helper('admin/auth')->getTwofaSecret();
                 $user->setTwofaSecret($secret)->save();
             }
             $fieldset->addField('twofa_qr', 'note', [
                 'label' => Mage::helper('adminhtml')->__('QR Code'),
-                'text' => $twoFactorAuthenticationHelper->getQRCode($user->getUsername(), $secret),
+                'text' => Mage::helper('admin/auth')->getTwofaQRCode($user->getUsername(), $secret),
                 'note' => Mage::helper('adminhtml')->__('Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)'),
             ]);
             $fieldset->addField('twofa_verification_code', 'text', [
