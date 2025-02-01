@@ -25,7 +25,7 @@ class Mage_Adminhtml_Block_Dashboard_Grid extends Mage_Adminhtml_Block_Widget_Gr
     public function __construct()
     {
         parent::__construct();
-        $this->setTemplate('dashboard/grid.phtml');
+        //$this->setTemplate('dashboard/grid.phtml');
         $this->setDefaultLimit(5);
     }
 }

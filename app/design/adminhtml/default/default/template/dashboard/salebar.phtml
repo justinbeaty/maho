@@ -12,13 +12,13 @@
 
 /** @var Mage_Adminhtml_Block_Dashboard_Sales $this */
 ?>
-<?php if(count($this->getTotals()) > 0): ?>
-            <?php foreach( $this->getTotals() as $_total ): ?>
-            <div class="entry-edit">
-                <div class="entry-edit-head"><h4><?= $_total['label'] ?></h4></div>
-                <fieldset class="a-center bold">
-                    <span class="nowrap" style="font-size:18px;"><?= $_total['value'] ?><span style="font-size:14px; color:#686868;"><?= $_total['decimals'] ?>
-                </fieldset>
-            </div>
-            <?php endforeach ?>
+<?php if (count($this->getTotals()) > 0): ?>
+    <?php foreach ($this->getTotals() as $total): ?>
+    <div class="entry-edit">
+        <div class="entry-edit-head"><h4><?= $total['label'] ?></h4></div>
+        <fieldset class="a-center">
+            <strong class="nowrap large"><?= $total['value'] ?></strong>
+        </fieldset>
+    </div>
+    <?php endforeach ?>
 <?php endif ?>
