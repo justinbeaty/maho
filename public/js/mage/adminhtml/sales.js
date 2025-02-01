@@ -108,7 +108,7 @@ AdminOrder.prototype = {
         this.customerSelectorHide();
         if (this.storeId) {
             $(this.getAreaId('data')).callback = 'dataLoaded';
-            this.loadArea(['data'], true);
+            this.loadArea(['data', 'sidebar'], true);
         }
         else {
             this.storeSelectorShow();
@@ -119,15 +119,15 @@ AdminOrder.prototype = {
         this.storeId = id;
         this.storeSelectorHide();
         this.sidebarShow();
-        //this.loadArea(['header', 'sidebar','data'], true);
+        this.loadArea(['header', 'sidebar','data'], true);
         this.dataShow();
-        this.loadArea(['header', 'data'], true);
+        //this.loadArea(['header', 'data'], true);
     },
 
     setCurrencyId : function(id){
         this.currencyId = id;
-        //this.loadArea(['sidebar', 'data'], true);
-        this.loadArea(['data'], true);
+        this.loadArea(['sidebar', 'data'], true);
+        //this.loadArea(['data'], true);
     },
 
     setCurrencySymbol : function(symbol){
@@ -959,6 +959,7 @@ AdminOrder.prototype = {
     },
 
     loadAreaResponseHandler : function (response){
+        console.log('loadAreaResponseHandler', response);
         if (response.error) {
             alert(response.message);
         }
@@ -1029,6 +1030,9 @@ AdminOrder.prototype = {
     },
 
     prepareParams : function(params){
+        if (params instanceof Hash) {
+            params = params.toObject();
+        }
         if (!params) {
             params = {};
         }
