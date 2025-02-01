@@ -46,10 +46,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Composite_Fieldset_Qty extends Mage_C
      */
     public function getQtyValue()
     {
-        $qty = $this->getProduct()->getPreconfiguredValues()->getQty();
-        if (!$qty) {
-            $qty = 1;
-        }
-        return $qty;
+        $qty = (int) $this->getProduct()->getPreconfiguredValues()->getQty();
+        return $qty ? $qty : 1;
     }
 }
