@@ -13,12 +13,10 @@
 /** @var Mage_Adminhtml_Block_Template $this */
 ?>
 <?php if ($this->getChildHtml()): ?>
-<div class="entry-edit">
+<div class="entry-edit box-gift-options">
     <div class="entry-edit-head">
         <h4><?= Mage::helper('sales')->__('Gift Options') ?></h4>
     </div>
-    <fieldset>
-        <?= $this->getChildHtml() ?>
-    </fieldset>
+    <?= $this->getChildHtml() ?>
 </div>
 <?php endif ?>

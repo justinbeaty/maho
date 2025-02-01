@@ -492,6 +492,15 @@
     <adminhtml_sales_order_create_index>
         <reference name="left">
             <action method="setIsCollapsed"><value>true</value></action>
+            <block type="adminhtml/sales_order_create_sidebar" template="sales/order/create/sidebar.phtml" name="sidebar">
+                <block type="adminhtml/sales_order_create_sidebar_cart" template="sales/order/create/sidebar/items.phtml" name="cart" />
+                <block type="adminhtml/sales_order_create_sidebar_wishlist" template="sales/order/create/sidebar/items.phtml" name="wishlist" />
+                <block type="adminhtml/sales_order_create_sidebar_reorder" template="sales/order/create/sidebar/items.phtml" name="reorder" />
+                <block type="adminhtml/sales_order_create_sidebar_viewed" template="sales/order/create/sidebar/items.phtml" name="viewed" />
+                <block type="adminhtml/sales_order_create_sidebar_compared" template="sales/order/create/sidebar/items.phtml" name="compared" />
+                <block type="adminhtml/sales_order_create_sidebar_pcompared" template="sales/order/create/sidebar/items.phtml" name="pcompared" />
+                <block type="adminhtml/sales_order_create_sidebar_pviewed" template="sales/order/create/sidebar/items.phtml" name="pviewed" />
+            </block>
         </reference>
         <reference name="head">
             <action method="addJs"><file>mage/adminhtml/sales.js</file></action>
@@ -514,15 +523,6 @@
                         <block type="adminhtml/sales_order_create_store_select" template="sales/order/create/store/select.phtml" name="select" />
                     </block>
                     <block type="adminhtml/sales_order_create_data" template="sales/order/create/data.phtml" name="data">
-                        <block type="adminhtml/sales_order_create_sidebar" template="sales/order/create/sidebar.phtml" name="sidebar">
-                            <block type="adminhtml/sales_order_create_sidebar_cart" template="sales/order/create/sidebar/items.phtml" name="cart" />
-                            <block type="adminhtml/sales_order_create_sidebar_wishlist" template="sales/order/create/sidebar/items.phtml" name="wishlist" />
-                            <block type="adminhtml/sales_order_create_sidebar_reorder" template="sales/order/create/sidebar/items.phtml" name="reorder" />
-                            <block type="adminhtml/sales_order_create_sidebar_viewed" template="sales/order/create/sidebar/items.phtml" name="viewed" />
-                            <block type="adminhtml/sales_order_create_sidebar_compared" template="sales/order/create/sidebar/items.phtml" name="compared" />
-                            <block type="adminhtml/sales_order_create_sidebar_pcompared" template="sales/order/create/sidebar/items.phtml" name="pcompared" />
-                            <block type="adminhtml/sales_order_create_sidebar_pviewed" template="sales/order/create/sidebar/items.phtml" name="pviewed" />
-                        </block>
                         <block type="adminhtml/sales_order_create_form_account" template="sales/order/create/form/account.phtml" name="form_account" />
                         <block type="adminhtml/sales_order_create_shipping_address" template="sales/order/create/form/address.phtml" name="shipping_address" />
                         <block type="adminhtml/sales_order_create_billing_address" template="sales/order/create/form/address.phtml" name="billing_address" />
