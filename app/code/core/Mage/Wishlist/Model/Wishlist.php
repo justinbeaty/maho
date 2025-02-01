@@ -429,6 +429,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         /** @var Mage_Catalog_Model_Product $product */
         $product = Mage::getModel('catalog/product')
             ->setStoreId($storeId)
+            ->setWishlistStoreId($storeId)
             ->load($productId);
 
         $buyRequest->unsId();
@@ -637,6 +638,8 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      */
     public function updateItem($itemId, $buyRequest, $params = null)
     {
+
+
         $item = $itemId instanceof Mage_Wishlist_Model_Item ? $itemId : $this->getItem((int) $itemId);
         if (!$item) {
             Mage::throwException(Mage::helper('wishlist')->__('Cannot specify wishlist item.'));
