@@ -187,7 +187,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      * @param   bool $forciblySetQty
      * @return  Mage_Wishlist_Model_Item
      */
-    protected function _addCatalogProduct(Mage_Catalog_Model_Product $product, $qty = 1)
+    protected function _addCatalogProduct2(Mage_Catalog_Model_Product $product, $qty = 1)
     {
         $newItem = false;
         $item = $this->getItemByProduct($product);
@@ -228,8 +228,9 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     }
 
 
-    protected function _addCatalogProduct2(Mage_Catalog_Model_Product $product, $qty = 1, $forciblySetQty = false)
+    protected function _addCatalogProduct(Mage_Catalog_Model_Product $product, $qty = 1, $forciblySetQty = false)
     {
+        /*
         $item = null;
         foreach ($this->getItemCollection() as $wishlistItem) {
             if ($wishlistItem->representProduct($product)) {
@@ -237,6 +238,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 break;
             }
         }
+        */
         /*
         $item = array_find(
             $this->getItemCollection(),
@@ -244,30 +246,40 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         );
         */
 
-        if ($item === null) {
+        $item = $this->getItemByProduct($product);
+
+        if (!$item) {
             //Mage::log('is new');
             $item = Mage::getModel('wishlist/item')
-                ->setProductId($product->getId())
+                ->setWishlist($this)
                 ->setWishlistId($this->getId())
+                ->setProductId($product->getId())
                 ->setStoreId($product->hasWishlistStoreId() ? $product->getWishlistStoreId() : $this->getStore()->getId())
                 ->setOptions($product->getCustomOptions())
                 ->setProduct($product)
-                ->setQty($qty)
-                ->save();
+                ->setQty($qty);
 
             Mage::dispatchEvent('wishlist_item_add_after', ['wishlist' => $this]);
 
-            $this->addItem($item);
+            //$this->addItem($item);
 
         } else {
-            //Mage::log('is old');
-            if ($forciblySetQty) {
-                $item->setQty((int) $qty);
-            } else {
-                $item->setQty($item->getQty() + (int) $qty);
-            }
-            $item->save();
+            // //Mage::log('is old');
+            // if ($forciblySetQty) {
+            //     $item->setQty((int) $qty);
+            // } else {
+            //     $item->setQty($item->getQty() + (int) $qty);
+            // }
+            // $item->save();
         }
+
+        if ($item->getId() && $product->getParentProductId()) {
+            //return $item;
+        }
+
+        $item->setOptions($product->getCustomOptions())
+            ->setProduct($product)
+            ->save();
 
         //$this->addItem($item);
 
