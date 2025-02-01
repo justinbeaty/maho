@@ -14,7 +14,6 @@ var Product = Product ?? {};
 /**************************** CONFIGURABLE PRODUCT **************************/
 Product.Config = class {
     constructor(config) {
-        console.log(config)
         this.config = config;
         this.taxConfig = this.config.taxConfig;
         this.state = new Map();
@@ -26,6 +25,28 @@ Product.Config = class {
             this.settings = document.querySelectorAll(`#${config.containerId} .super-attribute-select`);
         } else {
             this.settings = document.querySelectorAll('.super-attribute-select');
+        }
+
+        // Set default values
+        if (this.config.defaultValues) {
+            this.values = config.defaultValues;
+        }
+
+        // Overwrite defaults by url
+        for (const [ key, value ] of new URLSearchParams(window.location.hash.slice(1))) {
+            this.values ??= {};
+            this.values[key] = value;
+        }
+
+        // Overwrite defaults by inputs values if needed
+        if (this.config.inputsInitialized) {
+            this.values = {};
+            for (const element of this.settings) {
+                if (element.value) {
+                    const attributeId = element.id.replace(/[a-z]*/, '');
+                    this.values[attributeId] = element.value;
+                }
+            }
         }
 
         // Add change event listeners to all settings
@@ -58,27 +79,7 @@ Product.Config = class {
             childSettings.push(element);
         }
 
-        // Set default values
-        if (this.config.defaultValues) {
-            this.values = config.defaultValues;
-        }
-
-        // Overwrite defaults by url
-        for (const [ key, value ] of new URLSearchParams(window.location.hash.slice(1))) {
-            this.values ??= {};
-            this.values[key] = value;
-        }
-
-        // Overwrite defaults by inputs values if needed
-        if (this.config.inputsInitialized) {
-            this.values = {};
-            for (const element of this.settings) {
-                if (element.value) {
-                    const attributeId = element.id.replace(/[a-z]*/, '');
-                    this.values[attributeId] = element.value;
-                }
-            }
-        }
+        console.log('Product.Config', this.values)
 
         this.configureForValues();
         document.addEventListener('DOMContentLoaded', this.configureForValues.bind(this));
