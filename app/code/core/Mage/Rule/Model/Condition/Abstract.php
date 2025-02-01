@@ -639,10 +639,8 @@ abstract class Mage_Rule_Model_Condition_Abstract extends Varien_Object implemen
      */
     public function getAddLinkHtml()
     {
-        $src = Mage::getDesign()->getSkinUrl('images/rule_component_add.gif');
-        return '<img src="' . $src . '" class="rule-param-add v-middle" alt="" title="'
-            . Mage::helper('core')->quoteEscape(Mage::helper('rule')->__('Add'))
-            . '"/>';
+        $title = Mage::helper('core')->quoteEscape(Mage::helper('rule')->__('Add'));
+        return '<span class="rule-param-add icon-add" title="' . $title . '"></span>';
     }
 
     /**
@@ -650,10 +648,8 @@ abstract class Mage_Rule_Model_Condition_Abstract extends Varien_Object implemen
      */
     public function getRemoveLinkHtml()
     {
-        $src = Mage::getDesign()->getSkinUrl('images/rule_component_remove.gif');
-        return ' <span class="rule-param"><a href="javascript:void(0)" class="rule-param-remove" title="'
-            . Mage::helper('core')->quoteEscape(Mage::helper('rule')->__('Remove'))
-            . '"><img src="' . $src . '"  alt="" class="v-middle" /></a></span>';
+        $title = Mage::helper('core')->quoteEscape(Mage::helper('rule')->__('Remove'));
+        return '<a href="javascript:void(0)" class="rule-param-remove icon-remove" title="' . $title . '"></a>';
     }
 
     /**
@@ -662,11 +658,10 @@ abstract class Mage_Rule_Model_Condition_Abstract extends Varien_Object implemen
     public function getChooserContainerHtml()
     {
         $url = $this->getValueElementChooserUrl();
-        $html = '';
         if ($url) {
-            $html = '<div class="rule-chooser" url="' . $url . '"></div>';
+            return '<div class="rule-chooser" url="' . $url . '"></div>';
         }
-        return $html;
+        return '';
     }
 
     /**
