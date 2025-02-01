@@ -219,6 +219,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         }
 
         $item->setOptions($product->getCustomOptions())
+            ->setStoreId($product->hasWishlistStoreId() ? $product->getWishlistStoreId() : $this->getStore()->getId())
             ->setProduct($product);
 
         // Add only item that is not in quote already (there can be other new or already saved item
@@ -254,7 +255,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             $item = Mage::getModel('wishlist/item')
                 ->setProductId($product->getId())
                 ->setWishlistId($this->getId())
-                ->setAddedAt(Varien_Date::now())
                 ->setStoreId($product->hasWishlistStoreId() ? $product->getWishlistStoreId() : $this->getStore()->getId())
                 ->setOptions($product->getCustomOptions())
                 ->setProduct($product)
@@ -429,7 +429,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         /** @var Mage_Catalog_Model_Product $product */
         $product = Mage::getModel('catalog/product')
             ->setStoreId($storeId)
-            ->setWishlistStoreId($storeId)
             ->load($productId);
 
         $buyRequest->unsId();
