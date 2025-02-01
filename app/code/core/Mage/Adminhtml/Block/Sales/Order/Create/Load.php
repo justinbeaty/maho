@@ -30,12 +30,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Load extends Mage_Core_Block_Templ
                 $result[$name] = $block->toHtml();
             }
         }
-        $resultJson = Mage::helper('core')->jsonEncode($result);
-        $jsVarname = $this->getRequest()->getParam('as_js_varname');
-        if ($jsVarname) {
-            return Mage::helper('adminhtml/js')->getScript(sprintf('var %s = %s', $jsVarname, $resultJson));
-        } else {
-            return $resultJson;
-        }
+        return Mage::helper('core')->jsonEncode($result);
     }
 }
