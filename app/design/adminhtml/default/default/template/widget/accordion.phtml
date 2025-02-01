@@ -17,11 +17,11 @@
  * @var Mage_Adminhtml_Block_Customer_Edit_Tab_View_Accordion $this
  */
 ?>
-<dl id="tab_content_<?= $this->getHtmlId() ?>" name="tab_content_<?= $this->getHtmlId() ?>" class="accordion">
+<div id="tab_content_<?= $this->getHtmlId() ?>" name="tab_content_<?= $this->getHtmlId() ?>" class="accordion">
 <?php foreach ($this->getItems() as $_item): ?>
     <?= $this->getChildHtml($_item->getId()) ?>
 <?php endforeach ?>
-</dl>
-<script type="text/javascript">
-    tab_content_<?= $this->getHtmlId() ?>AccordionJs = new varienAccordion('tab_content_<?= $this->getHtmlId() ?>', '<?= $this->getShowOnlyOne() ?>');
+</div>
+<script>
+    window.tab_content_<?= $this->getHtmlId() ?>AccordionJs = new varienAccordion('tab_content_<?= $this->getHtmlId() ?>', '<?= $this->getShowOnlyOne() ?>');
 </script>
