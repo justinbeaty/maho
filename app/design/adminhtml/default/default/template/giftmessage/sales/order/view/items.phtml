@@ -21,12 +21,5 @@
         <input type="hidden" id="<?= $this->getFieldId('recipient') ?>" name="<?= $this->getFieldName('recipient') ?>"  value="<?= $this->getRecipient() ?>" />
         <input type="hidden" id="<?= $this->getFieldId('message') ?>" name="<?= $this->getFieldName('message') ?>"  value="<?= $this->getMessageText() ?>" />
     </form>
-
-    <?php if ($this->getMessageText()): ?>
-    <div class="gift-options-tooltip-content">
-        <div><strong><?= $this->helper('giftmessage')->__('Gift Message') ?></strong>: </div>
-        <div><?= $this->getMessageText() ?></div>
-    </div>
-    <?php endif ?>
 </div>
 <?php endif ?>
