@@ -23,9 +23,9 @@
                 <?php endif ?>
                 <?php if ($showGroup == false): ?>
                     <?php $showGroup = true; ?>
-                    <h4 style="margin-left:12px;"><?= $this->escapeHtml($_group->getName()) ?></h4>
+                    <h4><?= $this->escapeHtml($_group->getName()) ?></h4>
                 <?php endif ?>
-                <span class="field-row" style="margin-left:28px;">
+                <span class="field-row">
                     <input type="radio" id="store_<?= $_store->getId() ?>" class="radio" onclick="order.setStoreId('<?= $_store->getId() ?>')"/>
                     <label for="store_<?= $_store->getId() ?>" class="inline"><?= $this->escapeHtml($_store->getName()) ?></label>
                 </span>

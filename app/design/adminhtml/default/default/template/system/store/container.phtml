@@ -12,12 +12,10 @@
 /** @var Mage_Adminhtml_Block_System_Store_Store $this */
 ?>
 <div class="content-header">
-    <table cellspacing="0">
-        <tr>
-            <td style="<?= $this->getHeaderWidth() ?>"><?= $this->getHeaderHtml() ?></td>
-            <td class="form-buttons"><?= $this->getButtonsHtml() ?></td>
-        </tr>
-    </table>
+    <?= $this->getHeaderHtml() ?>
+    <div class="form-buttons">
+        <?= $this->getButtonsHtml() ?>
+    </div>
 </div>
 <div>
     <?= $this->getGridHtml() ?>

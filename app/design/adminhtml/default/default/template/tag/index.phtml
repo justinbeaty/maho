@@ -12,12 +12,12 @@
 /** @var Mage_Adminhtml_Block_Tag_Pending $this */
 ?>
 <div class="content-header">
-<table cellspacing="0">
-    <tr>
-        <td style="width:80%;"><h3 class="<?= $this->getHeaderCssClass() ?>"><?= $this->getHeaderHtml() ?></h3></td>
-        <td class="form-buttons"><?= $this->getCreateButtonHtml() ?></td>
-    </tr>
-</table>
+    <h3 class="<?= $this->getHeaderCssClass() ?>">
+        <?= $this->getHeaderHtml() ?>
+    </div>
+    <div class="form-buttons">
+        <?= $this->getCreateButtonHtml() ?>
+    </div>
 </div>
 <div id="tag_frame">
     <?= $this->getGridHtml() ?>

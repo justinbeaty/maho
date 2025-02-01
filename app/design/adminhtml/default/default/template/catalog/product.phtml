@@ -12,18 +12,14 @@
 /** @var Mage_Adminhtml_Block_Catalog_Product $this */
 ?>
 <div class="content-header">
-<table cellspacing="0">
-    <tr>
-        <td style="width:50%;"><h3><?= Mage::helper('catalog')->__('Manage Products') ?></h3></td>
-        <td class="a-right">
-            <?= $this->getButtonsHtml() ?>
-        </td>
-    </tr>
-</table>
+    <h3><?= Mage::helper('catalog')->__('Manage Products') ?></h3>
+    <?php if (!$this->isSingleStoreMode()): ?>
+        <?= $this->getChildHtml('store_switcher') ?>
+    <?php endif ?>
+    <div class="form-buttons">
+        <?= $this->getButtonsHtml() ?>
+    </div>
 </div>
-<?php if( !$this->isSingleStoreMode() ): ?>
-<?= $this->getChildHtml('store_switcher') ?>
-<?php endif ?>
 <div>
     <?= $this->getGridHtml() ?>
 </div>

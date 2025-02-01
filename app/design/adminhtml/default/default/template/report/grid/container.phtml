@@ -12,12 +12,12 @@
 /** @var Mage_Adminhtml_Block_Widget_Grid_Container $this */
 ?>
 <div class="content-header">
-    <table cellspacing="0">
-        <tr>
-            <td style="<?= $this->getHeaderWidth() ?>"><?= $this->getHeaderHtml() ?></td>
-            <td class="form-buttons"><?= $this->getButtonsHtml() ?></td>
-        </tr>
-    </table>
+    <h3 class="<?= $this->getHeaderCssClass() ?>">
+        <?= $this->getHeaderHtml() ?>
+    </div>
+    <div class="form-buttons">
+        <?= $this->getButtonsHtml() ?>
+    </div>
 </div>
 <div>
     <?= $this->getChildHtml('store.switcher') ?>

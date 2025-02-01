@@ -10,20 +10,16 @@
  */
 ?>
 <div class="content-header">
-    <table cellspacing="0">
-        <tr>
-            <td style="width:50%;"><h3><?= $header ?></h3></td>
-            <td class="form-buttons">
-                <?= $this->getBackButtonHtml() ?>
-                <?= $this->getResetButtonHtml() ?>
-                <?= $this->getSaveButtonHtml() ?>
-            </td>
-        </tr>
-    </table>
+    <h3><?= $header ?></h3>
+    <div class="form-buttons">
+        <?= $this->getBackButtonHtml() ?>
+        <?= $this->getResetButtonHtml() ?>
+        <?= $this->getSaveButtonHtml() ?>
+    </div>
 </div>
-<?php if( $form ): ?>
+<?php if ($form): ?>
 <?= $form->toHtml() ?>
-<script type="text/javascript">
-    var wigetForm = new varienForm('<?= $form->getForm()->getId() ?>');
+<script>
+    window.wigetForm = new varienForm('<?= $form->getForm()->getId() ?>');
 </script>
 <?php endif ?>
