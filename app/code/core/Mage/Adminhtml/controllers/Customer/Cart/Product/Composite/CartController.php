@@ -89,7 +89,7 @@ class Mage_Adminhtml_Customer_Cart_Product_Composite_CartController extends Mage
                 ->getCollection()
                 ->addItemFilter([$this->_quoteItem->getId()]);
 
-            $quoteItem->setOptions($optionCollection->getOptionsByItem($this->_quoteItem));
+            $this->_quoteItem->setOptions($optionCollection->getOptionsByItem($this->_quoteItem));
 
             $configureResult = new Varien_Object([
                 'ok'                  => true,
