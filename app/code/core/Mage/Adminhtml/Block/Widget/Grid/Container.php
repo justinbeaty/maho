@@ -109,15 +109,6 @@ class Mage_Adminhtml_Block_Widget_Grid_Container extends Mage_Adminhtml_Block_Wi
     /**
      * @return string
      */
-    #[\Override]
-    public function getHeaderCssClass()
-    {
-        return 'icon-head ' . parent::getHeaderCssClass();
-    }
-
-    /**
-     * @return string
-     */
     public function getHeaderWidth()
     {
         return 'width:50%;';
