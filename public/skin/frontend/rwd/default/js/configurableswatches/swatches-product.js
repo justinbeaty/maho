@@ -14,11 +14,13 @@ window.addEventListener('load', function() {
     windowLoaded = true;
 });
 
-class ProductConfigWithSwatches extends ProductConfig
-{
+
+var Product = Product ?? {};
+
+Product.Config = class extends Product.Config {
     constructor (config) {
         super(config);
-        this.configureObservers = [];
+        //this.configureObservers = [];
         this.loadOptions();
     }
 
@@ -41,17 +43,17 @@ class ProductConfigWithSwatches extends ProductConfig
         });
     }
 
-    configure (event) {
-        super.configure(event);
-        var element = event.target;
-        this.configureObservers.forEach(function(funct) {
-            funct(element);
-        });
-    }
+    // configure (event) {
+    //     super.configure(event);
+    //     var element = event.target;
+    //     this.configureObservers.forEach(function(funct) {
+    //         funct(element);
+    //     });
+    // }
 
-    configureSubscribe (funct) {
-        this.configureObservers.push(funct);
-    }
+    // configureSubscribe (funct) {
+    //     this.configureObservers.push(funct);
+    // }
 
     /**
      * Load ALL the options into the selects
@@ -81,10 +83,7 @@ class ProductConfigWithSwatches extends ProductConfig
     }
 }
 
-Product.Config = ProductConfigWithSwatches;
-
-class ProductConfigurableSwatches
-{
+Product.ConfigurableSwatches = class {
     constructor(productConfig, config) {
         this.productConfig = false;
         this.configurableAttributes = {};
@@ -700,5 +699,3 @@ class ProductConfigurableSwatches
         return lists.reduce((a, b) => a.filter(c => b.includes(c)));
     }
 }
-
-Product.ConfigurableSwatches = ProductConfigurableSwatches;

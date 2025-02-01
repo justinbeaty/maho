@@ -9,8 +9,9 @@
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-class ProductConfigConfigurable
-{
+var Product = Product ?? {};
+
+Product.Config2 = class {
     constructor(config) {
         this.config = config;
         this.taxConfig = config.taxConfig;
@@ -22,30 +23,6 @@ class ProductConfigConfigurable
         this.state = {};
         this.priceTemplate = new Template(config.template);
         this.prices = config.prices;
-
-        if (config.defaultValues) {
-            this.values = config.defaultValues;
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams) {
-            for (const [key, value] of urlParams) {
-                if (!this.values) {
-                    this.values = {};
-                }
-                this.values[key] = value;
-            }
-        }
-
-        if (config.inputsInitialized) {
-            this.values = {};
-            this.settings.forEach(element => {
-                if (element.value) {
-                    const attributeId = element.id.replace(/[a-z]*/, '');
-                    this.values[attributeId] = element.value;
-                }
-            });
-        }
 
         this.settings.forEach(element => {
             element.addEventListener('change', this.configure.bind(this));
@@ -60,19 +37,45 @@ class ProductConfigConfigurable
             }
         });
 
+
         const childSettings = [];
         for (let i = this.settings.length - 1; i >= 0; i--) {
             const prevSetting = this.settings[i - 1] || false;
             const nextSetting = this.settings[i + 1] || false;
+
             if (i === 0) {
                 this.fillSelect(this.settings[i]);
             } else {
                 this.settings[i].disabled = true;
             }
-            childSettings.push(this.settings[i]);
+
             this.settings[i].childSettings = [...childSettings];
             this.settings[i].prevSetting = prevSetting;
             this.settings[i].nextSetting = nextSetting;
+            childSettings.push(this.settings[i]);
+        }
+
+
+        if (config.defaultValues) {
+            this.values = config.defaultValues;
+        }
+
+        if (config.inputsInitialized) {
+            this.values = {};
+            this.settings.forEach(element => {
+                if (element.value) {
+                    const attributeId = element.id.replace(/[a-z]*/, '');
+                    this.values[attributeId] = element.value;
+                }
+            });
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        for (const [key, value] of urlParams) {
+            if (!this.values) {
+                this.values = {};
+            }
+            this.values[key] = value;
         }
 
         this.configureForValues();
@@ -83,7 +86,8 @@ class ProductConfigConfigurable
         if (this.values) {
             this.settings.forEach(element => {
                 const attributeId = element.attributeId;
-                element.value = this.values[attributeId] || '';
+                //element.value = this.values[attributeId] || '';
+                element.value = typeof this.values[attributeId] === 'undefined' ? '' : this.values[attributeId];
                 this.configureElement(element);
             });
         }
@@ -111,7 +115,7 @@ class ProductConfigConfigurable
 
     reloadOptionLabels(element) {
         let selectedPrice = 0;
-        if(element.options[element.selectedIndex].config && !this.config.stablePrices){
+        if(element.options[element.selectedIndex].config && !this.config.stablePrices){ // this line
             selectedPrice = parseFloat(element.options[element.selectedIndex].config.price);
         }
 
@@ -127,7 +131,7 @@ class ProductConfigConfigurable
             element.childSettings.forEach(child => {
                 child.selectedIndex = 0;
                 child.disabled = true;
-                if (child.config) {
+                if (element.config) {
                     this.state[child.config.id] = false;
                 }
             });
@@ -138,15 +142,21 @@ class ProductConfigConfigurable
         const attributeId = element.id.replace(/[a-z]*/, '');
         const options = this.getAttributeOptions(attributeId);
         this.clearSelect(element);
+
+
         element.options[0] = new Option('', '');
         element.options[0].innerHTML = this.config.chooseText;
 
         const prevConfig = element.prevSetting ? element.prevSetting.options[element.prevSetting.selectedIndex] : false;
 
+
+
+
         if (options) {
             let index = 1;
             options.forEach(option => {
                 const allowedProducts = [];
+
                 if (prevConfig) {
                     option.products.forEach(product => {
                         if (prevConfig.config.allowedProducts.includes(product)) {
@@ -171,7 +181,9 @@ class ProductConfigConfigurable
     }
 
     getOptionLabel(option, price) {
+        price = parseFloat(price);
         let tax, excl, incl;
+
         if (this.taxConfig.includeTax) {
             tax = price / (100 + this.taxConfig.defaultTax) * this.taxConfig.defaultTax;
             excl = price - tax;
@@ -202,6 +214,7 @@ class ProductConfigConfigurable
     formatPrice(price, showSign) {
         let str = '';
         price = parseFloat(price);
+
         if (showSign) {
             if (price < 0) {
                 str += '-';
@@ -268,6 +281,3 @@ class ProductConfigConfigurable
         }
     }
 }
-
-var Product = Product ?? {};
-Product.Config = ProductConfigConfigurable;
