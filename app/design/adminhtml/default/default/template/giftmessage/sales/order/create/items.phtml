@@ -17,12 +17,5 @@
         <div id="gift-message-form-data-<?= $this->getItem()->getId() ?>">
             <?= $this->getFormHtml() ?>
         </div>
-
-        <?php if ($this->getMessageText()): ?>
-        <div class="gift-options-tooltip-content">
-            <div><strong><?= $this->helper('giftmessage')->__('Gift Message') ?></strong>:</div>
-            <div><?= $this->getMessageText() ?></div>
-        </div>
-        <?php endif ?>
     </div>
 <?php endif ?>

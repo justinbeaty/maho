@@ -24,7 +24,7 @@ class Mage_GiftMessage_Block_Adminhtml_Sales_Order_View_Items extends Mage_Admin
     protected $_giftMessage = [];
 
     /**
-     * Get Order Item
+     * Get order item object from parent block
      *
      * @return Mage_Sales_Model_Order_Item
      */
