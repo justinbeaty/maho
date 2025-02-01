@@ -203,11 +203,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 ->setProduct($product)
                 ->setQty($qty);
 
-            if (Mage::app()->getStore()->isAdmin()) {
-                $item->setStoreId($this->getStore()->getId());
-            } else {
-                $item->setStoreId(Mage::app()->getStore()->getId());
-            }
             $newItem = true;
         }
 
@@ -219,7 +214,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         }
 
         $item->setOptions($product->getCustomOptions())
-            ->setStoreId($product->hasWishlistStoreId() ? $product->getWishlistStoreId() : $this->getStore()->getId())
             ->setProduct($product);
 
         // Add only item that is not in quote already (there can be other new or already saved item
