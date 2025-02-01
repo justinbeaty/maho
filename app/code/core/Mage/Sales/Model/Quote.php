@@ -1039,6 +1039,9 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         $cartCandidates = $product->getTypeInstance(true)
             ->prepareForCartAdvanced($request, $product, $processMode);
 
+        Mage::log("load product {$product->getStore()->getId()} {$product->getId()}");
+        Mage::log($request->debug());
+
         /**
          * Error message
          */
@@ -1057,6 +1060,8 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         $errors = [];
         $items = [];
         foreach ($cartCandidates as $candidate) {
+            //Mage::log($candidate->debug());
+
             // Child items can be sticked together only within their parent
             $stickWithinParent = $candidate->getParentProductId() ? $parentItem : null;
             $candidate->setStickWithinParent($stickWithinParent);
@@ -1190,6 +1195,7 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
             ->setStoreId($this->getStore()->getId())
             ->load($productId);
 
+
         if (!$params) {
             $params = new Varien_Object();
         } elseif (is_array($params)) {
@@ -1198,7 +1204,9 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         $params->setCurrentConfig($item->getBuyRequest());
         $buyRequest = Mage::helper('catalog/product')->addParamsToBuyRequest($buyRequest, $params);
 
+
         $buyRequest->setResetCount(true);
+
         $resultItem = $this->addProduct($product, $buyRequest);
 
         if (is_string($resultItem)) {

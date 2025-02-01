@@ -244,6 +244,7 @@ class Mage_Wishlist_IndexController extends Mage_Wishlist_Controller_Abstract
         } catch (Mage_Core_Exception $e) {
             $session->addError($this->__('An error occurred while adding item to wishlist: %s', $e->getMessage()));
         } catch (Exception $e) {
+            Mage::logException($e);
             $session->addError($this->__('An error occurred while adding item to wishlist.'));
         }
 
@@ -346,6 +347,7 @@ class Mage_Wishlist_IndexController extends Mage_Wishlist_Controller_Abstract
         } catch (Mage_Core_Exception $e) {
             $session->addError($e->getMessage());
         } catch (Exception $e) {
+            Mage::logException($e);
             $session->addError($this->__('An error occurred while updating wishlist.'));
             Mage::logException($e);
         }
@@ -470,6 +472,7 @@ class Mage_Wishlist_IndexController extends Mage_Wishlist_Controller_Abstract
                 $this->__('An error occurred while deleting the item from wishlist: %s', $e->getMessage()),
             );
         } catch (Exception $e) {
+            Mage::logException($e);
             Mage::getSingleton('customer/session')->addError(
                 $this->__('An error occurred while deleting the item from wishlist.'),
             );
