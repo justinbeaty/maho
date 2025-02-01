@@ -29,6 +29,23 @@ function setElementDisable(element, disable){
     }
 }
 
+function restoreFormData(formEl, formData) {
+    for (const [ key, value ] of formData.entries()) {
+        const fieldEl = formEl.querySelector(`[name="${key}"]`);
+
+        console.log(key, value, fieldEl);
+
+        if (!fieldEl) {
+            return;
+        }
+        if (fieldEl.type === 'checkbox' || fieldEl.type === 'radio') {
+            fieldEl.checked = value === 'on';
+        } else {
+            fieldEl.value = value;
+        }
+    }
+}
+
 function toggleParentVis(element, force = null) {
     if (typeof element === 'string' || element instanceof String) {
         element = document.getElementById(element);
