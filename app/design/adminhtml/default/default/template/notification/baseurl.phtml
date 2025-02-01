@@ -8,14 +8,11 @@
  * @copyright   Copyright (c) 2024 Maho (https://mahocommerce.com)
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-/**
- * @see Mage_Adminhtml_Block_Notification_Baseurl
- * @var Mage_Adminhtml_Block_Notification_Baseurl $this 
- */
+
+/** @var Mage_Adminhtml_Block_Notification_Baseurl $this */
 ?>
-<?php $_url = $this->getConfigUrl()?>
-<?php if ($_url): ?>
+<?php if ($url = $this->getConfigUrl()): ?>
 <div class="notification-global notification-global-notice">
-    <?= $this->helper('adminhtml')->__('{{base_url}} is not recommended to use in a production environment to declare the Base Unsecure URL / Base Secure URL. It is highly recommended to change this value in your Maho <a href="%s">configuration</a>.', $_url) ?>
+    <?= $this->helper('adminhtml')->__('{{base_url}} is not recommended to use in a production environment to declare the Base Unsecure URL / Base Secure URL. It is highly recommended to change this value in your Maho <a href="%s">configuration</a>.', $url) ?>
 </div>
 <?php endif ?>
