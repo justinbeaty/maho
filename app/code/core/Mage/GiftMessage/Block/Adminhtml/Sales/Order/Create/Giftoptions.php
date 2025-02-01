@@ -17,12 +17,26 @@
 class Mage_GiftMessage_Block_Adminhtml_Sales_Order_Create_Giftoptions extends Mage_Adminhtml_Block_Template
 {
     /**
-     * Get order item object from parent block
+     * Get quote item object from parent block
      *
-     * @return Mage_Sales_Model_Order_Item
+     * @return Mage_Sales_Model_Quote_Item
      */
     public function getItem()
     {
-        return $this->getParentBlock()->getData('item');
+        return $this->getParentBlock()->getItem();
+    }
+
+    /**
+     * Retrieve gift message for item
+     */
+    public function getMessageText(): string
+    {
+        if ($this->getItem()->getGiftMessageId()) {
+            $model = $this->helper('giftmessage/message')
+                ->getGiftMessage($this->getItem()->getGiftMessageId());
+
+            return $this->escapeHtml($model->getMessage());
+        }
+        return '';
     }
 }
