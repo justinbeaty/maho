@@ -174,7 +174,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         parent::_afterSave();
 
         if ($this->_itemCollection !== null) {
-            $this->getItemCollection()->save();
+            //$this->getItemCollection()->save();
         }
         return $this;
     }
@@ -602,6 +602,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 $resultItem->setDescription($item->getDescription())->save();
             }
             $item->isDeleted(true);
+            $item->save();
             $this->setDataChanges(true);
         } else {
             $resultItem->setQty($buyRequest->getQty());
