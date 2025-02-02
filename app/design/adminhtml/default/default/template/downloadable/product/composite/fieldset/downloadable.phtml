@@ -20,11 +20,14 @@ $skipSaleableCheck = Mage::helper('catalog/product')->getSkipSaleableCheck();
 <?php $links = $this->getLinks(); ?>
 <?php $isRequired = $this->getLinkSelectionRequired(); ?>
 <?php $requiredIds = []; ?>
-<div id="catalog_product_composite_configure_fields_downloadable">
+<div>
     <h4><?= Mage::helper('catalog')->__('Downloadable Information') ?></h4>
     <div class="product-options">
         <dl>
-            <dt><label<?= $isRequired ? ' class="required"' : '' ?>><?= $this->escapeHtml($this->getLinksTitle()) ?></label></dt>
+            <dt>
+                <?php if ($isRequired): ?><span class="required">*</span><?php endif ?>
+                <?= $this->escapeHtml($this->getLinksTitle()) ?>
+            </dt>
             <dd>
                 <ul id="downloadable-links-list" class="options-list">
                 <?php foreach ($links as $link): ?>
@@ -32,7 +35,7 @@ $skipSaleableCheck = Mage::helper('catalog/product')->getSkipSaleableCheck();
                     <li>
                     <?php if ($linksPurchasedSeparately): ?>
                         <input type="checkbox" class="checkbox<?= $isRequired ? ' validate-one-required-by-name' : '' ?> product-downloadable-link" name="links[]" id="links_<?= $link->getId() ?>" value="<?= $link->getId() ?>" <?= $this->getLinkCheckedValue($link) ?> price="<?= $this->getCurrencyPrice($link->getPrice()) ?>"/>
-                        <?php endif ?>
+                    <?php endif ?>
                         <span class="label">
                             <label for="links_<?= $link->getId() ?>"><?= $this->escapeHtml($link->getTitle()) ?></label>
                         <?php if ($link->getSampleFile() || $link->getSampleUrl()): ?>
@@ -43,12 +46,11 @@ $skipSaleableCheck = Mage::helper('catalog/product')->getSkipSaleableCheck();
                             <?= $this->getFormattedLinkPrice($link) ?>
                         <?php endif ?>
                         </span>
-                    <?php endif ?>
                     </li>
                 <?php endforeach ?>
                 </ul>
             <?php if ($isRequired): ?>
-                <span id="links-advice-container"></span>
+                <span class="links-advice-container"></span>
             <?php endif ?>
             </dd>
         </dl>
@@ -60,7 +62,7 @@ $skipSaleableCheck = Mage::helper('catalog/product')->getSkipSaleableCheck();
     const requiriedIds = <?= json_encode($requiredIds) ?>;
     for (const linkId of requiriedIds) {
         const inputEl = document.getElementById(`links_${linkId}`);
-        inputEl.adviceContainer = 'links-advice-container';
+        inputEl.adviceContainer = inputEl.closest('dd').querySelector('.links-advice-container');
         inputEl.callbackFunction = 'validateDownloadableCallback';
     }
     window.validateDownloadableCallback = (elmId, result) => {

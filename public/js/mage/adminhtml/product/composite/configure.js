@@ -14,10 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 class ProductConfigure
 {
-
     listTypes =                  {};
     itemsFilter =                {};
-
     current =                    {};
 
     confirmedCurrentId =         null;
@@ -579,6 +577,9 @@ class ProductConfigure
 
             for (const oldScriptEl of this.blockFormFields.querySelectorAll('script:not([src])')) {
                 const newScriptEl = document.createElement('script');
+                for (const attr of oldScriptEl.attributes) {
+                    newScriptEl.setAttribute(attr.name, attr.value)
+                }
                 newScriptEl.appendChild(document.createTextNode(oldScriptEl.innerHTML));
                 oldScriptEl.replaceWith(newScriptEl);
             }
