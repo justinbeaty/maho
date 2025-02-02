@@ -187,101 +187,35 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      * @param   bool $forciblySetQty
      * @return  Mage_Wishlist_Model_Item
      */
-    protected function _addCatalogProduct2(Mage_Catalog_Model_Product $product, $qty = 1)
-    {
-        $newItem = false;
-        $item = $this->getItemByProduct($product);
-        if (!$item) {
-            $item = Mage::getModel('wishlist/item');
-            $item
-                ->setWishlist($this)
-                ->setProductId($product->getId())
-                ->setWishlistId($this->getId())
-                ->setAddedAt(Varien_Date::now())
-                ->setStoreId($product->hasWishlistStoreId() ? $product->getWishlistStoreId() : $this->getStore()->getId())
-                ->setOptions($product->getCustomOptions())
-                ->setProduct($product)
-                ->setQty($qty);
-
-            $newItem = true;
-        }
-
-        /**
-         * We can't modify existing child items
-         */
-        if ($item->getId() && $product->getParentProductId()) {
-            return $item;
-        }
-
-        $item->setOptions($product->getCustomOptions())
-            ->setProduct($product);
-
-        // Add only item that is not in quote already (there can be other new or already saved item
-        if ($newItem) {
-            Mage::log('is new');
-            //$this->addItem($item);
-        }
-
-        $item->save();
-
-        return $item;
-    }
-
-
     protected function _addCatalogProduct(Mage_Catalog_Model_Product $product, $qty = 1, $forciblySetQty = false)
     {
-        /*
-        $item = null;
-        foreach ($this->getItemCollection() as $wishlistItem) {
-            if ($wishlistItem->representProduct($product)) {
-                $item = $wishlistItem;
-                break;
-            }
-        }
-        */
-        /*
-        $item = array_find(
-            $this->getItemCollection(),
-            fn ($wishlistItem) => $wishlistItem->representProduct($product),
-        );
-        */
-
         $item = $this->getItemByProduct($product);
-
         if (!$item) {
-            //Mage::log('is new');
             $item = Mage::getModel('wishlist/item')
-                //->setWishlist($this)
                 ->setWishlistId($this->getId())
                 ->setProductId($product->getId())
                 ->setStoreId($product->hasWishlistStoreId() ? $product->getWishlistStoreId() : $this->getStore()->getId())
                 ->setOptions($product->getCustomOptions())
                 ->setProduct($product)
-                ->setQty($qty);
+                ->setQty($qty)
+                ->save();
 
             Mage::dispatchEvent('wishlist_item_add_after', ['wishlist' => $this]);
 
-            //$this->addItem($item);
+            if ($item->getId()) {
+                $this->getItemCollection()->addItem($item);
+            }
 
         } else {
-            // //Mage::log('is old');
-            // if ($forciblySetQty) {
-            //     $item->setQty((int) $qty);
-            // } else {
-            //     $item->setQty($item->getQty() + (int) $qty);
-            // }
-            // $item->save();
+            if ($forciblySetQty) {
+                $item->setQty((int) $qty);
+            } else {
+                $item->setQty($item->getQty() + (int) $qty);
+            }
+            $item->save();
         }
 
-        if ($item->getId() && $product->getParentProductId()) {
-            //return $item;
-        }
-
-        $item->setOptions($product->getCustomOptions())
-            ->setProduct($product)
-            ->save();
-
-        //$this->addItem($item);
+        $this->addItem($item);
 
         return $item;
     }
