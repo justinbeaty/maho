@@ -73,55 +73,66 @@ class Mage_Adminhtml_Customer_Wishlist_Product_Composite_WishlistController exte
      */
     public function configureAction()
     {
-        $configureResult = new Varien_Object();
         try {
             $this->_initData();
 
-            $configureResult->setProductId($this->_wishlistItem->getProductId());
-            $configureResult->setBuyRequest($this->_wishlistItem->getBuyRequest());
-            $configureResult->setCurrentStoreId($this->_wishlistItem->getStoreId());
-            $configureResult->setCurrentCustomerId($this->_wishlist->getCustomerId());
+            $configureResult = new Varien_Object([
+                'ok'                  => true,
+                'product_id'          => $this->_wishlistItem->getProductId(),
+                'buy_request'         => $this->_wishlistItem->getBuyRequest(),
+                'current_store_id'    => $this->_wishlistItem->getStoreId(),
+                'current_customer_id' => $this->_wishlist->getCustomerId(),
+            ]);
 
-            $configureResult->setOk(true);
+            // During order creation in the backend admin has ability to add any products to order
+            Mage::helper('catalog/product')->setSkipSaleableCheck(true);
+
+            // Render page
+            Mage::helper('adminhtml/catalog_product_composite')->renderConfigureResult($this, $configureResult);
+
+        } catch (Mage_Core_Exception $e) {
+            $this->getResponse()->setBodyJson(['error' => true, 'message' => $e->getMessage()]);
         } catch (Exception $e) {
-            $configureResult->setError(true);
-            $configureResult->setMessage($e->getMessage());
+            Mage::logException($e);
+            $this->getResponse()->setBodyJson(['error' => true, 'message' => $this->__('Internal Error')]);
         }
-
-        /** @var Mage_Adminhtml_Helper_Catalog_Product_Composite $helper */
-        $helper = Mage::helper('adminhtml/catalog_product_composite');
-        Mage::helper('catalog/product')->setSkipSaleableCheck(true);
-        $helper->renderConfigureResult($this, $configureResult);
 
         return $this;
     }
 
     /**
-     * IFrame handler for submitted configuration for wishlist item
+     * Ajax handler for submitted configuration for wishlist item
      *
      * @return false
      */
     public function updateAction()
     {
-        // Update wishlist item
-        $updateResult = new Varien_Object();
         try {
             $this->_initData();
 
             $buyRequest = new Varien_Object($this->getRequest()->getParams());
+            /*
+            $buyRequest = new Varien_Object($this->getRequest()->getPost());
+            $buyRequest->unsFormKey();
+
+            $buyRequest->setProduct($this->_wishlistItem->getProduct()->getId());
+            $buyRequest->setRelatedProduct('');
+            */
 
             $this->_wishlist
                 ->updateItem($this->_wishlistItem->getId(), $buyRequest)
                 ->save();
 
-            $updateResult->setOk(true);
+            // Mage::helper('wishlist')->calculate();
+
+            $this->getResponse()->setBodyJson(['ok' => true]);
+
+        } catch (Mage_Core_Exception $e) {
+            $this->getResponse()->setBodyJson(['error' => true, 'message' => $e->getMessage()]);
         } catch (Exception $e) {
-            $updateResult->setError(true);
-            $updateResult->setMessage($e->getMessage());
+            Mage::logException($e);
+            $this->getResponse()->setBodyJson(['error' => true, 'message' => $this->__('Internal Error')]);
         }
-        $updateResult->setJsVarName($this->getRequest()->getParam('as_js_varname'));
-        Mage::getSingleton('adminhtml/session')->setCompositeProductResult($updateResult);
-        $this->_redirect('*/catalog_product/showUpdateResult');
 
         return false;
     }

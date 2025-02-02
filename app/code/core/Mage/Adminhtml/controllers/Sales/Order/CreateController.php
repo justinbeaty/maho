@@ -409,11 +409,12 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
                 $update->addHandle('adminhtml_sales_order_create_load_block_' . $block);
             }
         }
+
         $this->loadLayoutUpdates()->generateLayoutXml()->generateLayoutBlocks();
         $result = $this->getLayout()->getBlock('content')->toHtml();
-        if ($request->getParam('as_js_varname')) {
-            Mage::getSingleton('adminhtml/session')->setUpdateResult($result);
-            $this->_redirect('*/*/showUpdateResult');
+
+        if ($asJson) {
+            $this->getResponse()->setBodyJson($result);
         } else {
             $this->getResponse()->setBody($result);
         }
@@ -424,27 +425,18 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
      */
     public function addConfiguredAction()
     {
-        $errorMessage = null;
         try {
             $this->_initSession()
                 ->_processData();
+            $this->getResponse()->setBodyJson([ 'ok' => true ]);
+        } catch (Mage_Core_Exception $e) {
+            $this->_reloadQuote();
+            $this->getResponse()->setBodyJson([ 'error' => true, 'message' => $e->getMessage() ]);
         } catch (Exception $e) {
             $this->_reloadQuote();
-            $errorMessage = $e->getMessage();
+            Mage::logException($e);
+            $this->getResponse()->setBodyJson([ 'error' => true, 'message' => $this->__('Internal Error') ]);
         }
-
-        // Form result for client javascript
-        $updateResult = new Varien_Object();
-        if ($errorMessage) {
-            $updateResult->setError(true);
-            $updateResult->setMessage($errorMessage);
-        } else {
-            $updateResult->setOk(true);
-        }
-
-        $updateResult->setJsVarName($this->getRequest()->getParam('as_js_varname'));
-        Mage::getSingleton('adminhtml/session')->setCompositeProductResult($updateResult);
-        $this->_redirect('*/catalog_product/showUpdateResult');
     }
 
     /**
@@ -570,21 +562,16 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
      */
     public function configureProductToAddAction()
     {
-        // Prepare data
-        $productId  = (int) $this->getRequest()->getParam('id');
-
-        $configureResult = new Varien_Object();
-        $configureResult->setOk(true);
-        $configureResult->setProductId($productId);
         $sessionQuote = Mage::getSingleton('adminhtml/session_quote');
-        $configureResult->setCurrentStoreId($sessionQuote->getStore()->getId());
-        $configureResult->setCurrentCustomerId($sessionQuote->getCustomerId());
+        $configureResult = new Varien_Object([
+            'ok'                  => true,
+            'product_id'          => (int) $this->getRequest()->getParam('id'),
+            'current_store_id'    => $sessionQuote->getStore()->getId(),
+            'current_customer_id' => $sessionQuote->getCustomerId(),
+        ]);
 
         // Render page
-        /** @var Mage_Adminhtml_Helper_Catalog_Product_Composite $helper */
-        $helper = Mage::helper('adminhtml/catalog_product_composite');
-        $helper->renderConfigureResult($this, $configureResult);
-
+        Mage::helper('adminhtml/catalog_product_composite')->renderConfigureResult($this, $configureResult);
         return $this;
     }
 
@@ -595,8 +582,6 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
      */
     public function configureQuoteItemsAction()
     {
-        // Prepare data
-        $configureResult = new Varien_Object();
         try {
             $quoteItemId = (int) $this->getRequest()->getParam('id');
             if (!$quoteItemId) {
@@ -608,25 +593,29 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
                 Mage::throwException($this->__('Quote item is not loaded.'));
             }
 
-            $configureResult->setOk(true);
-            $optionCollection = Mage::getModel('sales/quote_item_option')->getCollection()
-                    ->addItemFilter([$quoteItemId]);
+            $optionCollection = Mage::getModel('sales/quote_item_option')
+                ->getCollection()
+                ->addItemFilter([$quoteItemId]);
+
             $quoteItem->setOptions($optionCollection->getOptionsByItem($quoteItem));
 
-            $configureResult->setBuyRequest($quoteItem->getBuyRequest());
-            $configureResult->setCurrentStoreId($quoteItem->getStoreId());
-            $configureResult->setProductId($quoteItem->getProductId());
-            $sessionQuote = Mage::getSingleton('adminhtml/session_quote');
-            $configureResult->setCurrentCustomerId($sessionQuote->getCustomerId());
-        } catch (Exception $e) {
-            $configureResult->setError(true);
-            $configureResult->setMessage($e->getMessage());
-        }
+            $configureResult = new Varien_Object([
+                'ok'                  => true,
+                'product_id'          => $quoteItem->getProductId(),
+                'buy_request'         => $quoteItem->getBuyRequest(),
+                'current_store_id'    => $quoteItem->getStoreId(),
+                'current_customer_id' => Mage::getSingleton('adminhtml/session_quote')->getCustomerId(),
+            ]);
 
-        // Render page
-        /** @var Mage_Adminhtml_Helper_Catalog_Product_Composite $helper */
-        $helper = Mage::helper('adminhtml/catalog_product_composite');
-        $helper->renderConfigureResult($this, $configureResult);
+            // Render page
+            Mage::helper('adminhtml/catalog_product_composite')->renderConfigureResult($this, $configureResult);
+
+        } catch (Mage_Core_Exception $e) {
+            $this->getResponse()->setBodyJson([ 'error' => true, 'message' => $e->getMessage() ]);
+        } catch (Exception $e) {
+            Mage::logException($e);
+            $this->getResponse()->setBodyJson([ 'error' => true, 'message' => $this->__('Internal Error') ]);
+        }
 
         return $this;
     }
@@ -635,6 +624,8 @@ class Mage_Adminhtml_Sales_Order_CreateController extends Mage_Adminhtml_Control
      * Show item update result from loadBlockAction
      * to prevent popup alert with resend data question
      *
+     * @return false|void
+     * @deprecated use `$this->getResponse()->setBodyJson()`
      */
     public function showUpdateResultAction()
     {

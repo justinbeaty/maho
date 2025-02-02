@@ -328,9 +328,11 @@ class Mage_Wishlist_IndexController extends Mage_Wishlist_Controller_Abstract
                 return;
             }
 
-            $buyRequest = new Varien_Object($this->getRequest()->getParams());
+            $buyRequest = new Varien_Object($this->getRequest()->getPost());
+            $buyRequest->unsFormKey();
 
-            $wishlist->updateItem($id, $buyRequest)
+            $wishlist
+                ->updateItem($item->getId(), $buyRequest)
                 ->save();
 
             Mage::helper('wishlist')->calculate();
