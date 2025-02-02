@@ -251,7 +251,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         if (!$item) {
             //Mage::log('is new');
             $item = Mage::getModel('wishlist/item')
-                ->setWishlist($this)
+                //->setWishlist($this)
                 ->setWishlistId($this->getId())
                 ->setProductId($product->getId())
                 ->setStoreId($product->hasWishlistStoreId() ? $product->getWishlistStoreId() : $this->getStore()->getId())
