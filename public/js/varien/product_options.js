@@ -9,9 +9,9 @@
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
-var Product = Product || {};
+var Product = Product ?? {};
 
-class OptionsPrice {
+Product.OptionsPrice = class {
     constructor(config) {
         this.productId = config.productId;
         this.priceFormat = config.priceFormat;
@@ -279,5 +279,3 @@ class OptionsPrice {
         return formatCurrency(price, this.priceFormat);
     }
 }
-
-Product.OptionsPrice = OptionsPrice;
