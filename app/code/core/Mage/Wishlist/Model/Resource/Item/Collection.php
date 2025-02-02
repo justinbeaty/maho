@@ -23,6 +23,11 @@
 class Mage_Wishlist_Model_Resource_Item_Collection extends Mage_Core_Model_Resource_Db_Collection_Abstract
 {
     /**
+     * Collection wishlist instance
+     */
+    protected Mage_Wishlist_Model_Wishlist $_wishlist;
+
+    /**
      * Product Visibility Filter to product collection flag
      *
      * @var bool
@@ -151,39 +156,26 @@ class Mage_Wishlist_Model_Resource_Item_Collection extends Mage_Core_Model_Resou
     protected function _assignProducts()
     {
         Varien_Profiler::start('WISHLIST:' . __METHOD__);
+
         $productIds = [];
-
-        $isStoreAdmin = Mage::app()->getStore()->isAdmin();
-
-        $storeIds = [];
         foreach ($this as $item) {
-            $productIds[$item->getProductId()] = 1;
-            if ($isStoreAdmin && !in_array($item->getStoreId(), $storeIds)) {
-                $storeIds[] = $item->getStoreId();
-            }
+            $productIds[] = (int) $item->getProductId();
         }
-        if (!$isStoreAdmin) {
-            $storeIds = $this->_storeIds;
-        }
-
         $this->_productIds = array_merge($this->_productIds, array_keys($productIds));
-        $attributes = Mage::getSingleton('wishlist/config')->getProductAttributes();
-        $productCollection = Mage::getModel('catalog/product')->getCollection();
-        foreach ($storeIds as $id) {
-            $productCollection->addWebsiteFilter(Mage::app()->getStore($id)->getWebsiteId());
-        }
+
+        $productCollection = Mage::getModel('catalog/product')->getCollection()
+            ->setStoreId($this->getStoreId())
+            ->addIdFilter($this->_productIds)
+            ->addAttributeToSelect(Mage::getSingleton('wishlist/config')->getProductAttributes())
+            ->addOptionsToResult()
+            ->addPriceData($this->_customerGroupId, $this->_websiteId)
+            ->addStoreFilter()
+            ->addUrlRewrite()
+            ->addTaxPercents();
 
         if ($this->_productVisible) {
             Mage::getSingleton('catalog/product_visibility')->addVisibleInSiteFilterToCollection($productCollection);
         }
-
-        $productCollection->addPriceData($this->_customerGroupId, $this->_websiteId)
-            ->addTaxPercents()
-            ->addIdFilter($this->_productIds)
-            ->addAttributeToSelect($attributes)
-            ->addOptionsToResult()
-            ->addUrlRewrite();
-
         if ($this->_productSalable) {
             $productCollection = Mage::helper('adminhtml/sales')->applySalableProductTypesFilter($productCollection);
         }
@@ -218,14 +210,37 @@ class Mage_Wishlist_Model_Resource_Item_Collection extends Mage_Core_Model_Resou
     }
 
     /**
+     * Retrieve Store ID (from wishlist)
+     */
+    public function getStoreId(): int
+    {
+        return (int) $this->_wishlist->getStoreId();
+    }
+
+    /**
+     * Set Wishlist object to Collection
+     */
+    public function setWishlist(Mage_Wishlist_Model_Wishlist $wishlist): self
+    {
+        $this->_wishlist = $wishlist;
+        $wishlistId      = $wishlist->getId();
+        if ($wishlistId) {
+            $this->addFieldToFilter('wishlist_id', $wishlist->getId());
+        } else {
+            $this->_totalRecords = 0;
+            $this->_setIsLoaded(true);
+        }
+        return $this;
+    }
+
+    /**
      * Add filter by wishlist object
      *
      * @return $this
      */
     public function addWishlistFilter(Mage_Wishlist_Model_Wishlist $wishlist)
     {
-        $this->addFieldToFilter('wishlist_id', $wishlist->getId());
-        return $this;
+        return $this->setWishlist($wishlist);
     }
 
     /**

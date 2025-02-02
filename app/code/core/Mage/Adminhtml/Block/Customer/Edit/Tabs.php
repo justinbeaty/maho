@@ -69,7 +69,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tabs extends Mage_Adminhtml_Block_Widge
             $this->addTab('wishlist', [
                 'label'     => Mage::helper('customer')->__('Wishlist'),
                 'class'     => 'ajax',
-                'url'       => $this->getUrl('*/*/wishlist', ['_current' => true]),
+                'url'       => $this->getUrl('*/*/wishlists', ['_current' => true]),
             ]);
 
             if ($this->isModuleOutputEnabled('Mage_Newsletter')

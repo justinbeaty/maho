@@ -265,6 +265,14 @@ class Mage_Wishlist_Model_Item extends Mage_Core_Model_Abstract implements Mage_
             $this->setAddedAt(Mage::getSingleton('core/date')->gmtDate());
         }
 
+        Mage::log('Save: ' . $this->getProduct()->getName());
+        foreach ($this->getData() as $key=>$val) {
+            if (is_scalar($val) || is_null($val))
+                Mage::log("  $key: " . var_export($val,1));
+            else
+                Mage::log("  $key: " . get_class($val));
+        }
+
         return $this;
     }
 

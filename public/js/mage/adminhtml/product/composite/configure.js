@@ -77,6 +77,7 @@ class ProductConfigure
      *             - {urlSubmit: 'http://magento...'} for submit configured data through iFrame
      */
     addListType(type, urls) {
+        console.log('addListType', type, urls);
         this.listTypes[type] ??= {};
         Object.extend(this.listTypes[type], urls);
         return this;

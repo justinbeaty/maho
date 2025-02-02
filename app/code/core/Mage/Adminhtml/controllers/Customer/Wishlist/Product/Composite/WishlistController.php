@@ -25,10 +25,17 @@ class Mage_Adminhtml_Customer_Wishlist_Product_Composite_WishlistController exte
     public const ADMIN_RESOURCE = 'customer/manage';
 
     /**
-    * Wishlist we're working with
-    *
-    * @var Mage_Wishlist_Model_Wishlist
-    */
+     * Customer we're working with
+     *
+     * @var Mage_Customer_Model_Customer
+     */
+    protected $_customer = null;
+
+    /**
+     * Wishlist we're working with
+     *
+     * @var Mage_Wishlist_Model_Wishlist
+     */
     protected $_wishlist = null;
 
     /**
@@ -45,23 +52,25 @@ class Mage_Adminhtml_Customer_Wishlist_Product_Composite_WishlistController exte
      */
     protected function _initData()
     {
+        $customerId = (int) $this->getRequest()->getParam('customer_id');
+        if (!$customerId) {
+            Mage::throwException($this->__('No customer id defined.'));
+        }
+
+        $this->_customer = Mage::getModel('customer/customer')
+            ->load($customerId);
+
         $wishlistItemId = (int) $this->getRequest()->getParam('id');
-        if (!$wishlistItemId) {
-            Mage::throwException($this->__('No wishlist item id defined.'));
-        }
-
-        /** @var Mage_Wishlist_Model_Item $wishlistItem */
-        $wishlistItem = Mage::getModel('wishlist/item')
-            ->loadWithOptions($wishlistItemId);
-
-        if (!$wishlistItem->getWishlistId()) {
-            Mage::throwException($this->__('Wishlist item is not loaded.'));
-        }
+        $websiteId = (int) $this->getRequest()->getParam('website_id');
 
         $this->_wishlist = Mage::getModel('wishlist/wishlist')
-            ->load($wishlistItem->getWishlistId());
+            ->setWebsite(Mage::app()->getWebsite($websiteId))
+            ->loadByCustomer($this->_customer);
 
-        $this->_wishlistItem = $wishlistItem;
+        $this->_wishlistItem = $this->_wishlist->getItemById($wishlistItemId);
+        if (!$this->_wishlistItem) {
+            Mage::throwException($this->__('Wishlist item is not loaded.'));
+        }
 
         return $this;
     }

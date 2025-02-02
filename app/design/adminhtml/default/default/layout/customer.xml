@@ -31,23 +31,27 @@
             </block>
         </reference>
         <reference name="js">
-            <block type="adminhtml/template" template="customer/edit/js.phtml" name="customer.edit.js" as="customer_edit_js"></block>
+            <block type="adminhtml/template" template="customer/edit/js.phtml" name="customer.edit.js" as="customer_edit_js"/>
         </reference>
     </adminhtml_customer_edit>
+
     <adminhtml_customer_group_index>
         <reference name="content">
-            <block type="adminhtml/customer_group" name="customer_group"></block>
+            <block type="adminhtml/customer_group" name="customer_group"/>
         </reference>
     </adminhtml_customer_group_index>
-    <adminhtml_customer_wishlist>
-        <block type="adminhtml/customer_edit_tab_wishlist" name="customer.wishlist.edit.tab" output="toHtml" />
-    </adminhtml_customer_wishlist>
 
     <adminhtml_customer_orders>
         <block type="core/text_list" name="root" output="toHtml">
             <block type="adminhtml/customer_edit_tab_orders" name="adminhtml.customer.edit.tab.orders"/>
         </block>
     </adminhtml_customer_orders>
+
+    <adminhtml_customer_cart>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="adminhtml/customer_edit_tab_cart" name="admin.customer.view.edit.cart"/>
+        </block>
+    </adminhtml_customer_cart>
 
     <adminhtml_customer_carts>
         <block type="core/text_list" name="root" output="toHtml">
@@ -60,6 +64,18 @@
             <block type="adminhtml/customer_edit_tab_view_cart" name="admin.customer.view.cart"/>
         </block>
     </adminhtml_customer_viewcart>
+
+    <adminhtml_customer_wishlist>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="adminhtml/customer_edit_tab_wishlist" name="admin.customer.view.edit.wishlist"/>
+        </block>
+    </adminhtml_customer_wishlist>
+
+    <adminhtml_customer_wishlists>
+        <block type="core/text_list" name="root" output="toHtml">
+            <block type="adminhtml/customer_edit_tab_wishlists" name="admin.customer.wishlists"/>
+        </block>
+    </adminhtml_customer_wishlists>
 
     <adminhtml_customer_viewwishlist>
         <block type="core/text_list" name="root" output="toHtml">
@@ -102,10 +118,4 @@
             <block type="adminhtml/customer_grid" name="admin.customer.grid"/>
         </block>
     </adminhtml_customer_grid>
-
-    <adminhtml_customer_cart>
-        <block type="core/text_list" name="root" output="toHtml">
-            <block type="adminhtml/customer_edit_tab_cart" name="admin.customer.view.edit.cart" />
-        </block>
-    </adminhtml_customer_cart>
 </layout>

@@ -62,6 +62,23 @@ class Mage_Wishlist_Model_Resource_Wishlist extends Mage_Core_Model_Resource_Db_
     }
 
     /**
+     * Load quote data by customer identifier
+     */
+    public function loadByCustomerId(Mage_Wishlist_Model_Wishlist $wishlist, int $customerId): self
+    {
+        $adapter = $this->_getReadAdapter();
+        $select  = $this->_getLoadSelect($this->getCustomerIdFieldName(), $customerId, $wishlist);
+        $data    = $adapter->fetchRow($select);
+
+        if ($data) {
+            $wishlist->setData($data);
+        }
+
+        $this->_afterLoad($wishlist);
+        return $this;
+    }
+
+    /**
      * Getter for customer ID field name
      *
      * @return string

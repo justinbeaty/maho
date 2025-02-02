@@ -26,7 +26,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
      *
      * @var string
      */
-
     protected $_defaultSort = 'added_at';
 
     /**
@@ -48,7 +47,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
     public function __construct()
     {
         parent::__construct();
-        $this->setId('wishlistGrid');
         $this->setUseAjax(true);
         $this->_parentTemplate = $this->getTemplate();
         $this->setTemplate('customer/tab/wishlist.phtml');
@@ -56,14 +54,13 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
         $this->addProductConfigurationHelper('default', 'catalog/product_configuration');
     }
 
-    /**
-     * Retrieve current customer object
-     *
-     * @return Mage_Customer_Model_Customer
-     */
-    protected function _getCustomer()
+    #[\Override]
+    protected function _prepareGrid()
     {
-        return Mage::registry('current_customer');
+        Mage::log('wish grid ' . var_export($this->getWebsiteId(),1));
+        $this->setId('wishlistGrid');
+        //$this->setId('customer_cart_grid' . $this->getWebsiteId());
+        return parent::_prepareGrid();
     }
 
     /**
@@ -86,11 +83,35 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
     #[\Override]
     protected function _prepareCollection()
     {
-        $collection = $this->_createCollection()->addCustomerIdFilter($this->_getCustomer()->getId())
+        $customer = Mage::registry('current_customer');
+        $storeIds = Mage::app()->getWebsite($this->getWebsiteId())->getStoreIds();
+
+        $wishlist = Mage::getModel('wishlist/wishlist')
+            ->setSharedStoreIds($storeIds)
+            ->loadByCustomer($customer, true);
+
+        if ($wishlist) {
+            // $collection = $wishlist->getItemsCollection(false);
+            $collection = $wishlist->getItemCollection();
+        } else {
+            $collection = new Varien_Data_Collection();
+        }
+
+        // $collection->addFieldToFilter('parent_item_id', ['null' => true]);
+        $collection
             ->resetSortOrder()
             ->addDaysInWishlist()
-            ->addStoreData();
+            ->addStoreData()
+            ;
+
         $this->setCollection($collection);
+
+
+        // $collection = $this->_createCollection()->addCustomerIdFilter($this->_getCustomer()->getId())
+        //     ->resetSortOrder()
+        //     ->addDaysInWishlist()
+        //     ->addStoreData();
+        // $this->setCollection($collection);
 
         return parent::_prepareCollection();
     }
@@ -164,6 +185,26 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
     }
 
     /**
+     * Retrieve current customer object
+     *
+     * @return Mage_Customer_Model_Customer
+     */
+    protected function _getCustomer()
+    {
+        return Mage::registry('current_customer');
+    }
+
+    /**
+     * Gets customer assigned to this block
+     *
+     * @return Mage_Customer_Model_Customer
+     */
+    public function getCustomer()
+    {
+        return Mage::registry('current_customer');
+    }
+
+    /**
      * Retrieve Grid URL
      *
      * @return string
@@ -171,7 +212,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
     #[\Override]
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/wishlist', ['_current' => true]);
+        return $this->getUrl('*/*/wishlist', ['_current' => true, 'website_id' => $this->getWebsiteId()]);
     }
 
     /**

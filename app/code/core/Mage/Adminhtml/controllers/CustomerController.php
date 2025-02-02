@@ -505,6 +505,16 @@ class Mage_Adminhtml_CustomerController extends Mage_Adminhtml_Controller_Action
     }
 
     /**
+     * Get wishlists from all websites for specified client
+     */
+    public function wishlistsAction()
+    {
+        $this->_initCustomer();
+        $this->loadLayout();
+        $this->renderLayout();
+    }
+
+    /**
      * [Handle and then] get a cart grid contents
      */
     public function cartAction()

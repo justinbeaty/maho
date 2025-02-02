@@ -39,6 +39,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
     #[\Override]
     protected function _prepareGrid()
     {
+        Mage::log('cart grid ' . var_export($this->getWebsiteId(),1));
         $this->setId('customer_cart_grid' . $this->getWebsiteId());
         return parent::_prepareGrid();
     }
@@ -92,6 +93,13 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
             'index'     => 'qty',
             'type'      => 'number',
         ]);
+
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('store', [
+                'header'    => Mage::helper('wishlist')->__('Added From'),
+                'type'      => 'store',
+            ]);
+        }
 
         $this->addColumn('price', [
             'type'          => 'currency',
