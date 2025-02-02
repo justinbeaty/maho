@@ -249,6 +249,22 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     }
 
     /**
+     * Retrieve wishlist items array
+     *
+     * @return Mage_Wishlist_Model_Item[]
+     */
+    public function getAllItems()
+    {
+        $items = [];
+        foreach ($this->getItemCollection() as $item) {
+            if (!$item->isDeleted()) {
+                $items[] =  $item;
+            }
+        }
+        return $items;
+    }
+
+    /**
      * Retrieve wishlist item collection
      *
      * @param int $itemId
@@ -263,26 +279,10 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Retrieve quote items array
-     *
-     * @return Mage_Sales_Model_Quote_Item[]
-     */
-    public function getAllItems()
-    {
-        $items = [];
-        foreach ($this->getItemCollection() as $item) {
-            if (!$item->isDeleted()) {
-                $items[] =  $item;
-            }
-        }
-        return $items;
-    }
-
-    /**
-     * Retrieve quote item by product id
+     * Retrieve wishlist item by product id
      *
      * @param   Mage_Catalog_Model_Product $product
-     * @return  Mage_Sales_Model_Quote_Item|false
+     * @return  Mage_Wishlist_Model_Item|false
      */
     public function getItemByProduct($product)
     {
@@ -292,26 +292,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             }
         }
         return false;
-    }
-
-
-
-    /**
-     * Retrieve Product collection
-     *
-     * @deprecated after 1.4.2.0
-     * @see Mage_Wishlist_Model_Wishlist::getItemCollection()
-     *
-     * @return Mage_Wishlist_Model_Resource_Product_Collection
-     */
-    public function getProductCollection()
-    {
-        $collection = $this->getData('product_collection');
-        if (is_null($collection)) {
-            $collection = Mage::getResourceModel('wishlist/product_collection');
-            $this->setData('product_collection', $collection);
-        }
-        return $collection;
     }
 
     /**
