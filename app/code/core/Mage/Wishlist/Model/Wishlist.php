@@ -7,7 +7,7 @@
  * @package    Mage_Wishlist
  * @copyright  Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
  * @copyright  Copyright (c) 2019-2023 The OpenMage Contributors (https://openmage.org)
- * @copyright  Copyright (c) 2024 Maho (https://mahocommerce.com)
+ * @copyright  Copyright (c) 2024-2025 Maho (https://mahocommerce.com)
  * @license    https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -120,7 +120,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             $this->save();
         }
         $this->setOrigData();
-        //$this->setDataChanges(false);
         return $this;
     }
 
@@ -134,11 +133,63 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     {
         $this->_getResource()->load($this, $code, 'sharing_code');
         if (!$this->getShared()) {
-            $this->setId(null); // todo, unset all data
+            $this->setId(null);
         }
         $this->setOrigData();
-        //$this->setDataChanges(false);
         return $this;
+    }
+
+    /**
+     * Get wishlist store identifier
+     *
+     * @return int
+     */
+    public function getStoreId()
+    {
+        if (!$this->hasStoreId()) {
+            return Mage::app()->getStore()->getId();
+        }
+        return (int) $this->_getData('store_id');
+    }
+
+    /**
+     * Get wishlist store model object
+     *
+     * @return  Mage_Core_Model_Store
+     */
+    public function getStore()
+    {
+        return Mage::app()->getStore($this->getStoreId());
+    }
+
+    /**
+     * Declare wishlist store model
+     *
+     * @return  $this
+     */
+    public function setStore(Mage_Core_Model_Store $store)
+    {
+        if ($this->getStoreId() != $store->getId()) {
+            $this->setStoreId($store->getId());
+        }
+        return $this;
+    }
+
+    /**
+     * Get all available store ids for wishlist
+     *
+     * @return array
+     */
+    public function getSharedStoreIds()
+    {
+        $ids = $this->_getData('shared_store_ids');
+        if (is_null($ids) || !is_array($ids)) {
+            if ($website = $this->getWebsite()) {
+                return $website->getStoreIds();
+            }
+            return $this->getStore()->getWebsite()->getStoreIds();
+        }
+        return $ids;
     }
 
     /**
@@ -174,65 +225,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     protected function _getSharingRandomCode()
     {
         return Mage::helper('core')->uniqHash();
-    }
-
-
-
-
-
-
-
-    /**
-     * Get quote store identifier
-     *
-     * @return int
-     */
-    public function getStoreId()
-    {
-        if (!$this->hasStoreId()) {
-            return Mage::app()->getStore()->getId();
-        }
-        return (int) $this->_getData('store_id');
-    }
-
-    /**
-     * Get quote store model object
-     *
-     * @return  Mage_Core_Model_Store
-     */
-    public function getStore()
-    {
-        return Mage::app()->getStore($this->getStoreId());
-    }
-
-    /**
-     * Declare quote store model
-     *
-     * @return  $this
-     */
-    public function setStore(Mage_Core_Model_Store $store)
-    {
-        if ($this->getStoreId() != $store->getId()) {
-            $this->setStoreId($store->getId());
-        }
-        return $this;
-    }
-
-    /**
-     * Get all available store ids for quote
-     *
-     * @return array
-     */
-    public function getSharedStoreIds()
-    {
-        $ids = $this->_getData('shared_store_ids');
-        if (is_null($ids) || !is_array($ids)) {
-            if ($website = $this->getWebsite()) {
-                return $website->getStoreIds();
-            }
-            return $this->getStore()->getWebsite()->getStoreIds();
-        }
-        return $ids;
     }
 
     /**
@@ -406,7 +398,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Remove quote item by item identifier
+     * Remove wishlist item by item identifier
      */
     public function removeItem(int $itemId): self
     {
@@ -434,7 +426,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     }
 
     /**
-     * Mark all quote items as deleted (empty quote)
+     * Mark all wishlist items as deleted (empty wishlist)
      *
      * @return $this
      */
@@ -464,7 +456,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         }
         return $this;
     }
-
 
     /**
      * Adds new product to wishlist.
@@ -649,18 +640,15 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             Mage::throwException(Mage::helper('checkout')->__($resultItem));
         }
 
+        // Check if product configuration didn't stick to original wishlist item if it either has the same
+        // configuration as some other wishlist item's product or is a completely new configuration.
         if ($resultItem->getId() != $item->getId()) {
-            // Product configuration didn't stick to original quote item
-            // It either has same configuration as some other quote item's product or completely new configuration
-
             $resultItem->addData([
                 'store_id' => $item->getStoreId(),
                 'description' => $item->getDescription(),
             ]);
             $this->removeItem($item->getId());
         }
-
-        $resultItem->setQty($buyRequest->getQty());
 
         return $this;
     }
