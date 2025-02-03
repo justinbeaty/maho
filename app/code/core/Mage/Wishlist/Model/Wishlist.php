@@ -496,6 +496,27 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             $buyRequest = new Varien_Object();
         }
 
+        if (!$product instanceof Mage_Catalog_Model_Product) {
+            $product = Mage::getModel('catalog/product')
+                ->setStoreId($this->getStore()->getId())
+                ->load((int) $product);
+        }
+
+        if (!$product->getId()) {
+            Mage::throwException('No Product Found.');
+        }
+
+        // if ($product->hasWishlistStoreId()) {
+        //     $storeId = $product->getWishlistStoreId();
+        //     Mage::log('hasWishlistStoreId ', $storeId);
+        // } elseif ($buyRequest->getStoreId()) {
+        //     $storeId = $buyRequest->getStoreId();
+        //     Mage::log('buyRequest->getStoreId ', $storeId);
+        // } else {
+        //     $storeId = Mage::app()->getStore()->getId();
+        //     Mage::log('Root Store ', $storeId);
+        // }
+
         $cartCandidates = $product->getTypeInstance(true)
             ->processConfiguration($buyRequest, $product);
 
@@ -515,9 +536,12 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             if ($candidate->getParentProductId()) {
                 continue;
             }
+            $candidate->setStoreId($product->getStoreId());
+            // $candidate->setStoreId($storeId);
 
             $qty = $candidate->getQty() ? $candidate->getQty() : 1; // No null values as qty. Convert zero to 1.
             //$qty = max($candidate->getQty(), 1);
+            $qty = 1;
 
             $item = $this->_addCatalogProduct($candidate, $qty);//, $forciblySetQty);
             $items[] = $item;
@@ -553,7 +577,10 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 ->setWishlist($this)
                 ->setWishlistId($this->getId());
             if (Mage::app()->getStore()->isAdmin()) {
-                $item->setStoreId($this->getStore()->getId());
+
+                $item->setStoreId($product->getStoreId());
+                // $item->setStoreId($this->getStore()->getId());
+                Mage::log('Set Store ' . $item->getStoreId());
             } else {
                 $item->setStoreId(Mage::app()->getStore()->getId());
             }
@@ -627,10 +654,12 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             Mage::throwException(Mage::helper('checkout')->__($resultItem));
         }
 
-        if ($resultItem->getId() != $itemId) {
+        if ($resultItem->getId() != $item->getId()) {
             // Product configuration didn't stick to original quote item
             // It either has same configuration as some other quote item's product or completely new configuration
-            $this->removeItem($itemId);
+
+            $resultItem->setStoreId($item->getStoreId());
+            $this->removeItem($item->getId());
 
             $items = $this->getAllItems();
             foreach ($items as $item) {

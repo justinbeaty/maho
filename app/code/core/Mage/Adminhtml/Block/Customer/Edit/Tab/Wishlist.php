@@ -99,10 +99,11 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
 
         // $collection->addFieldToFilter('parent_item_id', ['null' => true]);
         $collection
+            ->setWebsiteId($this->_getCustomer()->getWebsiteId())
+            ->setCustomerGroupId($this->_getCustomer()->getGroupId())
             ->resetSortOrder()
             ->addDaysInWishlist()
-            ->addStoreData()
-            ;
+            ->addStoreData();
 
         $this->setCollection($collection);
 
@@ -124,6 +125,12 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
     #[\Override]
     protected function _prepareColumns()
     {
+        $this->addColumn('item_id', [
+            'header'    => Mage::helper('wishlist')->__('ID'),
+            'index'     => 'wishlist_item_id',
+            'width'     => '100px',
+        ]);
+
         $this->addColumn('product_name', [
             'header'    => Mage::helper('catalog')->__('Product Name'),
             'index'     => 'product_name',
@@ -185,37 +192,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
     }
 
     /**
-     * Retrieve current customer object
-     *
-     * @return Mage_Customer_Model_Customer
-     */
-    protected function _getCustomer()
-    {
-        return Mage::registry('current_customer');
-    }
-
-    /**
-     * Gets customer assigned to this block
-     *
-     * @return Mage_Customer_Model_Customer
-     */
-    public function getCustomer()
-    {
-        return Mage::registry('current_customer');
-    }
-
-    /**
-     * Retrieve Grid URL
-     *
-     * @return string
-     */
-    #[\Override]
-    public function getGridUrl()
-    {
-        return $this->getUrl('*/*/wishlist', ['_current' => true, 'website_id' => $this->getWebsiteId()]);
-    }
-
-    /**
      * Add column filter to collection
      *
      * @param Mage_Adminhtml_Block_Widget_Grid_Column $column
@@ -266,6 +242,37 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist extends Mage_Adminhtml_Blo
             }
         }
         return $this;
+    }
+
+    /**
+     * Retrieve current customer object
+     *
+     * @return Mage_Customer_Model_Customer
+     */
+    protected function _getCustomer()
+    {
+        return Mage::registry('current_customer');
+    }
+
+    /**
+     * Gets customer assigned to this block
+     *
+     * @return Mage_Customer_Model_Customer
+     */
+    public function getCustomer()
+    {
+        return Mage::registry('current_customer');
+    }
+
+    /**
+     * Retrieve Grid URL
+     *
+     * @return string
+     */
+    #[\Override]
+    public function getGridUrl()
+    {
+        return $this->getUrl('*/*/wishlist', ['_current' => true, 'website_id' => $this->getWebsiteId()]);
     }
 
     /**

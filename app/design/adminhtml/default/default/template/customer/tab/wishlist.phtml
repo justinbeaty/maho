@@ -12,25 +12,28 @@
 
 /** @var Mage_Adminhtml_Block_Customer_Edit_Tab_Wishlist $this */
 ?>
+<?php if($this->getWishlistHeader()): ?>
+<div class="content-header skip-header">
+    <table cellspacing="0">
+        <tr>
+            <td style="width:50%;"><h4><?= $this->getWishlistHeader() ?></h4></td>
+        </tr>
+    </table>
+</div>
+<?php endif ?>
 <?= $this->getGridParentHtml() ?>
 
 <?php if($this->canDisplayContainer()): ?>
 <script>
+<?php $jsObjectName = $this->getJsObjectName() ?>
 window.wishlistControl = {
-    reload (urlParams) {
-        if (!urlParams) {
-            urlParams = '';
+    reload (params) {
+        if (!params) {
+            params = {};
         }
-        var url = <?= $this->getJsObjectName() ?>.url + '?ajax=true' + urlParams;
-        new Ajax.Updater(
-            <?= $this->getJsObjectName() ?>.containerId,
-            url,
-            {
-                parameters: {form_key: FORM_KEY},
-                onComplete: <?= $this->getJsObjectName() ?>.initGrid.bind(<?= $this->getJsObjectName() ?>),
-                evalScripts:true
-            }
-        );
+        <?= $jsObjectName ?>.reloadParams = params;
+        <?= $jsObjectName ?>.reload();
+        <?= $jsObjectName ?>.reloadParams = {};
     },
 
     configureItem (itemId) {
@@ -54,7 +57,9 @@ window.wishlistControl = {
         if(!confirm('<?= Mage::helper('core')->jsQuoteEscape(Mage::helper('customer')->__('Are you sure that you want to remove this item?')) ?>')) {
             return false;
         }
-        this.reload('&delete=' + itemId);
+
+        this.reload({'delete':itemId});
+
         return false;
     },
 }

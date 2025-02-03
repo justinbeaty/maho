@@ -70,6 +70,12 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Cart extends Mage_Adminhtml_Block_W
     #[\Override]
     protected function _prepareColumns()
     {
+        $this->addColumn('item_id', [
+            'header'    => Mage::helper('catalog')->__('ID'),
+            'index'     => 'item_id',
+            'width'     => '100px',
+        ]);
+
         $this->addColumn('product_id', [
             'header'    => Mage::helper('catalog')->__('Product ID'),
             'index'     => 'product_id',
