@@ -84,13 +84,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         return parent::_beforeSave();
     }
 
-    // #[\Override]
-    // public function save()
-    // {
-    //     $this->_hasDataChanges = true;
-    //     return parent::save();
-    // }
-
     /**
      * Save related items
      */
@@ -101,10 +94,6 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
 
         if ($this->_itemCollection !== null) {
             $this->getItemsCollection()->save();
-            // foreach ($this->getItemsCollection() as $item) {
-            //     Mage::log('afterSave: ' . $item->getProduct()->getName());
-            //     $item->save();
-            // }
         }
         return $this;
     }
@@ -525,14 +514,9 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 continue;
             }
             $candidate->setStoreId($product->getStoreId());
-
-
-
-            $qty = $candidate->getQty() ? $candidate->getQty() : 1; // No null values as qty. Convert zero to 1.
-
             $qty = max($candidate->getQty(), 1);
 
-            $item = $this->_addCatalogProduct($candidate, $qty);
+            $item = $this->_addCatalogProduct($candidate, $qty, $forciblySetQty);
             $items[] = $item;
 
             // Collect errors instead of throwing first one
@@ -553,15 +537,15 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     /**
      * Add catalog product object data to wishlist
      *
-     * @param   int $qty deprecated
-     * @param   bool $forciblySetQty deprecated
+     * @param   int $qty
+     * @param   bool $forciblySetQty
      * @return  Mage_Wishlist_Model_Item
      */
     protected function _addCatalogProduct(Mage_Catalog_Model_Product $product, $qty = 1, $forciblySetQty = false)
     {
         $newItem = false;
         $item = $this->getItemByProduct($product);
-        if (!$item) {
+        if ($item === false) {
             $item = Mage::getModel('wishlist/item')
                 ->setWishlist($this)
                 ->setWishlistId($this->getId());
@@ -571,6 +555,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 $item->setStoreId(Mage::app()->getStore()->getId());
             }
             $newItem = true;
+        } else {
         }
 
         // We can't modify existing child items
@@ -580,6 +565,12 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
 
         $item->setOptions($product->getCustomOptions())
             ->setProductId($product->getId());
+
+        if ($newItem || $forciblySetQty) {
+            $item->setQty($qty);
+        } else {
+            $item->setQty($item->getQty() + $qty);
+        }
 
         // Add only item that is not in wislist already (there can be other new or already saved item)
         if ($newItem) {
@@ -632,7 +623,26 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         $params->setCurrentConfig($item->getBuyRequest());
         $buyRequest = Mage::helper('catalog/product')->addParamsToBuyRequest($buyRequest, $params);
 
-        $resultItem = $this->addNewItem($product, $buyRequest);
+        // $isForceSetQuantity = array_any(
+        //     $this->getItemCollection(),
+        //     fn ($wishlistItem) => $wishlistItem->getProductId() == $product->getId()
+        //         && $wishlistItem->representProduct($product)
+        //         && $wishlistItem->getId() != $item->getId(),
+        // );
+
+        $isForceSetQuantity = true;
+        foreach ($this->getItemsCollection() as $_item) {
+            /** @var Mage_Wishlist_Model_Item $_item */
+            if ($_item->getProductId() == $product->getId()
+                && $_item->representProduct($product)
+                && $_item->getId() != $item->getId()
+            ) {
+                // We do not add new wishlist item, but updating the existing one
+                $isForceSetQuantity = false;
+            }
+        }
+
+        $resultItem = $this->addNewItem($product, $buyRequest, $isForceSetQuantity);
 
         // Error message
         if (is_string($resultItem)) {
