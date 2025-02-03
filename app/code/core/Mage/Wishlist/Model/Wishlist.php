@@ -483,7 +483,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      *
      * @param int|Mage_Catalog_Model_Product $product
      * @param mixed $buyRequest
-     * @param bool $forciblySetQty deprecated
+     * @param bool $forciblySetQty
      * @return Mage_Wishlist_Model_Item|string
      */
     public function addNewItem($product, $buyRequest = null, $forciblySetQty = false)
@@ -501,21 +501,9 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 ->setStoreId($this->getStore()->getId())
                 ->load((int) $product);
         }
-
         if (!$product->getId()) {
             Mage::throwException('No Product Found.');
         }
-
-        // if ($product->hasWishlistStoreId()) {
-        //     $storeId = $product->getWishlistStoreId();
-        //     Mage::log('hasWishlistStoreId ', $storeId);
-        // } elseif ($buyRequest->getStoreId()) {
-        //     $storeId = $buyRequest->getStoreId();
-        //     Mage::log('buyRequest->getStoreId ', $storeId);
-        // } else {
-        //     $storeId = Mage::app()->getStore()->getId();
-        //     Mage::log('Root Store ', $storeId);
-        // }
 
         $cartCandidates = $product->getTypeInstance(true)
             ->processConfiguration($buyRequest, $product);
@@ -537,6 +525,11 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 continue;
             }
             $candidate->setStoreId($product->getStoreId());
+
+
+
+            $qty = $candidate->getQty() ? $candidate->getQty() : 1; // No null values as qty. Convert zero to 1.
+
             $qty = max($candidate->getQty(), 1);
 
             $item = $this->_addCatalogProduct($candidate, $qty);
@@ -560,7 +553,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     /**
      * Add catalog product object data to wishlist
      *
-     * @param   int $qty
+     * @param   int $qty deprecated
      * @param   bool $forciblySetQty deprecated
      * @return  Mage_Wishlist_Model_Item
      */
@@ -585,8 +578,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             return $item;
         }
 
-        $item->setQty($qty)
-            ->setOptions($product->getCustomOptions())
+        $item->setOptions($product->getCustomOptions())
             ->setProductId($product->getId());
 
         // Add only item that is not in wislist already (there can be other new or already saved item)
@@ -648,47 +640,17 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         }
 
         if ($resultItem->getId() != $item->getId()) {
+            // Product configuration didn't stick to original quote item
+            // It either has same configuration as some other quote item's product or completely new configuration
+
             $resultItem->addData([
                 'store_id' => $item->getStoreId(),
                 'description' => $item->getDescription(),
             ]);
             $this->removeItem($item->getId());
-            // $item->isDeleted(true);
-
-
-            // // Product configuration didn't stick to original quote item
-            // // It either has same configuration as some other quote item's product or completely new configuration
-            // $this->removeItem($item->getId());
-
-            // $items = $this->getAllItems();
-            // foreach ($items as $item) {
-            //     if ($item->getProductId() == $productId && $item->getId() != $resultItem->getId()) {
-            //         if ($resultItem->compare($item)) {
-            //             // Product configuration is same as in other quote item
-            //             $resultItem->setQty($resultItem->getQty() + $item->getQty());
-            //             $this->removeItem($item->getId());
-            //             break;
-            //         }
-            //     }
-            // }
-        } else {
-            $resultItem->setQty($buyRequest->getQty());
         }
 
-        $this->setDataChanges(true);
-
-
-        // if ($resultItem->getId() != $item->getId()) {
-        //     if ($resultItem->getDescription() != $item->getDescription()) {
-        //         $resultItem->setDescription($item->getDescription())->save();
-        //     }
-        //     $item->isDeleted(true);
-        //     // $item->save();
-        //     $this->setDataChanges(true);
-        // } else {
-        //     $resultItem->setQty($buyRequest->getQty());
-        //     $resultItem->setOrigData('qty', 0);
-        // }
+        $resultItem->setQty($buyRequest->getQty());
 
         return $this;
     }
