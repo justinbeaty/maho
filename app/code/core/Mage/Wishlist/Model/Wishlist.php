@@ -100,8 +100,8 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         parent::_afterSave();
 
         if ($this->_itemCollection !== null) {
-            $this->getItemCollection()->save();
-            // foreach ($this->getItemCollection() as $item) {
+            $this->getItemsCollection()->save();
+            // foreach ($this->getItemsCollection() as $item) {
             //     Mage::log('afterSave: ' . $item->getProduct()->getName());
             //     $item->save();
             // }
@@ -253,7 +253,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      */
     public function isSalable()
     {
-        foreach ($this->getItemCollection() as $item) {
+        foreach ($this->getItemsCollection() as $item) {
             if ($item->getProduct()->getIsSalable()) {
                 return true;
             }
@@ -312,8 +312,19 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      *
      * @return Mage_Wishlist_Model_Resource_Item_Collection
      * @throws Mage_Core_Model_Store_Exception
+     * @deprecated use self::getItemsCollection()
      */
     public function getItemCollection()
+    {
+        return $this->getItemsCollection();
+    }
+
+    /**
+     * Retrieve wishlist item collection
+     *
+     * @throws Mage_Core_Model_Store_Exception
+     */
+    public function getItemsCollection(): Mage_Wishlist_Model_Resource_Item_Collection
     {
         if ($this->hasItemsCollection()) {
             return $this->getData('items_collection');
@@ -335,7 +346,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     public function getAllItems(): array
     {
         $items = [];
-        foreach ($this->getItemCollection() as $item) {
+        foreach ($this->getItemsCollection() as $item) {
             if (!$item->isDeleted()) {
                 $items[] = $item;
             }
@@ -358,7 +369,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      */
     public function getItemsCount()
     {
-        return $this->getItemCollection()->getSize();
+        return $this->getItemsCollection()->getSize();
     }
 
     /**
@@ -373,7 +384,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         if (!$itemId) {
             return false;
         }
-        return $this->getItemCollection()->getItemById($itemId);
+        return $this->getItemsCollection()->getItemById($itemId);
     }
 
     /**
@@ -381,7 +392,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
      */
     public function getItemById(int $itemId): ?Mage_Wishlist_Model_Item
     {
-        if ($item = $this->getItemCollection()->getItemById($itemId)) {
+        if ($item = $this->getItemsCollection()->getItemById($itemId)) {
             return $item;
         }
         foreach ($this->getItemsCollection() as $item) {
@@ -459,7 +470,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
     {
         $item->setWishlist($this);
         if (!$item->getId()) {
-            $this->getItemCollection()->addItem($item);
+            $this->getItemsCollection()->addItem($item);
             Mage::dispatchEvent('wishlist_add_item', ['item' => $item]);
         }
         return $this;
