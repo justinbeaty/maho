@@ -537,13 +537,9 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 continue;
             }
             $candidate->setStoreId($product->getStoreId());
-            // $candidate->setStoreId($storeId);
+            $qty = max($candidate->getQty(), 1);
 
-            $qty = $candidate->getQty() ? $candidate->getQty() : 1; // No null values as qty. Convert zero to 1.
-            //$qty = max($candidate->getQty(), 1);
-            $qty = 1;
-
-            $item = $this->_addCatalogProduct($candidate, $qty);//, $forciblySetQty);
+            $item = $this->_addCatalogProduct($candidate, $qty);
             $items[] = $item;
 
             // Collect errors instead of throwing first one
@@ -577,10 +573,7 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
                 ->setWishlist($this)
                 ->setWishlistId($this->getId());
             if (Mage::app()->getStore()->isAdmin()) {
-
                 $item->setStoreId($product->getStoreId());
-                // $item->setStoreId($this->getStore()->getId());
-                Mage::log('Set Store ' . $item->getStoreId());
             } else {
                 $item->setStoreId(Mage::app()->getStore()->getId());
             }
@@ -592,9 +585,9 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
             return $item;
         }
 
-        $item->setOptions($product->getCustomOptions())
+        $item->setQty($qty)
+            ->setOptions($product->getCustomOptions())
             ->setProductId($product->getId());
-        //->setProduct($product);
 
         // Add only item that is not in wislist already (there can be other new or already saved item)
         if ($newItem) {
@@ -655,23 +648,29 @@ class Mage_Wishlist_Model_Wishlist extends Mage_Core_Model_Abstract
         }
 
         if ($resultItem->getId() != $item->getId()) {
-            // Product configuration didn't stick to original quote item
-            // It either has same configuration as some other quote item's product or completely new configuration
-
-            $resultItem->setStoreId($item->getStoreId());
+            $resultItem->addData([
+                'store_id' => $item->getStoreId(),
+                'description' => $item->getDescription(),
+            ]);
             $this->removeItem($item->getId());
+            // $item->isDeleted(true);
 
-            $items = $this->getAllItems();
-            foreach ($items as $item) {
-                if ($item->getProductId() == $productId && $item->getId() != $resultItem->getId()) {
-                    if ($resultItem->compare($item)) {
-                        // Product configuration is same as in other quote item
-                        $resultItem->setQty($resultItem->getQty() + $item->getQty());
-                        $this->removeItem($item->getId());
-                        break;
-                    }
-                }
-            }
+
+            // // Product configuration didn't stick to original quote item
+            // // It either has same configuration as some other quote item's product or completely new configuration
+            // $this->removeItem($item->getId());
+
+            // $items = $this->getAllItems();
+            // foreach ($items as $item) {
+            //     if ($item->getProductId() == $productId && $item->getId() != $resultItem->getId()) {
+            //         if ($resultItem->compare($item)) {
+            //             // Product configuration is same as in other quote item
+            //             $resultItem->setQty($resultItem->getQty() + $item->getQty());
+            //             $this->removeItem($item->getId());
+            //             break;
+            //         }
+            //     }
+            // }
         } else {
             $resultItem->setQty($buyRequest->getQty());
         }
