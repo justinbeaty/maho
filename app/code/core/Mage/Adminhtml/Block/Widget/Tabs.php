@@ -366,6 +366,20 @@ class Mage_Adminhtml_Block_Widget_Tabs extends Mage_Adminhtml_Block_Widget
      * @param Varien_Object|Mage_Adminhtml_Block_Widget_Tab_Interface $tab
      * @return string
      */
+    public function getTabClasses($tab)
+    {
+        $classes = explode(' ', $this->getTabClass($tab) ?? '');
+        if (str_contains($tab->getClass() ?? '', 'ajax')) {
+            $classes[] = 'notloaded';
+        }
+        $classes[] = 'tab-item-link';
+        return implode(' ', array_filter($classes));
+    }
+
+    /**
+     * @param Varien_Object|Mage_Adminhtml_Block_Widget_Tab_Interface $tab
+     * @return string
+     */
     public function getTabLabel($tab)
     {
         if ($tab instanceof Mage_Adminhtml_Block_Widget_Tab_Interface) {
