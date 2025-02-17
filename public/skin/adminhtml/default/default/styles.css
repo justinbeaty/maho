@@ -738,6 +738,17 @@ td.divider {
     }
 }
 
+
+/* ========================================
+   Widgets
+   ======================================== */
+
+/* === Combiner CSS == */
+
+/* How grids and forms display in boxes */
+/* Select all types of boxes with adjacent boxes and add margin */
+
+
 /* === Buttons == */
 
 .buttons-set, .form-buttons, .content-buttons {
@@ -1245,6 +1256,7 @@ button, .form-button {
         }
     }
 
+    /* These selectors are the rest of the box. Special attn grid, form-list */
     .entry-edit-head + div, .entry-edit-head ~ fieldset, .entry-edit-head ~ .fieldset, .entry-edit > fieldset {
         padding: 16px;
         background-color: var(--maho-box-background);
@@ -1253,9 +1265,9 @@ button, .form-button {
         .entry-edit-head ~ & {
             border-top: 0;
         }
-        &.grid, &:has(.grid), &.form-list, &:has(.form-list) {
+        &.grid, &:has(.grid) {
             padding: 0;
-            table {
+            :not(table) table {
                 border: 0;
             }
         }
@@ -1881,7 +1893,7 @@ table.form-list {
             .next-toinput {
                 display: inline-block;
                 width: 100px;
-                margin-right: 5px;
+                margin-right: 4px;
                 vertical-align: top;
             }
 
