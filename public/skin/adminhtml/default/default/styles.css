@@ -1786,6 +1786,9 @@ table.data, table.dynamic-grid {
     gap: 4px;
     label {
         width: 100px;
+        .fieldset-wide & {
+            width: 228px;
+        }
     }
     .input-box {
         flex-grow: 1;
@@ -2018,10 +2021,16 @@ table.form-list {
     }
 
     /* Swap .content-header before #messages in #content flex container */
-    #content > &, #content > * > & {
+    #page\:container #content > &, #page\:container #content > * > & {
         order: -1;
         background: var(--maho-box-background);
         border-bottom: 1px solid var(--maho-box-border-color);
+        & ~ & {
+            order: unset;
+            margin: unset;
+            border: 1px solid var(--maho-box-border-color);
+            border-radius: var(--maho-box-border-radius);
+        }
     }
 
     /* TODO: Some pages like Manage Categories wrap .content-header */
@@ -2445,8 +2454,11 @@ ul.super-attributes {
     grid-gap: 16px;
 
     .entry-edit {
-        .entry-edit-head + * {
-            margin-bottom: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        & > :last-child {
+            flex-grow: 1;
         }
     }
 
