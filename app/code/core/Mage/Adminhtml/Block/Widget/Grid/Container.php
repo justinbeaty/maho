@@ -19,6 +19,7 @@
 class Mage_Adminhtml_Block_Widget_Grid_Container extends Mage_Adminhtml_Block_Widget_Container
 {
     protected $_addButtonLabel;
+    protected $_addButtonIcon;
     protected $_backButtonLabel;
     protected $_blockGroup = 'adminhtml';
 
@@ -35,6 +36,9 @@ class Mage_Adminhtml_Block_Widget_Grid_Container extends Mage_Adminhtml_Block_Wi
         if (is_null($this->_addButtonLabel)) {
             $this->_addButtonLabel = $this->__('Add New');
         }
+        if (is_null($this->_addButtonIcon)) {
+            $this->_addButtonIcon = 'circle-plus';
+        }
         if (is_null($this->_backButtonLabel)) {
             $this->_backButtonLabel = $this->__('Back');
         }
@@ -45,6 +49,7 @@ class Mage_Adminhtml_Block_Widget_Grid_Container extends Mage_Adminhtml_Block_Wi
 
         $this->_addButton('add', [
             'label'     => $this->getAddButtonLabel(),
+            'icon'      => $this->_addButtonIcon,
             'onclick'   => Mage::helper('core/js')->getSetLocationJs($this->getCreateUrl()),
             'class'     => 'add',
         ]);

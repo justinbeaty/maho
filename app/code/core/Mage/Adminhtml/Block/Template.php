@@ -61,6 +61,29 @@ class Mage_Adminhtml_Block_Template extends Mage_Core_Block_Template
     }
 
     /**
+     * Create button and return its html
+     *
+     * @param string $label
+     * @param string $onclick
+     * @param string $class
+     * @param string $id
+     * @return string
+     */
+    public function getButtonHtml($label, $onclick, $class = '', $id = null, $icon = null)
+    {
+        return $this->getLayout()->createBlock('adminhtml/widget_button')
+            ->setData([
+                'label'     => $label,
+                'onclick'   => $onclick,
+                'class'     => $class,
+                'type'      => 'button',
+                'id'        => $id,
+                'icon'      => $icon,
+            ])
+            ->toHtml();
+    }
+
+    /**
      * Deleting script tags from string
      *
      * @param string $html
