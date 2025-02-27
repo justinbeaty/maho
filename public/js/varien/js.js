@@ -779,7 +779,8 @@ Calendar.initialize = async function(event) {
         let flatpickrOptions = {
             allowInput: true,
             dateFormat: dateFormat,
-            enableTime: showsTime
+            enableTime: showsTime,
+            static: true,
         };
 
         if (Array.isArray(range)) {
