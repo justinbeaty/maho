@@ -153,16 +153,16 @@ abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml
         if ($hasError) {
             $this->_initLayoutMessages('adminhtml/session');
             $response = [
-                'error'   => 1,
+                'error'   => true,
                 'message' => $this->getLayout()->getMessagesBlock()->getGroupedHtml(),
             ];
         } else {
             $response = [
-                'error'   => 0,
+                'error'   => false,
                 'url'     => $this->getUrl('*/*/'),
             ];
         }
-        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($response));
+        $this->getResponse()->setBodyJson($response);
     }
 
     public function deleteAction()

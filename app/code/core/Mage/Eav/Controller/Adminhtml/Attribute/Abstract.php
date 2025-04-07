@@ -155,7 +155,7 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
             $response->setMessage($this->getLayout()->getMessagesBlock()->getGroupedHtml());
         }
 
-        $this->getResponse()->setBody($response->toJson());
+        $this->getResponse()->setBodyJson($response);
     }
 
     /**
