@@ -3,7 +3,6 @@
 /**
  * Maho
  *
- * @category   Mage
  * @package    Mage_Eav
  * @copyright  Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
  * @copyright  Copyright (c) 2024 Maho (https://mahocommerce.com)
@@ -13,7 +12,6 @@
 /**
  * Adminhtml generic EAV attribute grid
  *
- * @category   Mage
  * @package    Mage_Eav
  */
 class Mage_Eav_Block_Adminhtml_Attribute_Grid extends Mage_Eav_Block_Adminhtml_Attribute_Grid_Abstract
