@@ -13,6 +13,4 @@
 /**
  * @package    Mage_Adminhtml
  */
-class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main_Formset extends Mage_Eav_Block_Adminhtml_Attribute_Set_Edit_Formset
-{
-}
+class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main_Formset extends Mage_Eav_Block_Adminhtml_Attribute_Set_Edit_Formset {}

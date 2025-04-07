@@ -138,7 +138,7 @@ class Mage_Catalog_Model_Product_Attribute_Api extends Mage_Catalog_Model_Api_Re
         $regex = sprintf(
             '/^[a-z][a-z_0-9]{%d,%d}$/',
             Mage_Eav_Model_Entity_Attribute::ATTRIBUTE_CODE_MIN_LENGTH,
-            Mage_Eav_Model_Entity_Attribute::ATTRIBUTE_CODE_MAX_LENGTH
+            Mage_Eav_Model_Entity_Attribute::ATTRIBUTE_CODE_MAX_LENGTH,
         );
         if (!preg_match($regex, $data['attribute_code'])) {
             $this->_fault('invalid_code');

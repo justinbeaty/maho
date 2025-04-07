@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -47,7 +48,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Eav_Contro
                  ->_addBreadcrumb(Mage::helper('catalog')->__('Catalog'), Mage::helper('catalog')->__('Catalog'))
                  ->_addBreadcrumb(
                      Mage::helper('catalog')->__('Manage Product Attributes'),
-                     Mage::helper('catalog')->__('Manage Product Attributes')
+                     Mage::helper('catalog')->__('Manage Product Attributes'),
                  );
         }
         return $this;

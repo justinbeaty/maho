@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -37,11 +38,11 @@ class Mage_Adminhtml_Customer_Address_SetController extends Mage_Eav_Controller_
         $this->_setActiveMenu('customer/attributes/customer_address_sets')
              ->_addBreadcrumb(
                  $this->__('Customers'),
-                 $this->__('Customers')
+                 $this->__('Customers'),
              )
              ->_addBreadcrumb(
                  $this->__('Manage Customer Address Attribute Sets'),
-                 $this->__('Manage Customer Address Attribute Sets')
+                 $this->__('Manage Customer Address Attribute Sets'),
              );
 
         return $this;

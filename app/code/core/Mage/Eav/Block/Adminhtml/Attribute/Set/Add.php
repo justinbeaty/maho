@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -33,8 +34,8 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Te
                 ->setData([
                     'label' => Mage::helper('eav')->__('Save Attribute Set'),
                     'onclick' => 'if (addSet.submit()) disableElements(\'save\');',
-                    'class' => 'save'
-                ])
+                    'class' => 'save',
+                ]),
         );
         $this->setChild(
             'back_button',
@@ -42,8 +43,8 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Te
                 ->setData([
                     'label' => Mage::helper('eav')->__('Back'),
                     'onclick' => Mage::helper('core/js')->getSetLocationJs($this->getUrl('*/*/')),
-                    'class' => 'back'
-                ])
+                    'class' => 'back',
+                ]),
         );
         return parent::_prepareLayout();
     }
@@ -55,7 +56,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Add extends Mage_Adminhtml_Block_Te
     {
         return Mage::helper('eav')->__(
             'Add New %s Attribute Set',
-            Mage::helper('eav')->formatTypeCode($this->entityType->getEntityTypeCode())
+            Mage::helper('eav')->formatTypeCode($this->entityType->getEntityTypeCode()),
         );
     }
 

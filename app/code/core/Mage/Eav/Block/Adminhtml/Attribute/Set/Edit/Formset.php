@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -38,13 +39,13 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit_Formset extends Mage_Adminhtml
             'name'     => 'attribute_set_name',
             'required' => true,
             'class'    => 'required-entry validate-no-html-tags',
-            'value'    => $data->getAttributeSetName()
+            'value'    => $data->getAttributeSetName(),
         ]);
 
         if (!$this->getRequest()->getParam('id', false)) {
             $fieldset->addField('gotoEdit', 'hidden', [
                 'name'  => 'gotoEdit',
-                'value' => '1'
+                'value' => '1',
             ]);
 
             $sets = $this->entityType->getAttributeSetCollection()

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -56,7 +57,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
             'label' => Mage::helper('catalog')->__('Scope'),
             'title' => Mage::helper('catalog')->__('Scope'),
             'note'  => Mage::helper('catalog')->__('Declare attribute value saving scope'),
-            'values' => $scopes
+            'values' => $scopes,
         ], 'attribute_code');
 
         $fieldset->addField('apply_to', 'apply', [
@@ -65,9 +66,9 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit_Tab_Main extends Mage_
             'values'      => Mage_Catalog_Model_Product_Type::getOptions(),
             'mode_labels' => [
                 'all'     => Mage::helper('catalog')->__('All Product Types'),
-                'custom'  => Mage::helper('catalog')->__('Selected Product Types')
+                'custom'  => Mage::helper('catalog')->__('Selected Product Types'),
             ],
-            'required'    => true
+            'required'    => true,
         ]);
 
         $fieldset->addField('is_configurable', 'boolean', [

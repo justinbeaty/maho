@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -30,7 +31,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Edit_Renderer_Fieldset_Element extends 
     public function canDisplayUseDefault(): bool
     {
         $attributeObject = $this->getElement()->getForm()->getDataObject();
-        if ($attributeObject->getWebsite() && (int)$attributeObject->getWebsite()->getId()) {
+        if ($attributeObject->getWebsite() && (int) $attributeObject->getWebsite()->getId()) {
             return $this->getElement()->getScope() === Mage_Eav_Model_Entity_Attribute::SCOPE_WEBSITE;
         }
         return false;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -86,7 +87,7 @@ class Varien_Data_Form_Element_Customselect extends Varien_Data_Form_Element_Sel
             if (in_array($value, array_column($this->getData('values'), 'label'))) {
                 $value = '';
             }
-            $this->setData('custom_value', (string)$value);
+            $this->setData('custom_value', (string) $value);
         }
         return $this->getData('custom_value');
     }
@@ -102,7 +103,7 @@ class Varien_Data_Form_Element_Customselect extends Varien_Data_Form_Element_Sel
                 if (is_array($value)) {
                     $value['value'] = $value['label'];
                 } else {
-                    $value = ['value' => (string)$value, 'label' => (string)$value];
+                    $value = ['value' => (string) $value, 'label' => (string) $value];
                 }
             }
             $values[] = ['value' => $this->getCustomValue(), 'label' => Mage::helper('core')->__('Other')];

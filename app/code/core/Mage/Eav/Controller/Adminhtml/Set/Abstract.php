@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -145,7 +146,7 @@ abstract class Mage_Eav_Controller_Adminhtml_Set_Abstract extends Mage_Adminhtml
         } catch (Exception $e) {
             $this->_getSession()->addException(
                 $e,
-                Mage::helper('eav')->__('An error occurred while saving the attribute set.')
+                Mage::helper('eav')->__('An error occurred while saving the attribute set.'),
             );
             $hasError = true;
         }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -72,14 +73,14 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
         $form = new Varien_Data_Form([
             'id' => 'edit_form',
             'action' => $this->getData('action'),
-            'method' => 'post'
+            'method' => 'post',
         ]);
 
         $form->setDataObject($attributeObject);
 
         $fieldset = $form->addFieldset(
             'base_fieldset',
-            ['legend' => Mage::helper('eav')->__('Attribute Properties')]
+            ['legend' => Mage::helper('eav')->__('Attribute Properties')],
         );
         if ($attributeObject->getAttributeId()) {
             $fieldset->addField('attribute_id', 'hidden', [
@@ -91,7 +92,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
 
         $validateClass = sprintf(
             'validate-code validate-length maximum-length-%d',
-            Mage_Eav_Model_Entity_Attribute::ATTRIBUTE_CODE_MAX_LENGTH
+            Mage_Eav_Model_Entity_Attribute::ATTRIBUTE_CODE_MAX_LENGTH,
         );
         $fieldset->addField('attribute_code', 'text', [
             'name'  => 'attribute_code',
@@ -99,7 +100,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
             'title' => Mage::helper('eav')->__('Attribute Code'),
             'note'  => Mage::helper('eav')->__(
                 'For internal use. Must be unique with no spaces. Maximum length of attribute code must be less then %s symbols',
-                Mage_Eav_Model_Entity_Attribute::ATTRIBUTE_CODE_MAX_LENGTH
+                Mage_Eav_Model_Entity_Attribute::ATTRIBUTE_CODE_MAX_LENGTH,
             ),
             'class' => $validateClass,
             'required' => true,
@@ -132,8 +133,8 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
             'title' => Mage::helper('eav')->__('Unique Value'),
             'note'  => Mage::helper('eav')->__(
                 'Not shared with other %s',
-                strtolower(Mage::helper('eav')->formatTypeCode($entityTypeCode))
-            )
+                strtolower(Mage::helper('eav')->formatTypeCode($entityTypeCode)),
+            ),
         ]);
 
         $fieldset->addField('default_value_text', 'text', [
@@ -201,7 +202,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
         $data = $attributeObject->getData();
 
         // If website specified, unprefix relevant fields before adding to form
-        if ($attributeObject->getWebsite() && (int)$attributeObject->getWebsite()->getId()) {
+        if ($attributeObject->getWebsite() && (int) $attributeObject->getWebsite()->getId()) {
             foreach ($attributeObject->getResource()->getScopeFields($attributeObject) as $field) {
                 if (array_key_exists('scope_' . $field, $data)) {
                     $data[$field] = $data['scope_' . $field];
@@ -223,7 +224,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
         // This must be called before parent::_beforeToHtml()
         if (!Mage::app()->isSingleStoreMode() && $attributeObject->getResource()->hasScopeTable()) {
             Varien_Data_Form::setFieldsetElementRenderer(
-                $this->getLayout()->createBlock('eav/adminhtml_attribute_edit_renderer_fieldset_element')
+                $this->getLayout()->createBlock('eav/adminhtml_attribute_edit_renderer_fieldset_element'),
             );
         }
 
@@ -255,7 +256,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
 
         // Set scope value and disable global fields if website selected
         if ($attributeObject->getResource()->hasScopeTable()) {
-            $websiteId = $attributeObject->getWebsite() ? (int)$attributeObject->getWebsite()->getId() : 0;
+            $websiteId = $attributeObject->getWebsite() ? (int) $attributeObject->getWebsite()->getId() : 0;
             $scopeFields = $attributeObject->getResource()->getScopeFields($attributeObject);
 
             /** @var Varien_Data_Form_Element_Fieldset $fieldset */

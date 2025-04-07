@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -25,7 +26,7 @@ class Mage_Eav_Block_Widget_Form_Element_Boolean extends Mage_Eav_Block_Widget_F
         $options = [
             ['value' => '',  'label' => $this->__('')],
             ['value' => '1', 'label' => $this->__('Yes')],
-            ['value' => '0', 'label' => $this->__('No')]
+            ['value' => '0', 'label' => $this->__('No')],
         ];
 
         return $options;

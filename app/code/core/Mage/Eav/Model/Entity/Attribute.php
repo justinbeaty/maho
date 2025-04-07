@@ -181,7 +181,7 @@ class Mage_Eav_Model_Entity_Attribute extends Mage_Eav_Model_Entity_Attribute_Ab
                 }
                 try {
                     $filter = new Zend_Filter_LocalizedToNormalized(
-                        ['locale' => Mage::app()->getLocale()->getLocaleCode()]
+                        ['locale' => Mage::app()->getLocale()->getLocaleCode()],
                     );
                     $this->setDefaultValue($filter->filter($defaultValue));
                 } catch (Exception $e) {

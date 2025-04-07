@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -39,7 +40,7 @@ class Mage_Eav_Block_Widget_Form_Element_Country extends Mage_Eav_Block_Widget_F
             $this->getCountryId(),
             $this->getFieldName(),
             $this->getFieldId(),
-            $this->getLabel()
+            $this->getLabel(),
         );
     }
 }

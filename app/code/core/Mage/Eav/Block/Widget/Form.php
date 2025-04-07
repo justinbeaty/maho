@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -164,7 +165,7 @@ class Mage_Eav_Block_Widget_Form extends Mage_Core_Block_Template
 
         if ($this->groupMode === self::GROUP_MODE_FLAT) {
             $groups = [
-                array_key_first($groups) => array_merge(...array_values($groups))
+                array_key_first($groups) => array_merge(...array_values($groups)),
             ];
         }
 

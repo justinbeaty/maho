@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -26,12 +27,12 @@ class Mage_Eav_Block_Widget_Form_Element_Abstract extends Mage_Core_Block_Templa
 
     public function isEnabled(): bool
     {
-        return (bool)$this->getAttribute()->getIsVisible();
+        return (bool) $this->getAttribute()->getIsVisible();
     }
 
     public function isRequired(): bool
     {
-        return (bool)$this->getAttribute()->getIsRequired();
+        return (bool) $this->getAttribute()->getIsRequired();
     }
 
     public function getValue(): mixed

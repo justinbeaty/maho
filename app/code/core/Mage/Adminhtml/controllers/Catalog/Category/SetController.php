@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -37,11 +38,11 @@ class Mage_Adminhtml_Catalog_Category_SetController extends Mage_Eav_Controller_
         $this->_setActiveMenu('catalog/attributes/category_sets')
              ->_addBreadcrumb(
                  $this->__('Catalog'),
-                 $this->__('Catalog')
+                 $this->__('Catalog'),
              )
              ->_addBreadcrumb(
                  $this->__('Manage Category Attribute Sets'),
-                 $this->__('Manage Category Attribute Sets')
+                 $this->__('Manage Category Attribute Sets'),
              );
 
         return $this;

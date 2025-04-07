@@ -26,7 +26,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute extends Mage_Eav_Block_Admi
 
         $this->_headerText = $this->__(
             'Manage %s Attributes',
-            Mage::helper('eav')->formatTypeCode($this->entityType->getEntityTypeCode())
+            Mage::helper('eav')->formatTypeCode($this->entityType->getEntityTypeCode()),
         );
 
         $this->_addButtonLabel = Mage::helper('eav')->__('Add New Attribute');

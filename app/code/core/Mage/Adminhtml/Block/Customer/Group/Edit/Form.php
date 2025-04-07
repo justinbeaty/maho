@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -32,7 +33,7 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
 
         $validateClass = sprintf(
             'required-entry validate-length maximum-length-%d',
-            Mage_Customer_Model_Group::GROUP_CODE_MAX_LENGTH
+            Mage_Customer_Model_Group::GROUP_CODE_MAX_LENGTH,
         );
         $name = $fieldset->addField('customer_group_code', 'text', [
             'name'  => 'code',
@@ -53,7 +54,7 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
             'title' => Mage::helper('customer')->__('Tax Class'),
             'class' => 'required-entry',
             'required' => true,
-            'values' => Mage::getSingleton('tax/class_source_customer')->toOptionArray()
+            'values' => Mage::getSingleton('tax/class_source_customer')->toOptionArray(),
         ]);
 
         $setsCustomer = Mage::getResourceModel('eav/entity_attribute_set_collection')
@@ -68,7 +69,7 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
             'title' => Mage::helper('customer')->__('Customer Attribute Set'),
             'class' => 'required-entry',
             'required' => true,
-            'values' => $setsCustomer
+            'values' => $setsCustomer,
         ]);
 
         $setsAddress = Mage::getResourceModel('eav/entity_attribute_set_collection')
@@ -83,7 +84,7 @@ class Mage_Adminhtml_Block_Customer_Group_Edit_Form extends Mage_Adminhtml_Block
             'title' => Mage::helper('customer')->__('Customer Address Attribute Set'),
             'class' => 'required-entry',
             'required' => true,
-            'values' => $setsAddress
+            'values' => $setsAddress,
         ]);
 
         if (!is_null($customerGroup->getId())) {

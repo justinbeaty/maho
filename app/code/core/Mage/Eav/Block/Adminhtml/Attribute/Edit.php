@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -35,7 +36,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Edit extends Mage_Adminhtml_Block_Widge
         $this->_addButton('save_and_edit_button', [
             'label'   => $this->__('Save and Continue Edit'),
             'onclick' => 'saveAndContinueEdit()',
-            'class'   => 'save'
+            'class'   => 'save',
         ], 100);
 
         $this->_updateButton('save', 'label', $this->__('Save Attribute'));
@@ -58,7 +59,7 @@ class Mage_Eav_Block_Adminhtml_Attribute_Edit extends Mage_Adminhtml_Block_Widge
             return $this->__(
                 'Edit %s Attribute "%s"',
                 Mage::helper('eav')->formatTypeCode($this->entityType->getEntityTypeCode()),
-                $this->entityAttribute->getFrontendLabel()
+                $this->entityAttribute->getFrontendLabel(),
             );
         }
         return $this->__(

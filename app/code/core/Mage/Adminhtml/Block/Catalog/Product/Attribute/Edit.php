@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -35,13 +36,13 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Edit extends Mage_Eav_Block
                 'label'     => Mage::helper('catalog')->__('Close Window'),
                 'class'     => 'cancel',
                 'onclick'   => 'window.close()',
-                'level'     => -1
+                'level'     => -1,
             ]);
         } else {
             $this->_addButton('save_and_edit_button', [
                 'label'     => Mage::helper('catalog')->__('Save and Continue Edit'),
                 'onclick'   => 'saveAndContinueEdit()',
-                'class'     => 'save'
+                'class'     => 'save',
             ], 100);
         }
 

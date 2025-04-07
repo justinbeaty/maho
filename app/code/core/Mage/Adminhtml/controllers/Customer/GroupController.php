@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Maho
  *
@@ -104,20 +105,20 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
         $customerGroup = Mage::getModel('customer/group');
         $id = $this->getRequest()->getParam('id');
         if (!is_null($id)) {
-            $customerGroup->load((int)$id);
+            $customerGroup->load((int) $id);
         }
 
         try {
-            $customerGroupCode = (string)$this->getRequest()->getParam('code');
+            $customerGroupCode = (string) $this->getRequest()->getParam('code');
 
             if (!empty($customerGroupCode)) {
                 $customerGroup->setCode($customerGroupCode);
             }
 
             $customerGroup
-                ->setCustomerAttributeSetId((int)$this->getRequest()->getParam('customer_attribute_set'))
-                ->setCustomerAddressAttributeSetId((int)$this->getRequest()->getParam('customer_address_attribute_set'))
-                ->setTaxClassId((int)$this->getRequest()->getParam('tax_class'))
+                ->setCustomerAttributeSetId((int) $this->getRequest()->getParam('customer_attribute_set'))
+                ->setCustomerAddressAttributeSetId((int) $this->getRequest()->getParam('customer_address_attribute_set'))
+                ->setTaxClassId((int) $this->getRequest()->getParam('tax_class'))
                 ->save();
 
             Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('customer')->__('The customer group has been saved.'));
@@ -135,7 +136,7 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
     public function deleteAction()
     {
         $customerGroup = Mage::getModel('customer/group');
-        if ($id = (int)$this->getRequest()->getParam('id')) {
+        if ($id = (int) $this->getRequest()->getParam('id')) {
             try {
                 $customerGroup->load($id);
                 $customerGroup->delete();
