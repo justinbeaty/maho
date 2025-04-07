@@ -11,7 +11,7 @@
  */
 
 /**
- * Adminhtml catalog product sets main page toolbar
+ * Adminhtml "Manage Product Attribute Sets" grid toolbar
  *
  * @package    Mage_Adminhtml
  */
@@ -30,7 +30,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Toolbar_Main extends Ma
             'addButton',
             $this->getLayout()->createBlock('adminhtml/widget_button')
                 ->setData([
-                    'label'     => Mage::helper('catalog')->__('Add New Set'),
+                    'label'     => Mage::helper('eav')->__('Add New Set'),
                     'onclick'   => Mage::helper('core/js')->getSetLocationJs($this->getUrl('*/*/add')),
                     'class'     => 'add',
                 ]),
@@ -51,7 +51,7 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Toolbar_Main extends Ma
      */
     protected function _getHeader()
     {
-        return Mage::helper('catalog')->__('Manage Attribute Sets');
+        return Mage::helper('eav')->__('Manage Product Attribute Sets');
     }
 
     /**

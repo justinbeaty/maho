@@ -1,8 +1,8 @@
 <?php
-
 /**
  * Maho
  *
+ * @category   Mage
  * @package    Mage_Adminhtml
  * @copyright  Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
  * @copyright  Copyright (c) 2019-2023 The OpenMage Contributors (https://openmage.org)
@@ -13,6 +13,7 @@
 /**
  * Order create address form
  *
+ * @category   Mage
  * @package    Mage_Adminhtml
  */
 class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtml_Block_Sales_Order_Create_Form_Abstract
@@ -78,7 +79,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
         foreach ($this->getAddressCollection() as $address) {
             $addressForm->setEntity($address);
             $data[$address->getId()] = $addressForm->outputData(
-                Mage_Customer_Model_Attribute_Data::OUTPUT_FORMAT_JSON,
+                Mage_Customer_Model_Attribute_Data::OUTPUT_FORMAT_JSON
             );
         }
         return Mage::helper('core')->jsonEncode($data);
@@ -93,7 +94,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
     protected function _prepareForm()
     {
         $fieldset = $this->_form->addFieldset('main', [
-            'no_container' => true,
+            'no_container' => true
         ]);
 
         /** @var Mage_Customer_Model_Address $addressModel */
@@ -108,46 +109,6 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
                 ->processStreetAttribute($attributes['street']);
         }
         $this->_addAttributesToForm($attributes, $fieldset);
-
-        $prefixElement = $this->_form->getElement('prefix');
-        if ($prefixElement) {
-            /** @var Mage_Customer_Helper_Data $helper */
-            $helper = $this->helper('customer');
-            $prefixOptions = $helper->getNamePrefixOptions($this->getStore());
-            if (!empty($prefixOptions)) {
-                $fieldset->removeField($prefixElement->getId());
-                $prefixField = $fieldset->addField(
-                    $prefixElement->getId(),
-                    'select',
-                    $prefixElement->getData(),
-                    '^',
-                );
-                $prefixField->setValues($prefixOptions);
-                if ($this->getAddressId()) {
-                    $prefixField->addElementValues($this->getAddress()->getPrefix());
-                }
-            }
-        }
-
-        $suffixElement = $this->_form->getElement('suffix');
-        if ($suffixElement) {
-            /** @var Mage_Customer_Helper_Data $helper */
-            $helper = $this->helper('customer');
-            $suffixOptions = $helper->getNameSuffixOptions($this->getStore());
-            if (!empty($suffixOptions)) {
-                $fieldset->removeField($suffixElement->getId());
-                $suffixField = $fieldset->addField(
-                    $suffixElement->getId(),
-                    'select',
-                    $suffixElement->getData(),
-                    $this->_form->getElement('lastname')->getId(),
-                );
-                $suffixField->setValues($suffixOptions);
-                if ($this->getAddressId()) {
-                    $suffixField->addElementValues($this->getAddress()->getSuffix());
-                }
-            }
-        }
 
         $regionElement = $this->_form->getElement('region_id');
         if ($regionElement) {
@@ -167,7 +128,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
         }
         if (is_null($this->_form->getElement('country_id')->getValue())) {
             $this->_form->getElement('country_id')->setValue(
-                Mage::helper('core')->getDefaultCountry($this->getStore()),
+                Mage::helper('core')->getDefaultCountry($this->getStore())
             );
         }
 
@@ -176,7 +137,7 @@ class Mage_Adminhtml_Block_Sales_Order_Create_Form_Address extends Mage_Adminhtm
         if ($vatIdElement && $this->getDisplayVatValidationButton() !== false) {
             $vatIdElement->setRenderer(
                 $this->getLayout()->createBlock('adminhtml/customer_sales_order_address_form_renderer_vat')
-                    ->setJsVariablePrefix($this->getJsVariablePrefix()),
+                    ->setJsVariablePrefix($this->getJsVariablePrefix())
             );
         }
 

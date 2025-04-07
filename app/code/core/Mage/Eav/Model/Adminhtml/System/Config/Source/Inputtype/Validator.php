@@ -1,8 +1,8 @@
 <?php
-
 /**
  * Maho
  *
+ * @category   Mage
  * @package    Mage_Eav
  * @copyright  Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
  * @copyright  Copyright (c) 2019-2024 The OpenMage Contributors (https://openmage.org)
@@ -13,7 +13,8 @@
 /**
  * Validator for check input type value
  *
- * @package    Mage_Eav
+ * @deprecated Instead use Mage::helper('eav')->getInputTypes()
+ * @see Mage_Eav_Helper_Data::getInputTypes()
  */
 class Mage_Eav_Model_Adminhtml_System_Config_Source_Inputtype_Validator extends Zend_Validate_InArray
 {
@@ -32,8 +33,8 @@ class Mage_Eav_Model_Adminhtml_System_Config_Source_Inputtype_Validator extends 
 
         //parent construct with options
         parent::__construct([
-            'haystack' => $haystack,
-            'strict'   => true,
+             'haystack' => $haystack,
+             'strict'   => true,
         ]);
     }
 

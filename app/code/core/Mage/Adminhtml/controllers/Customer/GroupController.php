@@ -1,8 +1,8 @@
 <?php
-
 /**
  * Maho
  *
+ * @category   Mage
  * @package    Mage_Adminhtml
  * @copyright  Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
  * @copyright  Copyright (c) 2022-2024 The OpenMage Contributors (https://openmage.org)
@@ -13,6 +13,7 @@
 /**
  * Customer groups controller
  *
+ * @category   Mage
  * @package    Mage_Adminhtml
  */
 class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_Action
@@ -74,16 +75,15 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
         $currentGroup = Mage::registry('current_group');
 
         if (!is_null($currentGroup->getId())) {
+            $this->_title($currentGroup->getCode());
             $this->_addBreadcrumb(Mage::helper('customer')->__('Edit Group'), Mage::helper('customer')->__('Edit Customer Groups'));
         } else {
+            $this->_title($this->__('New Group'));
             $this->_addBreadcrumb(Mage::helper('customer')->__('New Group'), Mage::helper('customer')->__('New Customer Groups'));
         }
 
-        $this->_title($currentGroup->getId() ? $currentGroup->getCode() : $this->__('New Group'));
-
         $this->getLayout()->getBlock('content')
-            ->append($this->getLayout()->createBlock('adminhtml/customer_group_edit', 'group')
-                        ->setEditMode((bool) Mage::registry('current_group')->getId()));
+             ->append($this->getLayout()->createBlock('adminhtml/customer_group_edit', 'group'));
 
         $this->renderLayout();
     }
@@ -104,31 +104,28 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
         $customerGroup = Mage::getModel('customer/group');
         $id = $this->getRequest()->getParam('id');
         if (!is_null($id)) {
-            $customerGroup->load((int) $id);
+            $customerGroup->load((int)$id);
         }
 
-        $taxClass = (int) $this->getRequest()->getParam('tax_class');
+        try {
+            $customerGroupCode = (string)$this->getRequest()->getParam('code');
 
-        if ($taxClass) {
-            try {
-                $customerGroupCode = (string) $this->getRequest()->getParam('code');
-
-                if (!empty($customerGroupCode)) {
-                    $customerGroup->setCode($customerGroupCode);
-                }
-
-                $customerGroup->setTaxClassId($taxClass)->save();
-                Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('customer')->__('The customer group has been saved.'));
-                $this->getResponse()->setRedirect($this->getUrl('*/customer_group'));
-                return;
-            } catch (Exception $e) {
-                Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
-                Mage::getSingleton('adminhtml/session')->setCustomerGroupData($customerGroup->getData());
-                $this->getResponse()->setRedirect($this->getUrl('*/customer_group/edit', ['id' => $id]));
-                return;
+            if (!empty($customerGroupCode)) {
+                $customerGroup->setCode($customerGroupCode);
             }
-        } else {
-            $this->_forward('new');
+
+            $customerGroup
+                ->setCustomerAttributeSetId((int)$this->getRequest()->getParam('customer_attribute_set'))
+                ->setCustomerAddressAttributeSetId((int)$this->getRequest()->getParam('customer_address_attribute_set'))
+                ->setTaxClassId((int)$this->getRequest()->getParam('tax_class'))
+                ->save();
+
+            Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('customer')->__('The customer group has been saved.'));
+            $this->getResponse()->setRedirect($this->getUrl('*/customer_group'));
+        } catch (Exception $e) {
+            Mage::getSingleton('adminhtml/session')->addError($e->getMessage());
+            Mage::getSingleton('adminhtml/session')->setCustomerGroupData($customerGroup->getData());
+            $this->getResponse()->setRedirect($this->getUrl('*/customer_group/edit', ['id' => $id]));
         }
     }
 
@@ -138,7 +135,7 @@ class Mage_Adminhtml_Customer_GroupController extends Mage_Adminhtml_Controller_
     public function deleteAction()
     {
         $customerGroup = Mage::getModel('customer/group');
-        if ($id = (int) $this->getRequest()->getParam('id')) {
+        if ($id = (int)$this->getRequest()->getParam('id')) {
             try {
                 $customerGroup->load($id);
                 $customerGroup->delete();

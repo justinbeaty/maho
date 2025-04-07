@@ -1,8 +1,8 @@
 <?php
-
 /**
  * Maho
  *
+ * @category   Mage
  * @package    Mage_Eav
  * @copyright  Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
  * @copyright  Copyright (c) 2020-2023 The OpenMage Contributors (https://openmage.org)
@@ -13,6 +13,7 @@
 /**
  * EAV attribute resource model (Using Forms)
  *
+ * @category   Mage
  * @package    Mage_Eav
  */
 abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource_Entity_Attribute
@@ -58,24 +59,22 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
     protected function _getLoadSelect($field, $value, $object)
     {
         $select     = parent::_getLoadSelect($field, $value, $object);
-        $websiteId  = (int) $object->getWebsite()->getId();
+        $websiteId  = (int)$object->getWebsite()->getId();
         if ($websiteId) {
             $adapter    = $this->_getReadAdapter();
             $columns    = [];
             $scopeTable = $this->_getEavWebsiteTable();
-            $describe   = $adapter->describeTable($scopeTable);
-            unset($describe['attribute_id']);
-            foreach (array_keys($describe) as $columnName) {
+            foreach ($this->getScopeFields($object) as $columnName) {
                 $columns['scope_' . $columnName] = $columnName;
             }
             $conditionSql = $adapter->quoteInto(
                 $this->getMainTable() . '.attribute_id = scope_table.attribute_id AND scope_table.website_id =?',
-                $websiteId,
+                $websiteId
             );
             $select->joinLeft(
                 ['scope_table' => $scopeTable],
                 $conditionSql,
-                $columns,
+                $columns
             );
         }
 
@@ -100,7 +99,7 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
             foreach ($forms as $formCode) {
                 $data[] = [
                     'form_code'     => $formCode,
-                    'attribute_id'  => (int) $object->getId(),
+                    'attribute_id'  => (int)$object->getId()
                 ];
             }
 
@@ -112,27 +111,24 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
         // update sort order
         if (!$object->isObjectNew() && $object->dataHasChangedFor('sort_order')) {
             $data  = ['sort_order' => $object->getSortOrder()];
-            $where = ['attribute_id=?' => (int) $object->getId()];
+            $where = ['attribute_id=?' => (int)$object->getId()];
             $adapter->update($this->getTable('eav/entity_attribute'), $data, $where);
         }
 
         // save scope attributes
-        $websiteId = (int) $object->getWebsite()->getId();
+        $websiteId = (int)$object->getWebsite()->getId();
         if ($websiteId) {
             $table      = $this->_getEavWebsiteTable();
-            $describe   = $this->_getReadAdapter()->describeTable($table);
             $data       = [];
             if (!$object->getScopeWebsiteId() || $object->getScopeWebsiteId() != $websiteId) {
                 $data = $this->getScopeValues($object);
             }
 
-            $data['attribute_id']   = (int) $object->getId();
-            $data['website_id']     = (int) $websiteId;
-            unset($describe['attribute_id']);
-            unset($describe['website_id']);
+            $data['attribute_id']   = (int)$object->getId();
+            $data['website_id']     = (int)$websiteId;
 
             $updateColumns = [];
-            foreach (array_keys($describe) as $columnName) {
+            foreach ($this->getScopeFields($object) as $columnName) {
                 $data[$columnName] = $object->getData('scope_' . $columnName);
                 $updateColumns[]   = $columnName;
             }
@@ -144,6 +140,39 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
     }
 
     /**
+     * Check if we have a scope table for attribute
+     *
+     * @return bool
+     */
+    #[\Override]
+    public function hasScopeTable()
+    {
+        return !is_null($this->_getEavWebsiteTable());
+    }
+
+    /**
+     * Return scoped fields for attribute
+     *
+     * @return array
+     */
+    #[\Override]
+    public function getScopeFields(Mage_Eav_Model_Attribute $object)
+    {
+        if (!$this->hasScopeTable()) {
+            return [];
+        }
+
+        $adapter = $this->_getReadAdapter();
+        $scopeTable = $this->_getEavWebsiteTable();
+        $describe = $adapter->describeTable($scopeTable);
+
+        unset($describe['attribute_id']);
+        unset($describe['website_id']);
+
+        return array_keys($describe);
+    }
+
+    /**
      * Return scope values for attribute and website
      *
      * @return array
@@ -152,8 +181,8 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
     {
         $adapter = $this->_getReadAdapter();
         $bind    = [
-            'attribute_id' => (int) $object->getId(),
-            'website_id'   => (int) $object->getWebsite()->getId(),
+            'attribute_id' => (int)$object->getId(),
+            'website_id'   => (int)$object->getWebsite()->getId()
         ];
         $select = $adapter->select()
             ->from($this->_getEavWebsiteTable())
@@ -170,6 +199,17 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
     }
 
     /**
+     * Check if we have a forms table for attribute
+     *
+     * @return bool
+     */
+    #[\Override]
+    public function hasFormTable()
+    {
+        return !is_null($this->_getFormAttributeTable());
+    }
+
+    /**
      * Return forms in which the attribute
      *
      * @return array
@@ -177,7 +217,7 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
     public function getUsedInForms(Mage_Core_Model_Abstract $object)
     {
         $adapter = $this->_getReadAdapter();
-        $bind    = ['attribute_id' => (int) $object->getId()];
+        $bind    = ['attribute_id' => (int)$object->getId()];
         $select  = $adapter->select()
             ->from($this->_getFormAttributeTable(), 'form_code')
             ->where('attribute_id = :attribute_id');

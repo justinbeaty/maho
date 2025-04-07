@@ -1,0 +1,85 @@
+<?php
+/**
+ * Maho
+ *
+ * @package     default_default
+ * @copyright   Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
+ * @copyright   Copyright (c) 2021-2024 The OpenMage Contributors (https://openmage.org)
+ * @copyright   Copyright (c) 2024-2025 Maho (https://mahocommerce.com)
+ * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/** @var Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main $this */
+?>
+<div class="content-header">
+    <table cellspacing="0">
+        <tr>
+            <td style="width:50%;"><h3><?= $this->escapeHtml($this->_getHeader()) ?></h3></td>
+            <td class="form-buttons">
+                <?= $this->getBackButtonHtml() ?>
+                <?= $this->getResetButtonHtml() ?>
+                <?= $this->getDeleteButtonHtml() ?>
+                <?= $this->getSaveButtonHtml() ?>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="edit-attribute-set">
+    <div>
+        <?= $this->getSetFormHtml() ?>
+    </div>
+
+    <div class="edit-attribute-set-column">
+        <div class="content-header">
+            <h3><?= Mage::helper('catalog')->__('Groups') ?></h3>
+            <?php if (!$this->getIsReadOnly()): ?>
+            <div>
+                <?= $this->getAddGroupButton() ?><?= $this->getRenameButton() ?><?= $this->getDeleteGroupButton() ?>
+            </div>
+            <?php endif ?>
+        </div>
+        <div id="tree-div1" class="hor-scroll"></div>
+    </div>
+
+    <div id="remove-drop-zone" class="drop-zone edit-attribute-set-column">
+        <div class="content-header">
+            <h3><?= Mage::helper('catalog')->__('Unassigned Attributes') ?></h3>
+        </div>
+        <div id="tree-div2" class="hor-scroll"></div>
+    </div>
+</div>
+
+<script type="module">
+document.addEventListener('DOMContentLoaded', () => {
+    const setForm = new EavAttributeSetForm({
+        isReadOnly: <?= var_export((bool) $this->getIsReadOnly(), true) ?>,
+        saveUrl: '<?= $this->getSaveUrl() ?>',
+        deleteUrl: '<?= $this->getDeleteUrl() ?>',
+        canDeleteSet: () => {
+            const response = prompt(Translator.translate('All products of this set will be deleted! Type "confirm" to proceed.'));
+            return response === 'confirm';
+        },
+        canRemoveAttribute: (node) => {
+            if (!node.attributes.is_user_defined) {
+                return Translator.translate('Cannot unassign system attribute');
+            }
+            if (node.attributes.is_configurable) {
+                return Translator.translate('Cannot unassign configurable attribute');
+            }
+            return true;
+        },
+        canDeleteGroup: (group) => {
+            if (group.childNodes.some((node) => !node.attributes.is_user_defined)) {
+                return Translator.translate('Cannot delete group. Please move system attributes to another group and try again.');
+            }
+            if (group.childNodes.some((node) => node.attributes.is_configurable)) {
+                return Translator.translate('Cannot delete group. Please move configurable attributes to another group and try again.');
+            }
+            return true;
+        }
+    });
+
+    setForm.buildGroupTree(<?= $this->getGroupTreeJson() ?>);
+    setForm.buildAttributeTree(<?= $this->getAttributeTreeJson() ?>);
+});
+</script>

@@ -1,8 +1,8 @@
 <?php
-
 /**
  * Maho
  *
+ * @category   Mage
  * @package    Mage_Adminhtml
  * @copyright  Copyright (c) 2006-2020 Magento, Inc. (https://magento.com)
  * @copyright  Copyright (c) 2019-2024 The OpenMage Contributors (https://openmage.org)
@@ -13,6 +13,7 @@
 /**
  * Customer addresses forms
  *
+ * @category   Mage
  * @package    Mage_Adminhtml
  */
 class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Block_Widget_Form
@@ -45,8 +46,8 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
                     'name'   => 'delete_address',
                     'element_name' => 'delete_address',
                     'disabled' => $this->isReadonly(),
-                    'class'  => 'delete' . ($this->isReadonly() ? ' disabled' : ''),
-                ]),
+                    'class'  => 'delete' . ($this->isReadonly() ? ' disabled' : '')
+                ])
         );
         $this->setChild(
             'add_address_button',
@@ -58,8 +59,8 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
                     'element_name' => 'add_address_button',
                     'disabled' => $this->isReadonly(),
                     'class'  => 'add' . ($this->isReadonly() ? ' disabled' : ''),
-                    'onclick' => 'customerAddresses.addNewAddress()',
-                ]),
+                    'onclick' => 'customerAddresses.addNewAddress()'
+                ])
         );
         $this->setChild(
             'cancel_button',
@@ -72,7 +73,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
                     'class'  => 'cancel delete-address' . ($this->isReadonly() ? ' disabled' : ''),
                     'disabled' => $this->isReadonly(),
                     'onclick' => 'customerAddresses.cancelAdd(this)',
-                ]),
+                ])
         );
         return parent::_prepareLayout();
     }
@@ -113,6 +114,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
 
         $addressModel = Mage::getModel('customer/address');
         $addressModel->setCountryId(Mage::helper('core')->getDefaultCountry($customer->getStore()));
+        $addressModel->setCustomer($customer);
         /** @var Mage_Customer_Model_Form $addressForm */
         $addressForm = Mage::getModel('customer/form');
         $addressForm->setFormCode('adminhtml_customer_address')
@@ -161,40 +163,6 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
         $customerStoreId = null;
         if ($customer->getId()) {
             $customerStoreId = Mage::app()->getWebsite($customer->getWebsiteId())->getDefaultStore()->getId();
-        }
-
-        $prefixElement = $form->getElement('prefix');
-        if ($prefixElement) {
-            /** @var Mage_Customer_Helper_Data $helper */
-            $helper = $this->helper('customer');
-            $prefixOptions = $helper->getNamePrefixOptions($customerStoreId);
-            if (!empty($prefixOptions)) {
-                $fieldset->removeField($prefixElement->getId());
-                $prefixField = $fieldset->addField(
-                    $prefixElement->getId(),
-                    'select',
-                    $prefixElement->getData(),
-                    '^',
-                );
-                $prefixField->setValues($prefixOptions);
-            }
-        }
-
-        $suffixElement = $form->getElement('suffix');
-        if ($suffixElement) {
-            /** @var Mage_Customer_Helper_Data $helper */
-            $helper = $this->helper('customer');
-            $suffixOptions = $helper->getNameSuffixOptions($customerStoreId);
-            if (!empty($suffixOptions)) {
-                $fieldset->removeField($suffixElement->getId());
-                $suffixField = $fieldset->addField(
-                    $suffixElement->getId(),
-                    'select',
-                    $suffixElement->getData(),
-                    $form->getElement('lastname')->getId(),
-                );
-                $suffixField->setValues($suffixOptions);
-            }
         }
 
         $addressCollection = $customer->getAddresses();
@@ -257,7 +225,7 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
         $result = [];
         foreach ($websites as $website) {
             $result[$website['value']] = Mage::app()->getWebsite($website['value'])->getConfig(
-                Mage_Core_Helper_Data::XML_PATH_DEFAULT_COUNTRY,
+                Mage_Core_Helper_Data::XML_PATH_DEFAULT_COUNTRY
             );
         }
 
@@ -269,12 +237,10 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
      *
      * @param string|int|array $values
      * @return $this
+     * @deprecated
      */
     public function addValuesToNamePrefixElement($values)
     {
-        if ($this->getForm() && $this->getForm()->getElement('prefix')) {
-            $this->getForm()->getElement('prefix')->addElementValues($values);
-        }
         return $this;
     }
 
@@ -283,12 +249,10 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Addresses extends Mage_Adminhtml_Bl
      *
      * @param string|int|array $values
      * @return $this
+     * @deprecated
      */
     public function addValuesToNameSuffixElement($values)
     {
-        if ($this->getForm() && $this->getForm()->getElement('suffix')) {
-            $this->getForm()->getElement('suffix')->addElementValues($values);
-        }
         return $this;
     }
 }
