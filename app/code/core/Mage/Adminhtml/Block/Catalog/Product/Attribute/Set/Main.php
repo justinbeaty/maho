@@ -36,6 +36,10 @@ class Mage_Adminhtml_Block_Catalog_Product_Attribute_Set_Main extends Mage_Eav_B
         foreach ($items as &$item) {
             foreach ($item['children'] as &$child) {
                 $child['is_configurable'] = (int) in_array($child['id'], $configurable);
+
+                if ($child['is_user_defined'] && $child['is_configurable']) {
+                    $child['icon'] = 'configurable';
+                }
             }
         }
 

@@ -23,7 +23,7 @@ class EavAttributeOptionsForm {
             throw new Error(`Panel with ID ${panelId} not found in DOM`);
         }
         // PrototypeJS Template Instance
-        this.template = new Template(template, /(^|.|\r|\n)({{(\w+)}})/);
+        this.template = new Template(template, Template.HANDLEBARS_PATTERN);
 
         this.updateOptionsPanel();
         this.bindEventListeners();
@@ -87,15 +87,15 @@ class EavAttributeOptionsForm {
             });
         }
 
+        if (option.checked) {
+            row.querySelectorAll('input[name="default[]"]').forEach((el) => {
+                el.checked = true;
+            });
+        }
+
         this.itemCount++;
         this.totalItems++;
         this.updateItemsCountField();
-    }
-
-    addMany(options) {
-        for (let option of options) {
-            this.add(option)
-        }
     }
 
     remove(event) {

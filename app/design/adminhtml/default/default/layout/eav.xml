@@ -24,9 +24,7 @@
 
     <adminhtml_eav_attribute_edit>
         <reference name="head">
-            <action method="addJs"><name>sortable.min.js</name></action>
-            <action method="addJs"><name>maho-tree.js</name></action>
-            <action method="addJs"><name>mage/adminhtml/eav/set.js</name></action>
+            <action method="addJs"><name>mage/adminhtml/eav/attribute.js</name></action>
             <action method="addJs"><name>mage/adminhtml/eav/options.js</name></action>
         </reference>
         <reference name="left">
@@ -68,7 +66,9 @@
 
     <adminhtml_eav_set_edit>
         <reference name="head">
-            <action method="setCanLoadExtJs"><flag>1</flag></action>
+            <action method="addJs"><name>sortable.min.js</name></action>
+            <action method="addJs"><name>maho-tree.js</name></action>
+            <action method="addJs"><name>mage/adminhtml/eav/set.js</name></action>
         </reference>
         <reference name="content">
             <block type="eav/adminhtml_attribute_set_edit" name="attribute_set_edit">

@@ -87,7 +87,7 @@ $disabledAttr = $this->getReadOnly() ? 'disabled' : '';
         <td><input type="text" name="option[value][{{id}}][<?= $store->getId() ?>]" value="{{store<?= $store->getId() ?>}}" class="input-text <?= $store->getId() == 0 ? 'required-entry' : '' ?>" <?= $disabledAttr ?>/></td>
         <?php endforeach ?>
         <td><input type="text" name="option[order][{{id}}]" value="{{sort_order}}" class="input-text" <?= $disabledAttr ?>/></td>
-        <td class="a-center"><input type="{{intype}}" name="default[]" value="{{id}}" class="input-radio" {{checked}} <?= $disabledAttr ?>/></td>
+        <td class="a-center"><input type="{{intype}}" name="default[]" value="{{id}}" class="input-radio" <?= $disabledAttr ?>/></td>
         <td class="a-left">
             <input type="hidden" name="option[delete][{{id}}]" value="" class="delete-flag" />
             <?php if (!$this->getReadOnly()):?>
@@ -104,6 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const template = document.getElementById('row-template').innerHTML;
     const inputTypeOptionsInfo = <?= $this->jsonEncode(Mage::helper('eav')->getInputTypeOptionsPanelInfo($entityTypeCode)) ?>;
     const optionsForm = new EavAttributeOptionsForm('manage-options-panel', inputTypeOptionsInfo, template);
-    optionsForm.addMany(<?= $this->jsonEncode($this->getOptionValues()) ?>);
+<?php foreach ($this->getOptionValues() as $option): ?>
+    optionsForm.add(<?= $this->jsonEncode($option) ?>);
+<?php endforeach ?>
 });
 </script>

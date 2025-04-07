@@ -70,4 +70,16 @@ class Mage_Eav_Block_Adminhtml_Attribute_Set_Edit_Formset extends Mage_Adminhtml
         $this->setForm($form);
         return $this;
     }
+
+    #[\Override]
+    protected function _initFormValues()
+    {
+        if ($this->getIsReadOnly()) {
+            $fieldset = $this->getForm()->getElement('set_name');
+            foreach ($fieldset->getElements() as $element) {
+                $element->setDisabled(true);
+            }
+        }
+        return $this;
+    }
 }
