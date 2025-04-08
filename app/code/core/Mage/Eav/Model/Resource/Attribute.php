@@ -63,7 +63,7 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
             $adapter    = $this->_getReadAdapter();
             $columns    = [];
             $scopeTable = $this->_getEavWebsiteTable();
-            foreach ($this->getScopeFields($object) as $columnName) {
+            foreach ($this->getScopeFields() as $columnName) {
                 $columns['scope_' . $columnName] = $columnName;
             }
             $conditionSql = $adapter->quoteInto(
@@ -127,7 +127,7 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
             $data['website_id']     = (int) $websiteId;
 
             $updateColumns = [];
-            foreach ($this->getScopeFields($object) as $columnName) {
+            foreach ($this->getScopeFields() as $columnName) {
                 $data[$columnName] = $object->getData('scope_' . $columnName);
                 $updateColumns[]   = $columnName;
             }
@@ -155,7 +155,7 @@ abstract class Mage_Eav_Model_Resource_Attribute extends Mage_Eav_Model_Resource
      * @return array
      */
     #[\Override]
-    public function getScopeFields(Mage_Eav_Model_Attribute $object)
+    public function getScopeFields()
     {
         if (!$this->hasScopeTable()) {
             return [];

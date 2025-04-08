@@ -93,7 +93,7 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
         if (!empty($data)) {
             // If website specified, prefix relevant fields in saved data
             if ($attribute->getWebsite() && (int) $attribute->getWebsite()->getId()) {
-                foreach ($attribute->getResource()->getScopeFields($attribute) as $field) {
+                foreach ($attribute->getResource()->getScopeFields() as $field) {
                     if (array_key_exists($field, $data)) {
                         $data['scope_' . $field] = $data[$field];
                         unset($data[$field]);
@@ -260,7 +260,7 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
                 }
             }
             // Prefix relevant fields in POST data
-            foreach ($attribute->getResource()->getScopeFields($attribute) as $field) {
+            foreach ($attribute->getResource()->getScopeFields() as $field) {
                 if (array_key_exists($field, $data)) {
                     $data['scope_' . $field] = $data[$field];
                     unset($data[$field]);

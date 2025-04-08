@@ -201,7 +201,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
 
         // If website specified, unprefix relevant fields before adding to form
         if ($attributeObject->getWebsite() && (int) $attributeObject->getWebsite()->getId()) {
-            foreach ($attributeObject->getResource()->getScopeFields($attributeObject) as $field) {
+            foreach ($attributeObject->getResource()->getScopeFields() as $field) {
                 if (array_key_exists('scope_' . $field, $data)) {
                     $data[$field] = $data['scope_' . $field];
                     unset($data['scope_' . $field]);
@@ -255,7 +255,7 @@ abstract class Mage_Eav_Block_Adminhtml_Attribute_Edit_Main_Abstract extends Mag
         // Set scope value and disable global fields if website selected
         if ($attributeObject->getResource()->hasScopeTable()) {
             $websiteId = $attributeObject->getWebsite() ? (int) $attributeObject->getWebsite()->getId() : 0;
-            $scopeFields = $attributeObject->getResource()->getScopeFields($attributeObject);
+            $scopeFields = $attributeObject->getResource()->getScopeFields();
 
             /** @var Varien_Data_Form_Element_Fieldset $fieldset */
             $fieldset = $this->getForm()->getElement('base_fieldset');
