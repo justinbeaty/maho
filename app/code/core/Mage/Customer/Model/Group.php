@@ -93,7 +93,7 @@ class Mage_Customer_Model_Group extends Mage_Core_Model_Abstract
     {
         if (!is_null($groupId)) {
             $taxClassId = $this->getResource()->loadGroupTableData($groupId)['tax_class_id'];
-            self::$_taxClassIds[$groupId] = $taxClassId;
+            self::$_taxClassIds[$groupId] = $taxClassId; // @phpstan-ignore staticProperty.deprecated
             return $taxClassId;
         }
         return $this->getData('tax_class_id');

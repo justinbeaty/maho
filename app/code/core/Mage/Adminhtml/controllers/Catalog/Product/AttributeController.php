@@ -33,7 +33,7 @@ class Mage_Adminhtml_Catalog_Product_AttributeController extends Mage_Eav_Contro
     }
 
     #[\Override]
-    protected function _initAction()
+    protected function _initAction(): self
     {
         $this->_title($this->__('Catalog'))
              ->_title($this->__('Attributes'))

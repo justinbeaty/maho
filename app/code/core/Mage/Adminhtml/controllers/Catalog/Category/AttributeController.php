@@ -26,7 +26,7 @@ class Mage_Adminhtml_Catalog_Category_AttributeController extends Mage_Eav_Contr
     }
 
     #[\Override]
-    protected function _initAction()
+    protected function _initAction(): self
     {
         parent::_initAction();
 

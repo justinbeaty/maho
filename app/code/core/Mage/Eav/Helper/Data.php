@@ -82,6 +82,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
             $this->cacheFrontendClasses[$entityTypeCode] = $response->getOptions();
 
             // Update old property for backwards compatibility
+            // @phpstan-ignore property.deprecated
             $this->_entityTypeFrontendClasses[$entityTypeCode] = array_values($response->getOptions());
         }
         return $this->cacheFrontendClasses[$entityTypeCode];
@@ -151,6 +152,7 @@ class Mage_Eav_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
         // Update old property for backwards compatibility
+        // @phpstan-ignore property.deprecated
         $this->_attributesLockedFields[$entityTypeCode] = $lockedFields;
         return $lockedFields;
     }

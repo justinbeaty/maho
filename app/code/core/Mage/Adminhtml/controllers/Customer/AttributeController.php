@@ -26,7 +26,7 @@ class Mage_Adminhtml_Customer_AttributeController extends Mage_Eav_Controller_Ad
     }
 
     #[\Override]
-    protected function _initAction()
+    protected function _initAction(): self
     {
         parent::_initAction();
 

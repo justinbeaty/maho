@@ -14,7 +14,6 @@
  * Product attribute source input types
  *
  * @package    Mage_Catalog
- * @deprecated Instead use Mage::helper('eav')->getInputTypes()
  * @see        Mage_Eav_Helper_Data::getInputTypes()
  */
 class Mage_Catalog_Model_Product_Attribute_Source_Inputtype extends Mage_Eav_Model_Adminhtml_System_Config_Source_Inputtype

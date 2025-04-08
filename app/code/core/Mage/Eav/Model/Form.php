@@ -228,7 +228,7 @@ abstract class Mage_Eav_Model_Form
      * Return array of form attributes as groups
      * TODO remove
      */
-    public function getGroupedAttributes()
+    public function getGroupedAttributes(): array
     {
         $groups = [];
         foreach ($this->getAttributes() as $code => $attribute) {

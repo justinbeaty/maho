@@ -39,7 +39,7 @@ class Mage_Adminhtml_Catalog_Product_SetController extends Mage_Eav_Controller_A
     }
 
     #[\Override]
-    protected function _initAction()
+    protected function _initAction(): self
     {
         parent::_initAction();
 

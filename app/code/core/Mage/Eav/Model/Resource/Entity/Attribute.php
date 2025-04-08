@@ -563,7 +563,7 @@ class Mage_Eav_Model_Resource_Entity_Attribute extends Mage_Core_Model_Resource_
      *
      * @return array
      */
-    public function getScopeFields(Mage_Eav_Model_Attribute $object)
+    public function getScopeFields(Mage_Eav_Model_Entity_Attribute $object)
     {
         return [];
     }

@@ -8,7 +8,7 @@
  * @license    https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-/** @var Mage_Customer_Model_Entity_Setup $installer */
+/** @var Mage_Customer_Model_Entity_Setup $this */
 $installer = $this;
 $installer->startSetup();
 
@@ -51,9 +51,8 @@ foreach ($defs as $info) {
                     ->save();
 
         /** @var Mage_Eav_Model_Resource_Entity_Attribute_Collection $attributes */
-        $attributes = Mage::getResourceModel($entityType->getEntityAttributeCollection())
-                    ->setEntityTypeFilter($entityType->getId())
-                    ->load();
+        $attributes = Mage::getResourceModel($entityType->getEntityAttributeCollection());
+        $attributes->setEntityTypeFilter($entityType->getId())->load();
 
         /** @var Mage_Eav_Model_Entity_Attribute $attribute */
         foreach ($attributes->getItems() as $attribute) {

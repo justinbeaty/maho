@@ -13,7 +13,6 @@
 /**
  * Product attribute source input types
  *
- * @deprecated Instead use Mage::helper('eav')->getInputTypes()
  * @see Mage_Eav_Helper_Data::getInputTypes()
  */
 class Mage_Eav_Model_Adminhtml_System_Config_Source_Inputtype

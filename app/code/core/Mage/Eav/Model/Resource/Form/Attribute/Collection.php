@@ -145,7 +145,7 @@ class Mage_Eav_Model_Resource_Form_Attribute_Collection extends Mage_Core_Model_
         return $this->setOrder('ca.sort_order', $direction);
     }
 
-    public function joinAttributeGroup()
+    public function joinAttributeGroup(): self
     {
         if (!$this->getFlag('attribute_group_joined')) {
             $this->setFlag('attribute_group_joined', true);
@@ -165,7 +165,7 @@ class Mage_Eav_Model_Resource_Form_Attribute_Collection extends Mage_Core_Model_
         return $this;
     }
 
-    public function filterAttributeSet($attributeSetId)
+    public function filterAttributeSet(string|int $attributeSetId): self
     {
         $this->joinAttributeGroup();
         $this->getSelect()

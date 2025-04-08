@@ -26,7 +26,7 @@ class Mage_Adminhtml_Customer_SetController extends Mage_Eav_Controller_Adminhtm
     }
 
     #[\Override]
-    protected function _initAction()
+    protected function _initAction(): self
     {
         parent::_initAction();
 

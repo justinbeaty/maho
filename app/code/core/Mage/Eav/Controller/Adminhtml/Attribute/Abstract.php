@@ -38,7 +38,7 @@ abstract class Mage_Eav_Controller_Adminhtml_Attribute_Abstract extends Mage_Adm
         return $this;
     }
 
-    protected function _initAction()
+    protected function _initAction(): self
     {
         return $this->loadLayout();
     }

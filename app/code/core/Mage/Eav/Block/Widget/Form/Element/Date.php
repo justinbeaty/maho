@@ -12,7 +12,7 @@
 
 /**
  * @method DateTime getTime()
- * @method $this setTime(string $value)
+ * @method $this setTime(DateTime $value)
  */
 class Mage_Eav_Block_Widget_Form_Element_Date extends Mage_Eav_Block_Widget_Form_Element_Abstract
 {
@@ -29,12 +29,14 @@ class Mage_Eav_Block_Widget_Form_Element_Date extends Mage_Eav_Block_Widget_Form
     }
 
     /**
-     * @param string $date
+     * @param string|DateTime $date
      * @return $this
      */
     public function setDate($date)
     {
-        if ($date) {
+        if ($date instanceof DateTime) {
+            $this->setTime($date);
+        } elseif ($date) {
             try {
                 $dateTime = new DateTime($date);
                 $this->setTime($dateTime);
@@ -96,7 +98,7 @@ class Mage_Eav_Block_Widget_Form_Element_Date extends Mage_Eav_Block_Widget_Form
      * @param string $code
      * @param string $html
      */
-    public function setDateInput($code, $html)
+    public function setDateInput($code, $html): void
     {
         $this->_dateInputs[$code] = $html . "\n";
     }

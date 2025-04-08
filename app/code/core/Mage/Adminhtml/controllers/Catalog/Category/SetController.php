@@ -26,7 +26,7 @@ class Mage_Adminhtml_Catalog_Category_SetController extends Mage_Eav_Controller_
     }
 
     #[\Override]
-    protected function _initAction()
+    protected function _initAction(): self
     {
         parent::_initAction();
 
