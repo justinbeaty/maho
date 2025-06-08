@@ -166,6 +166,8 @@ T: {{telephone}}';
     {
         $errors = [];
 
+        $requireIsoCodes = false;
+
         // Validate Country ID
         if (empty($this->getCountryId())) {
             $errors[] = Mage::helper('adminhtml')->__('Country ID is required.');
@@ -173,16 +175,20 @@ T: {{telephone}}';
             $errors[] = Mage::helper('adminhtml')->__('Country ID must be exactly 2 uppercase letters.');
         }
 
-        // Validate ISO2 code if provided
+        // Validate ISO2 code
         if (empty($this->getIso2Code())) {
-            $errors[] = Mage::helper('adminhtml')->__('ISO2 code is required.');
+            if ($requireIsoCodes) {
+                $errors[] = Mage::helper('adminhtml')->__('ISO2 code is required.');
+            }
         } elseif (!preg_match('/^[A-Z]{2}$/', $this->getIso2Code())) {
             $errors[] = Mage::helper('adminhtml')->__('ISO2 code must be exactly 2 uppercase letters.');
         }
 
-        // Validate ISO3 code if provided
+        // Validate ISO3 code
         if (empty($this->getIso3Code())) {
-            $errors[] = Mage::helper('adminhtml')->__('ISO3 code is required.');
+            if ($requireIsoCodes) {
+                $errors[] = Mage::helper('adminhtml')->__('ISO3 code is required.');
+            }
         } elseif (!preg_match('/^[A-Z]{3}$/', $this->getIso3Code())) {
             $errors[] = Mage::helper('adminhtml')->__('ISO3 code must be exactly 3 uppercase letters.');
         }
