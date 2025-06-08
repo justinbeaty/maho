@@ -170,34 +170,34 @@ T: {{telephone}}';
 
         // Validate Country ID
         if (empty($this->getCountryId())) {
-            $errors[] = Mage::helper('adminhtml')->__('Country ID is required.');
+            $errors[] = Mage::helper('directory')->__('Country ID is required.');
         } elseif (!preg_match('/^[A-Z]{2}$/', $this->getCountryId())) {
-            $errors[] = Mage::helper('adminhtml')->__('Country ID must be exactly 2 uppercase letters.');
+            $errors[] = Mage::helper('directory')->__('Country ID must be exactly 2 uppercase letters.');
         }
 
         // Validate ISO2 code
         if (empty($this->getIso2Code())) {
             if ($requireIsoCodes) {
-                $errors[] = Mage::helper('adminhtml')->__('ISO2 code is required.');
+                $errors[] = Mage::helper('directory')->__('ISO2 code is required.');
             }
         } elseif (!preg_match('/^[A-Z]{2}$/', $this->getIso2Code())) {
-            $errors[] = Mage::helper('adminhtml')->__('ISO2 code must be exactly 2 uppercase letters.');
+            $errors[] = Mage::helper('directory')->__('ISO2 code must be exactly 2 uppercase letters.');
         }
 
         // Validate ISO3 code
         if (empty($this->getIso3Code())) {
             if ($requireIsoCodes) {
-                $errors[] = Mage::helper('adminhtml')->__('ISO3 code is required.');
+                $errors[] = Mage::helper('directory')->__('ISO3 code is required.');
             }
         } elseif (!preg_match('/^[A-Z]{3}$/', $this->getIso3Code())) {
-            $errors[] = Mage::helper('adminhtml')->__('ISO3 code must be exactly 3 uppercase letters.');
+            $errors[] = Mage::helper('directory')->__('ISO3 code must be exactly 3 uppercase letters.');
         }
 
         // Check for duplicate country ID (only for new countries)
         if (!$this->getOrigData('country_id') && !empty($this->getCountryId())) {
             $existingCountry = Mage::getModel('directory/country')->load($this->getCountryId());
             if ($existingCountry->getId()) {
-                $errors[] = Mage::helper('adminhtml')->__('A country with this ID already exists.');
+                $errors[] = Mage::helper('directory')->__('A country with this ID already exists.');
             }
         }
 
@@ -237,21 +237,21 @@ T: {{telephone}}';
 
         // Validate locale
         if (empty($data['locale'])) {
-            $errors[] = Mage::helper('adminhtml')->__('Locale is required.');
+            $errors[] = Mage::helper('directory')->__('Locale is required.');
         }
 
         // Validate name
         if (empty($data['name'])) {
-            $errors[] = Mage::helper('adminhtml')->__('Country name is required.');
+            $errors[] = Mage::helper('directory')->__('Country name is required.');
         } elseif (strlen($data['name']) > 255) {
-            $errors[] = Mage::helper('adminhtml')->__('Country name cannot be longer than 255 characters.');
+            $errors[] = Mage::helper('directory')->__('Country name cannot be longer than 255 characters.');
         }
 
         // Check for duplicate locale/country combination
         if (!empty($data['locale'])) {
             $existingCountry = $this->_getResource()->getTranslation($this, $data['locale']);
             if ($existingCountry->getLocale()) {
-                $errors[] = Mage::helper('adminhtml')->__('A country name for this locale and country combination already exists.');
+                $errors[] = Mage::helper('directory')->__('A country name for this locale and country combination already exists.');
             }
         }
 
@@ -264,7 +264,7 @@ T: {{telephone}}';
     public function saveTranslation(array $data): bool
     {
         if (empty($data['locale']) || empty($data['name'])) {
-            Mage::throwException(Mage::helper('adminhtml')->__('Missing required fields'));
+            Mage::throwException(Mage::helper('directory')->__('Missing required fields'));
         }
         return $this->_getResource()->insertOrUpdateTranslation($this, $data);
     }
