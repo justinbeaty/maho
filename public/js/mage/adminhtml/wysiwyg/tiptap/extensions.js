@@ -26,14 +26,10 @@ const parseDirective = (directiveStr) => {
     }
     directiveStr = (directiveStr ?? '').trim();
     if (directiveStr.startsWith('{{') && directiveStr.endsWith('}}')) {
-        const doc = new DOMParser().parseFromString(
-            '<' + directiveStr.slice(2, -2) + '>',
-            'text/html',
-        );
-        const node = doc.body.querySelector('*');
-        directiveObj.type = node?.nodeName.toLowerCase();
-        for (const attr of node?.attributes ?? []) {
-            directiveObj.params[attr.name] = attr.value;
+        const [ type, attrStr ] = directiveStr.slice(2, -2).trim().split(' ', 2);
+        directiveObj.type = type;
+        for (const match of (attrStr ?? '').matchAll(/([\w\-]+)="(.*?)"/g)) {
+            directiveObj.params[match[1]] = match[2];
         }
     }
     return directiveObj;
@@ -47,6 +43,8 @@ const renderDirective = (directiveObj) => {
     for (const [name, value] of Object.entries(directiveObj.params)) {
         if (value) {
             directiveStr += ` ${name}="${value}"`;
+        } else {
+            directiveStr += ` ${name}`;
         }
     }
     directiveStr += '}}';
@@ -69,6 +67,8 @@ const MahoWidget = Node.create({
         return {
             directiveObj: {
                 parseHTML: (element) => {
+                    console.log(element.getAttribute('data-directive'))
+                    console.log(JSON.stringify(parseDirective(element.getAttribute('data-directive'))))
                     return parseDirective(element.getAttribute('data-directive'));
                 },
                 rendered: false,
@@ -90,29 +90,36 @@ const MahoWidget = Node.create({
     addNodeView() {
         return ({ node, editor }) => {
             const dom = document.createElement('span');
-            dom.title = editor.options.wysiwygSetup.translate('Double-click to edit');
             dom.dataset.type = 'maho-widget';
             dom.contentEditable = 'false';
 
-            if (node.attrs.directiveObj.type === 'config') {
-                dom.innerText = '🔮 ' + node.attrs.directiveObj.params.path ?? 'variable';
-                dom.addEventListener('dblclick', () => {
-                    editor.commands.insertMahoVariable(node);
-                });
-            }
+            let icon, label, dblclick;
 
+            if (node.attrs.directiveObj.type === 'var') {
+                icon = 'variable';
+            }
+            else if (node.attrs.directiveObj.type === 'config') {
+                icon = 'variable';
+                label = node.attrs.directiveObj.params.path;
+                dblclick = () => editor.commands.insertMahoVariable(node);
+            }
             else if (node.attrs.directiveObj.type === 'customvar') {
-                dom.innerText = '🔮 ' + node.attrs.directiveObj.params.code ?? 'variable';
-                dom.addEventListener('dblclick', () => {
-                    editor.commands.insertMahoVariable(node);
-                });
+                icon = 'variable';
+                label = node.attrs.directiveObj.params.code;
+                dblclick = () => editor.commands.insertMahoVariable(node);
+            }
+            else if (node.attrs.directiveObj.type === 'widget') {
+                icon = 'widget';
+                label = node.attrs.directiveObj.params.type;
+                dblclick = () => editor.commands.insertMahoWidget(node);
             }
 
-            else if (node.attrs.directiveObj.type === 'widget') {
-                dom.innerText = '🔮 ' + node.attrs.directiveObj.params.type ?? 'widget';
-                dom.addEventListener('dblclick', () => {
-                    editor.commands.insertMahoWidget(node);
-                });
+            dom.innerHTML = editor.options.wysiwygSetup.getIcon(icon ?? 'widget')
+                + escapeHtml(label ?? renderDirective(node.attrs.directiveObj));
+
+            if (dblclick) {
+                dom.title = editor.options.wysiwygSetup.translate('Double-click to edit');
+                dom.addEventListener('dblclick', dblclick);
             }
 
             return { dom };
@@ -208,7 +215,7 @@ const MahoImage = Image.extend({
             }
 
             img.addEventListener('error', () => {
-                img.src = 'data:image/svg+xml,' + editor.storage.wysiwygSetup.getIcon('image');
+                img.src = 'data:image/svg+xml,' + editor.options.wysiwygSetup.getIcon('image');
                 img.classList.add('placeholder');
             }, { once: true });
 

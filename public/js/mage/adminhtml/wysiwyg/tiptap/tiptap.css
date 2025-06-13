@@ -310,11 +310,22 @@
 /* Widget placeholder styles */
 .ProseMirror span[data-type=maho-widget] {
     position: relative;
-    display: inline-block;
+    display: inline;
+    padding: 4px;
+    border: 1px dotted #adb5bd;
     cursor: pointer;
 
-    padding: 2px 6px 2px 4px;
-    border: 1px dotted #adb5bd;
+    font-size: 1rem;
+    font-weight: normal;
+    font-style: normal;
+    vertical-align: bottom;
+
+    svg {
+        display: inline-block;
+        width: 24px;
+        margin-right: 4px;
+        vertical-align: middle;
+    }
 
     &:hover, &.ProseMirror-selectednode {
         border-color: transparent;
