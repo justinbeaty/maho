@@ -7,6 +7,27 @@
  * @license     https://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 
+@font-face {
+    font-family:__GeistMono_c1e5c9;
+    src:url('./fonts/66f30814ff6d7cdf.p.woff2') format("woff2");
+    font-display:swap;
+    font-weight:100 900;
+  }
+@font-face {
+    font-family:__GeistSans_3a0388;
+    src:url('./fonts/e11418ac562b8ac1-s.p.woff2') format("woff2");
+    font-display:swap;
+    font-weight:100 900;
+}
+@font-face {
+    font-family:__GeistSans_Fallback_3a0388;
+    src:local("Arial");
+    ascent-override:85.83%;
+    descent-override:20.52%;
+    line-gap-override:9.33%;
+    size-adjust:107.19%;
+}
+
 :root {
     color-scheme: 'light dark';
 
@@ -58,9 +79,13 @@
     --maho-loading-icon: url('svg-spinners/180-ring-with-bg.svg');
 
     /* Fonts */
-    --maho-font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    --maho-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-    --maho-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --font-geist-sans: "__GeistSans_3a0388","__GeistSans_Fallback_3a0388";
+    --font-geist-mono: "__GeistMono_c1e5c9",ui-monospace,SFMono-Regular,Roboto Mono,Menlo,Monaco,Liberation Mono,DejaVu Sans Mono,Courier New,monospace;
+
+    --maho-font-sans: var(--font-geist-sans),ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    --maho-font-serif: var(--font-geist-sans),ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    --maho-font-mono: var(--font-geist-mono);
+
 }
 
 [data-maho-theme=light], :root {
@@ -237,9 +262,14 @@
 }
 
 body {
-    font: 14px var(--maho-font-sans);
+    font-size: 14px;
+    font-family: var(--maho-font-sans);
     color: var(--maho-layout-body-text-color);
     background: var(--maho-layout-body-background);
+}
+
+button {
+    font-family: inherit;
 }
 
 h1, h2, h3, h4, h5, h6 {
